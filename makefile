@@ -1,16 +1,16 @@
-all: program
+all: a.out
 
-program: main.o IncidenceCube.o Quasigroup.o
-	g++ main.o IncidenceCube.o Quasigroup.o -o program
-
-main.o: main.cpp
-	g++ -c main.cpp
+a.out: IncidenceCube.o Quasigroup.o main.o
+	g++ IncidenceCube.o Quasigroup.o main.o -Wall -o a.out
 
 IncidenceCube.o: IncidenceCube.cpp
-	g++ -c IncidenceCube.cpp
+	g++ -c -Wall IncidenceCube.cpp 
 
 Quasigroup.o: Quasigroup.cpp
-	g++ -c Quasigroup.cpp
+	g++ -c -Wall Quasigroup.cpp
+
+main.o: main.cpp
+	g++ -c -Wall main.cpp 
 
 clean:
-	rm -rf *.o program
+	rm -rf *.o a.out
