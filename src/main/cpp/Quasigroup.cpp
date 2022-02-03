@@ -375,7 +375,7 @@ namespace Quasigroup {
 				if (!used[j]) 
 				{
 					comp.clear();
-					DFS (j, edges, used, comp);
+					DFS (j, reinterpret_cast<std::vector<int> (&)[]>(edges), used, comp);
 
 					int value = mersenne() % k;
 					for (size_t m = 0; m < comp.size(); m++)
@@ -388,8 +388,6 @@ namespace Quasigroup {
 		}
 		
 		setProperFamily = true;
-		//if (ContainsConstantFunction())
-			//GenerateProperFamilies(stepCount);
 	}
 
 

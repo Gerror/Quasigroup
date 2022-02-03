@@ -60,7 +60,7 @@ void Test(int min_order, int max_order, int numOfAttempts)
         for(int j = 0; j < numOfAttempts; j++)
         {
             auto begin = chrono::steady_clock::now();
-            Quasigroup quasigroup(i);
+            Quasigroup::Quasigroup quasigroup(i);
             auto end = chrono::steady_clock::now();
             auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
             double time = elapsed.count()/((double)1000000);
