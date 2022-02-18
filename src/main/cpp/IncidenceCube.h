@@ -5,30 +5,29 @@
 #include <cstdlib>
 #include <cstdint>
 
-namespace IncidenceCube
-{
-    class IncidenceCube
-    {
-        public:
-            int** unitXY;
-            int** unitXZ;
-            int** unitYZ;
+namespace IncidenceCube {
+    class IncidenceCube {
+    public:
+        int **unitXY;
+        int **unitXZ;
+        int **unitYZ;
 
-            void AddUnit(int x, int y, int z);
+        void AddUnit(int x, int y, int z);
 
-            bool proper;
+        bool proper;
 
-            IncidenceCube(int size);
-            ~IncidenceCube();
+        IncidenceCube(int size);
 
-            friend std::ostream& operator<< (std::ostream &out, const IncidenceCube &cube);
+        ~IncidenceCube();
 
-        protected:
+        friend std::ostream &operator<<(std::ostream &out, const IncidenceCube &cube);
 
-        private:
-            int size;
+    protected:
 
-            IncidenceCube() {};
+    private:
+        int size;
+
+        IncidenceCube() {};
     };
 }
 

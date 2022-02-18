@@ -1,25 +1,20 @@
 #include "IncidenceCube.h"
 
-namespace IncidenceCube
-{
-    IncidenceCube::IncidenceCube(int size)
-    {
+namespace IncidenceCube {
+    IncidenceCube::IncidenceCube(int size) {
         this->size = size;
 
-        unitXY = new int*[size];
-        unitXZ = new int*[size];
-        unitYZ = new int*[size];
-        for(int i = 0; i < size; i++)
-        {
+        unitXY = new int *[size];
+        unitXZ = new int *[size];
+        unitYZ = new int *[size];
+        for (int i = 0; i < size; i++) {
             unitXY[i] = new int[size];
             unitXZ[i] = new int[size];
             unitYZ[i] = new int[size];
         }
 
-        for(int i = 0; i < size; i++)
-        {
-            for(int j = 0; j < size; j++)
-            {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 int k = (i + j) % size;
                 unitXY[i][j] = k;
                 unitXZ[i][k] = j;
@@ -30,10 +25,8 @@ namespace IncidenceCube
         proper = true;
     }
 
-    IncidenceCube::~IncidenceCube()
-    {
-        for(int i = 0; i < size; i++)
-        {
+    IncidenceCube::~IncidenceCube() {
+        for (int i = 0; i < size; i++) {
             delete[] unitXY[i];
             delete[] unitXZ[i];
             delete[] unitYZ[i];
@@ -44,22 +37,17 @@ namespace IncidenceCube
     }
 
 
-    void IncidenceCube::AddUnit(int x, int y, int z)
-    {
+    void IncidenceCube::AddUnit(int x, int y, int z) {
         unitXY[x][y] = z;
         unitYZ[y][z] = x;
         unitXZ[x][z] = y;
     }
 
 
-    std::ostream& operator<< (std::ostream &out, const IncidenceCube &cube)
-    {
-        for(int i = 0; i < cube.size; i++)
-        {
-            for(int j = 0; j < cube.size; j++)
-            {
-                for(int k = 0; k < cube.size; k++)
-                {
+    std::ostream &operator<<(std::ostream &out, const IncidenceCube &cube) {
+        for (int i = 0; i < cube.size; i++) {
+            for (int j = 0; j < cube.size; j++) {
+                for (int k = 0; k < cube.size; k++) {
                     if (cube.unitXY[i][j] == k)
                         out << 1 << " ";
                     else

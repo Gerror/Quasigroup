@@ -8,8 +8,7 @@
 
 using namespace std;
 
-void Test(int min_order, int max_order, int numOfAttempts)
-{
+void Test(int min_order, int max_order, int numOfAttempts) {
     if (min_order <= 0 || max_order <= 0 || min_order > max_order || numOfAttempts <= 0)
         return;
 
@@ -47,8 +46,7 @@ void Test(int min_order, int max_order, int numOfAttempts)
 
     std::srand(seed);
 
-    for(int i = min_order; i <= max_order; i++)
-    {
+    for (int i = min_order; i <= max_order; i++) {
         worst_time_generation = 0.0;
         worst_time_affine = 0.0;
         worst_time_simple = 0.0;
@@ -57,36 +55,35 @@ void Test(int min_order, int max_order, int numOfAttempts)
         average_time_affine = 0.0;
         average_time_simple = 0.0;
 
-        for(int j = 0; j < numOfAttempts; j++)
-        {
+        for (int j = 0; j < numOfAttempts; j++) {
             auto begin = chrono::steady_clock::now();
             Quasigroup::Quasigroup quasigroup(i);
             auto end = chrono::steady_clock::now();
             auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
-            double time = elapsed.count()/((double)1000000);
+            double time = elapsed.count() / ((double) 1000000);
 
             average_time_generation += time;
-            if(time > worst_time_generation)
+            if (time > worst_time_generation)
                 worst_time_generation = time;
 
             begin = chrono::steady_clock::now();
             quasigroup.IsAffine();
             end = chrono::steady_clock::now();
             elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
-            time = elapsed.count()/((double)1000000);
+            time = elapsed.count() / ((double) 1000000);
 
             average_time_affine += time;
-            if(time > worst_time_affine)
+            if (time > worst_time_affine)
                 worst_time_affine = time;
 
             begin = chrono::steady_clock::now();
             quasigroup.IsSimple();
             end = chrono::steady_clock::now();
             elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
-            time = elapsed.count()/((double)1000000);
+            time = elapsed.count() / ((double) 1000000);
 
             average_time_simple += time;
-            if(time > worst_time_simple)
+            if (time > worst_time_simple)
                 worst_time_simple = time;
 
         }
@@ -110,9 +107,6 @@ void Test(int min_order, int max_order, int numOfAttempts)
     out_seed << "Seed: " << seed << "\n";
 }
 
-int main()
-{
-    Test(4, 128, 5);
-
+int main() {
     return 0;
 }
