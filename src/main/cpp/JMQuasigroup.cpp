@@ -52,7 +52,7 @@ namespace  Quasigroup {
     }
 
     void JMQuasigroup::generate() {
-        IncidenceCube::IncidenceCube cube(order);
+        IncidenceCube cube(order);
         int i = 0;
 
         // pick point coord
@@ -75,17 +75,17 @@ namespace  Quasigroup {
         int minusY;
         int minusZ;
 
-        while (i < order * order * order || !cube.proper) {
-            if (cube.proper) {
+        while (i < order * order * order || !cube.isProper()) {
+            if (cube.isProper()) {
                 do {
                     pickX = mersenne() % order;
                     pickY = mersenne() % order;
                     pickZ = mersenne() % order;
-                } while (cube.unitXY[pickX][pickY] == pickZ);
+                } while (cube.getUnitXY(pickX, pickY) == pickZ);
 
-                firstX = cube.unitYZ[pickY][pickZ];
-                firstY = cube.unitXZ[pickX][pickZ];
-                firstZ = cube.unitXY[pickX][pickY];
+                firstX = cube.getUnitYZ(pickY, pickZ);
+                firstY = cube.getUnitXZ(pickX, pickZ);
+                firstZ = cube.getUnitXZ(pickX, pickY);
 
                 cube.AddUnit(pickX, pickY, pickZ);
             } else {
@@ -95,9 +95,9 @@ namespace  Quasigroup {
                 pickY = minusY;
                 pickZ = minusZ;
 
-                firstX = cube.unitYZ[pickY][pickZ];
-                firstY = cube.unitXZ[pickX][pickZ];
-                firstZ = cube.unitXY[pickX][pickY];
+                firstX = cube.getUnitYZ(pickY, pickZ);
+                firstY = cube.getUnitXZ(pickX, pickZ);
+                firstZ = cube.getUnitXY(pickX, pickY);
 
                 randomBit = mersenne() % 2;
                 if (randomBit)
@@ -116,18 +116,18 @@ namespace  Quasigroup {
                 cube.AddUnit(pickX, pickY, secondZ);
             }
 
-            if (cube.unitXY[firstX][firstY] != firstZ) {
-                cube.proper = false;
+            if (cube.getUnitXY(firstX, firstY) != firstZ) {
+                cube.setProper(false);
 
                 minusX = firstX;
                 minusY = firstY;
                 minusZ = firstZ;
 
-                secondX = cube.unitYZ[firstY][firstZ];
-                secondY = cube.unitXZ[firstX][firstZ];
-                secondZ = cube.unitXY[firstX][firstY];
+                secondX = cube.getUnitYZ(firstY, firstZ);
+                secondY = cube.getUnitXZ(firstX, firstZ);
+                secondZ = cube.getUnitXY(firstX, firstY);
             } else {
-                cube.proper = true;
+                cube.setProper(true);
             }
 
             cube.AddUnit(pickX, firstY, firstZ);
@@ -137,37 +137,11 @@ namespace  Quasigroup {
             i++;
         }
 
-        for (int j = 0; j < order; j++) {
-            for (int k = 0; k < order; k++) {
-                latinSquare[j][k] = cube.unitXY[j][k];
+        for (int x = 0; x < order; x++) {
+            for (int y = 0; y < order; y++) {
+                latinSquare[x][y] = cube.getUnitXY(x, y);
             }
         }
-    }
-
-    int JMQuasigroup::getProduct(int x, int y) const {
-        return latinSquare[x][y];
-    }
-
-    std::ostream &operator<<(std::ostream &out, const JMQuasigroup &quasigroup) {
-        return quasigroup.putLatinSquare(out);
-    }
-
-    bool operator==(const JMQuasigroup &q1, const JMQuasigroup &q2) {
-        if (q1.order != q2.order) {
-            return false;
-        }
-
-        int order = q1.order;
-
-        for (int i = 0; i < order; i++) {
-            for (int j = 0; j < order; j++) {
-                if (q1.latinSquare[i][j] != q2.latinSquare[i][j]) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
 }

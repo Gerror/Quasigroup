@@ -18,4 +18,6 @@ add_executable(Quasigroup
         src/main/cpp/Helper.cpp
         src/main/cpp/Helper.h
         src/main/cpp/PFQuasigroup.cpp
-        src/main/cpp/PFQuasigroup.h)
+        src/main/cpp/PFQuasigroup.h
+        src/main/cpp/ProperFamily.cpp
+        src/main/cpp/ProperFamily.h)

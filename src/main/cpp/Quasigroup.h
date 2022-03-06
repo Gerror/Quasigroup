@@ -5,22 +5,19 @@
 #ifndef QUASIGROUP_QUASIGROUP_H
 #define QUASIGROUP_QUASIGROUP_H
 
-#define NEW_LINE "\n"
-#define SEPARATOR " "
-
 #include <ostream>
 #include <random>
 #include <iostream>
 #include <queue>
-#include <time.h>
+#include <ctime>
 
 #include "Helper.h"
 
 namespace Quasigroup {
 
     /*
-     * Unordered pairs of elements needed for
-     * primality testing
+     * Неупорядоченная пара элементов, нужная
+     * для проверки простоты
      */
 
     struct UnorderedPair {
@@ -29,7 +26,7 @@ namespace Quasigroup {
     };
 
     /*
-     * Abstract class of quasigroups
+     * Абстрактный класс квазигрупп
      */
 
     class Quasigroup {
@@ -39,14 +36,15 @@ namespace Quasigroup {
         unsigned long long int getSeed() const { return seed; }
         bool isAffine();
         bool isSimple();
-        std::ostream & putLatinSquare(std::ostream &out) const;
+        friend std::ostream &operator<<(std::ostream &out, const Quasigroup &q);
+        friend bool operator==(const Quasigroup &q1, const Quasigroup &q2);
     protected:
-        int order;
-        unsigned long long int seed;
+        int order{};
+        unsigned long long int seed{};
         std::mt19937 mersenne;
 
         virtual void generate() = 0;
-        Quasigroup() {}
+        Quasigroup() = default;
     };
 
 }

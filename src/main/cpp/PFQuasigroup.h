@@ -11,25 +11,26 @@
 #include <fstream>
 
 #include "Quasigroup.h"
+#include "ProperFamily.h"
 
 namespace Quasigroup {
+
+    /*
+     * Квазигруппы, порождаемые правильными семействами функций
+     */
 
     class PFQuasigroup : public Quasigroup {
     private:
         int k;
         int n;
-        int **properFamilies;
-        int *piValue;
-        void generatePiValue();
+        ProperFamily properFamily;
+        int *piValue{};
     public:
         int getProduct(int x, int y) const override;
-        int getK();
-        int getN();
-        PFQuasigroup(int k, int n, unsigned long long int seed);
-        PFQuasigroup(int k, int n) : PFQuasigroup(k, n, time(nullptr)) {}
-        PFQuasigroup(std::ifstream &input);
-        friend std::ostream &operator<<(std::ostream &out, const PFQuasigroup &quasigroup);
-        friend bool operator==(const PFQuasigroup &q1, const PFQuasigroup &q2);
+        PFQuasigroup(const ProperFamily& properFamily, unsigned long long int seed);
+        PFQuasigroup(int k, int n, unsigned long long int seed) : PFQuasigroup(ProperFamily(k, n), seed) {}
+        PFQuasigroup(int k, int n) : PFQuasigroup(k, n, time(nullptr)) {};
+        explicit PFQuasigroup(const ProperFamily& properFamily) : PFQuasigroup(properFamily, time(nullptr)) {}
         ~PFQuasigroup();
     protected:
         void generate() override;

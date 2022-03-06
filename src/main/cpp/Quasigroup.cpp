@@ -221,13 +221,31 @@ namespace Quasigroup {
         return true;
     }
 
-    std::ostream & Quasigroup::putLatinSquare(std::ostream &out) const {
-        for (int i = 0; i < order; i++) {
-            for (int j = 0; j < order; j++)
-                out << getProduct(i, j) << SEPARATOR;
-            out << NEW_LINE;
+    std::ostream &operator<<(std::ostream &out, const Quasigroup &q) {
+        for (int i = 0; i < q.order; i++) {
+            for (int j = 0; j < q.order; j++)
+                out << q.getProduct(i, j) << " ";
+            out << std::endl;
         }
         return out;
+    }
+
+    bool operator==(const Quasigroup &q1, const Quasigroup &q2) {
+        if (q1.order != q2.order) {
+            return false;
+        }
+
+        int order = q1.order;
+
+        for (int i = 0; i < order; i++) {
+            for (int j = 0; j < order; j++) {
+                if (q1.getProduct(i, j) != q2.getProduct(i, j)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
 }

@@ -22,12 +22,10 @@ namespace Quasigroup {
     private:
         int **latinSquare;
     public:
-        int getProduct(int x, int y) const override;
+        int getProduct(int x, int y) const override { return latinSquare[x][y]; };
         JMQuasigroup(int order, unsigned long long int seed);
-        JMQuasigroup(int order) : JMQuasigroup(order, time(nullptr)) {}
-        JMQuasigroup(std::ifstream &input);
-        friend std::ostream &operator<<(std::ostream &out, const JMQuasigroup &quasigroup);
-        friend bool operator==(const JMQuasigroup &q1, const JMQuasigroup &q2);
+        explicit JMQuasigroup(int order) : JMQuasigroup(order, time(nullptr)) {}
+        explicit JMQuasigroup(std::ifstream &input);
         ~JMQuasigroup();
     protected:
         void generate() override;
