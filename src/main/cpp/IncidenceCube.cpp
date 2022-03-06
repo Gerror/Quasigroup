@@ -1,6 +1,7 @@
 #include "IncidenceCube.h"
 
-namespace IncidenceCube {
+namespace Quasigroup {
+
     IncidenceCube::IncidenceCube(int size) {
         this->size = size;
 
@@ -60,4 +61,5 @@ namespace IncidenceCube {
         }
         return out;
     }
+
 }
