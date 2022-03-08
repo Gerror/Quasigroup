@@ -7,7 +7,9 @@
 
 
 #include <vector>
-#include <math.h>
+#include <cmath>
+#include <random>
+#include <ctime>
 
 namespace Quasigroup {
 
@@ -35,6 +37,12 @@ namespace Quasigroup {
     int min(int a, int b, int k);
 
     int max(int a, int b, int k);
+
+    // Ставит числу value в соответствие число из кольца вычетов по модулю k
+    int mod(int value, int k);
+
+    std::vector<int> generateRandomPermutation(int size, unsigned long long int seed = time(NULL));
+
 }
 
 #endif //QUASIGROUP_HELPER_H

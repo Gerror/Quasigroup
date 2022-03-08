@@ -20,4 +20,8 @@ add_executable(Quasigroup
         src/main/cpp/PFQuasigroup.cpp
         src/main/cpp/PFQuasigroup.h
         src/main/cpp/ProperFamily.cpp
-        src/main/cpp/ProperFamily.h)
+        src/main/cpp/ProperFamily.h
+        src/main/cpp/TotalPermutation.cpp
+        src/main/cpp/TotalPermutation.h
+        src/main/cpp/TPQuasigroup.cpp
+        src/main/cpp/TPQuasigroup.h)

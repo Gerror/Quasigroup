@@ -105,4 +105,25 @@ namespace Quasigroup {
         return b;
     }
 
+    std::vector<int> generateRandomPermutation(int size, unsigned long long int seed) {
+        std::vector<int> result;
+        std::mt19937 mersenne(seed);
+        for (int i = 0; i <= size - 1; i++) {
+            result.push_back(i);
+        }
+        for (int i = 0; i < size - 1; i++) {
+            int j = mersenne() % (size - i) + i;
+            std::swap(result[i], result[j]);
+        }
+        return result;
+    }
+
+    int mod(int value, int k) {
+        int result = value % k;
+        while (result < 0) {
+            result += k;
+        }
+        return result % k;
+    }
+
 }

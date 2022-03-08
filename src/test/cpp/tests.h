@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <time.h>
+#include <ctime>
 #include <chrono>
 #include <fstream>
 #include "Quasigroup.h"
