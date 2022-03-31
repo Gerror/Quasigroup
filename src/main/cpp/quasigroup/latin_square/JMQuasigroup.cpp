@@ -1,54 +1,18 @@
 //
-// Created by rzhig on 04.03.2022.
+// Created by Gerror on 31.03.2022.
 //
 
 #include "JMQuasigroup.h"
 
-namespace  Quasigroup {
+namespace Quasigroup {
 
-    JMQuasigroup::JMQuasigroup(std::ifstream &input) {
-        if (!input.is_open()) {
-            std::cerr << "Input JMQuasigroup from ifstream, but ifstream was not open" << std::endl;
-            return;
-        }
-
-        input >> order;
-
-        latinSquare = new int *[order];
-        for (int i = 0; i < order; i++) {
-            latinSquare[i] = new int[order];
-        }
-
-        for (int i = 0; i < order; i++) {
-            for (int j = 0; j < order; j++) {
-                input >> latinSquare[i][j];
-            }
-        }
-    }
-
-    JMQuasigroup::JMQuasigroup(int order, unsigned long long int seed) {
-        this->order = order;
-        this->seed = seed;
-        this->mersenne = std::mt19937(seed);
-
-        latinSquare = new int *[order];
-        for (int i = 0; i < order; i++) {
-            latinSquare[i] = new int[order];
-        }
-
+    JMQuasigroup::JMQuasigroup(int order, unsigned long long int seed) : LatinSquareQuasigroup(order), GeneratedObject(seed) {
         if (order == 1) {
             latinSquare[0][0] = 0;
         }
         else {
             generate();
         }
-    }
-
-    JMQuasigroup::~JMQuasigroup() {
-        for (int i = 0; i < order; i++) {
-            delete[] (latinSquare[i]);
-        }
-        delete[] (latinSquare);
     }
 
     void JMQuasigroup::generate() {
@@ -85,7 +49,7 @@ namespace  Quasigroup {
 
                 firstX = cube.getUnitYZ(pickY, pickZ);
                 firstY = cube.getUnitXZ(pickX, pickZ);
-                firstZ = cube.getUnitXZ(pickX, pickY);
+                firstZ = cube.getUnitXY(pickX, pickY);
 
                 cube.AddUnit(pickX, pickY, pickZ);
             } else {
@@ -100,16 +64,19 @@ namespace  Quasigroup {
                 firstZ = cube.getUnitXY(pickX, pickY);
 
                 randomBit = mersenne() % 2;
-                if (randomBit)
+                if (randomBit) {
                     std::swap(firstX, secondX);
+                }
 
                 randomBit = mersenne() % 2;
-                if (randomBit)
+                if (randomBit) {
                     std::swap(firstY, secondY);
+                }
 
                 randomBit = mersenne() % 2;
-                if (randomBit)
+                if (randomBit) {
                     std::swap(firstZ, secondZ);
+                }
 
                 cube.AddUnit(secondX, pickY, pickZ);
                 cube.AddUnit(pickX, secondY, pickZ);

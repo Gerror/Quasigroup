@@ -1,5 +1,5 @@
 //
-// Created by rzhig on 18.02.2022.
+// Created by Gerror on 18.02.2022.
 //
 
 #ifndef QUASIGROUP_TESTS_H
@@ -10,15 +10,18 @@
 #include <ctime>
 #include <chrono>
 #include <fstream>
+
 #include "Quasigroup.h"
-#include "JMQuasigroup.h"
 #include "IncidenceCube.h"
+#include "ProperFamily.h"
+#include "Helper.h"
 
 using namespace std;
 
 namespace Quasigroup {
 
-    void checkCorrectnessLatinSquare(Quasigroup &q);
+    bool checkCorrectnessLatinSquare(Quasigroup &q);
+    bool checkCorrectnessProperFamily(ProperFamily &pf);
 
 }
 

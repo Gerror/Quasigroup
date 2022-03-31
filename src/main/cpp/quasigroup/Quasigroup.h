@@ -1,5 +1,5 @@
 //
-// Created by rzhig on 04.03.2022.
+// Created by Gerror on 04.03.2022.
 //
 
 #ifndef QUASIGROUP_QUASIGROUP_H
@@ -16,8 +16,7 @@
 namespace Quasigroup {
 
     /*
-     * Неупорядоченная пара элементов, нужная
-     * для проверки простоты
+     * Unordered pair of elements required for primality test
      */
 
     struct UnorderedPair {
@@ -26,24 +25,18 @@ namespace Quasigroup {
     };
 
     /*
-     * Абстрактный класс квазигрупп
+     * Abstract class of quasigroups
      */
 
     class Quasigroup {
     public:
         virtual int getProduct(int x, int y) const = 0;
-        int getOrder() const { return order; }
-        unsigned long long int getSeed() const { return seed; }
-        bool isAffine();
-        bool isSimple();
+        int getOrder() const;
+        bool isAffine() const;
+        bool isSimple() const;
         friend std::ostream &operator<<(std::ostream &out, const Quasigroup &q);
-        friend bool operator==(const Quasigroup &q1, const Quasigroup &q2);
     protected:
-        int order{};
-        unsigned long long int seed{};
-        std::mt19937 mersenne;
-
-        virtual void generate() = 0;
+        int order;
         Quasigroup() = default;
     };
 
