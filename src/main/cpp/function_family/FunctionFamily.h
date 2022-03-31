@@ -28,7 +28,7 @@ namespace Quasigroup {
         int getFunctionValue(int varValue, int functionNumber = 0) const;
         friend std::ostream &operator<<(std::ostream &out, const FunctionFamily &ff);
         friend bool operator==(const FunctionFamily &ff1, const FunctionFamily &ff2);
-        FunctionFamily & operator = (const FunctionFamily & ff);
+        FunctionFamily &operator=(const FunctionFamily & ff);
     protected:
         int k;
         int n;

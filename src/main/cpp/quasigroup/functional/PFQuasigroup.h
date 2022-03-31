@@ -11,6 +11,10 @@
 
 namespace Quasigroup {
 
+    /*
+     * Quasigroups based on proper families of functions
+     */
+
     class PFQuasigroup : public FunctionalQuasigroup, public GeneratedObject {
     private:
         int *piValue;

@@ -10,6 +10,10 @@
 
 namespace Quasigroup {
 
+    /*
+     * Quasigroups Defined Using Families of Functions
+     */
+
     class FunctionalQuasigroup : public Quasigroup {
     public:
         explicit FunctionalQuasigroup(const FunctionFamily& functionFamily);

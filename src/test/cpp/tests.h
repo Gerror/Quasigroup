@@ -7,17 +7,21 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <time.h>
+#include <ctime>
 #include <chrono>
 #include <fstream>
-#include "quasigroup/Quasigroup.h"
+
+#include "Quasigroup.h"
 #include "IncidenceCube.h"
+#include "ProperFamily.h"
+#include "Helper.h"
 
 using namespace std;
 
 namespace Quasigroup {
 
-    void checkCorrectnessLatinSquare(Quasigroup &q);
+    bool checkCorrectnessLatinSquare(Quasigroup &q);
+    bool checkCorrectnessProperFamily(ProperFamily &pf);
 
 }
 

@@ -2,7 +2,6 @@
 // Created by Gerror on 31.03.2022.
 //
 
-#include <iostream>
 #include "FunctionFamily.h"
 
 namespace Quasigroup {

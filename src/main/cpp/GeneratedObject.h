@@ -9,6 +9,10 @@
 
 namespace Quasigroup {
 
+    /*
+     * Abstract class for randomly generated objects
+     */
+
     class GeneratedObject {
     private:
         unsigned long long int seed;

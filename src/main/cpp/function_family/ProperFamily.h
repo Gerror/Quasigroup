@@ -22,6 +22,7 @@ namespace Quasigroup {
     private:
         int order;
     public:
+        int getOrder() const;
         ProperFamily(int k, int n, unsigned long long int seed = 0);
     protected:
         void generate() override;

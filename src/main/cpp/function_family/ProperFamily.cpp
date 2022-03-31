@@ -154,4 +154,8 @@ namespace Quasigroup {
         }
     }
 
+    int ProperFamily::getOrder() const {
+        return order;
+    }
+
 }

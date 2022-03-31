@@ -11,5 +11,5 @@ namespace Quasigroup {
         this->n = functionFamily.getN();
         this->functionFamily = functionFamily;
     }
-
+    
 }
