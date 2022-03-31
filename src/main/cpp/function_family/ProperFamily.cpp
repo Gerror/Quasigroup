@@ -1,94 +1,15 @@
 //
-// Created by rzhig on 06.03.2022.
+// Created by Gerror on 31.03.2022.
 //
 
 #include "ProperFamily.h"
 
 namespace Quasigroup {
 
-    ProperFamily::ProperFamily(int k, int n, unsigned long long int seed) {
-        this->k = k;
-        this->n = n;
+    ProperFamily::ProperFamily(int k, int n, unsigned long long int seed) : FunctionFamily(k, n, n, pow(k, n)), GeneratedObject(seed) {
         this->order = pow(k, n);
-        this->seed = seed;
-        this->mersenne = std::mt19937(seed);
-
-        properFamily = new int *[n];
-        for (int i = 0; i < n; i++) {
-            properFamily[i] = new int[order];
-        }
 
         generate();
-    }
-
-    ProperFamily::ProperFamily(std::ifstream &input) {
-        if (!input.is_open()) {
-            std::cerr << "Input PFQuasigroup from ifstream, but ifstream was not open" << std::endl;
-            return;
-        }
-
-        input >> k >> n;
-        order = pow(k, n);
-
-        properFamily = new int *[n];
-        for (int i = 0; i < n; i++) {
-            properFamily[i] = new int[order];
-        }
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < order; j++) {
-                input >> properFamily[i][j];
-            }
-        }
-
-    }
-
-    ProperFamily::ProperFamily(const ProperFamily &pf) {
-        this->k = pf.k;
-        this->n = pf.n;
-        this->order = pf.order;
-        this->seed = pf.seed;
-        this->mersenne = pf.mersenne;
-
-        properFamily = new int *[n];
-        for (int i = 0; i < n; i++) {
-            properFamily[i] = new int[order];
-        }
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < order; j++) {
-                this->properFamily[i][j] = pf.properFamily[i][j];
-            }
-        }
-    }
-
-    ProperFamily &ProperFamily::operator=(const ProperFamily &pf) {
-        if (this != &pf) {
-            this->k = pf.k;
-            this->n = pf.n;
-            this->order = pf.order;
-            this->seed = pf.seed;
-            this->mersenne = pf.mersenne;
-
-            properFamily = new int *[n];
-            for (int i = 0; i < n; i++) {
-                properFamily[i] = new int[order];
-            }
-
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < order; j++) {
-                    this->properFamily[i][j] = pf.properFamily[i][j];
-                }
-            }
-        }
-        return *this;
-    }
-
-    ProperFamily::~ProperFamily() {
-        for (int i = 0; i < n; i++) {
-            delete[] (properFamily[i]);
-        }
-        delete[] (properFamily);
     }
 
     void ProperFamily::generate() {
@@ -98,7 +19,7 @@ namespace Quasigroup {
         for (int i = 0; i < n; i++) {
             int value = mersenne() % k;
             for (int j = 0; j < order; j++) {
-                properFamily[i][j] = value;
+                functionFamily[i][j] = value;
             }
         }
 
@@ -119,7 +40,7 @@ namespace Quasigroup {
                     kArray[number] = kArray[n - 1];
                     kArray[n - 1] = temp;
 
-                    newProperFamily[j][m] = properFamily[j][kArrayToIntValue(k, kArray, n)];
+                    newProperFamily[j][m] = functionFamily[j][kArrayToIntValue(k, kArray, n)];
                 }
             }
             // Поменять местами функцию number с последней
@@ -132,7 +53,7 @@ namespace Quasigroup {
             // Вернуть семейство как было
             for (int j = 0; j < n; j++) {
                 for (int m = 0; m < order; m++) {
-                    properFamily[j][m] = newProperFamily[j][m];
+                    functionFamily[j][m] = newProperFamily[j][m];
                 }
             }
             number = n - 1;
@@ -152,7 +73,7 @@ namespace Quasigroup {
                             kArray[q] = newkArray[q];
                         }
 
-                        G[j][m][p] = properFamily[m][kArrayToIntValue(k, kArray, n)];
+                        G[j][m][p] = functionFamily[m][kArrayToIntValue(k, kArray, n)];
                     }
                 }
             }
@@ -175,7 +96,7 @@ namespace Quasigroup {
                         result = max(result, min(unarFunction(kArray[n - 1], p, k), G[p][j][newValue], k), k);
                     }
 
-                    properFamily[j][m] = result;
+                    functionFamily[j][m] = result;
                 }
             }
 
@@ -225,7 +146,7 @@ namespace Quasigroup {
                     int value = mersenne() % k;
                     for (int m : comp) {
                         for (int p = 0; p < k; p++) {
-                            properFamily[n - 1][m * k + p] = value;
+                            functionFamily[n - 1][m * k + p] = value;
                         }
                     }
                 }
@@ -233,32 +154,4 @@ namespace Quasigroup {
         }
     }
 
-    std::ostream &operator<<(std::ostream &out, const ProperFamily &pf) {
-        for (int i = 0; i < pf.getN(); i++) {
-            for (int j = 0; j < pf.getOrder(); j++) {
-                out << pf.getFunctionValue(i, j) << " ";
-            }
-            out << std::endl;
-        }
-        return out;
-    }
-
-    bool operator==(const ProperFamily &pf1, const ProperFamily &pf2) {
-        if (pf1.getN() != pf2.getN() || pf1.getK() != pf2.getK()) {
-            return false;
-        }
-
-        int n = pf1.getN();
-        int order = pf1.getOrder();
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < order; j++) {
-                if (pf1.getFunctionValue(i, j) != pf2.getFunctionValue(i, j)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
 }

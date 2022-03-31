@@ -1,5 +1,5 @@
 //
-// Created by rzhig on 18.02.2022.
+// Created by Gerror on 18.02.2022.
 //
 
 #include "tests.h"

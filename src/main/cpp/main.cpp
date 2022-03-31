@@ -1,6 +1,6 @@
 #include "tests.h"
-#include "JMQuasigroup.h"
 #include "PFQuasigroup.h"
+#include "JMQuasigroup.h"
 
 using namespace Quasigroup;
 

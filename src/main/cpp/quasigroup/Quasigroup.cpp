@@ -1,12 +1,12 @@
 //
-// Created by rzhig on 04.03.2022.
+// Created by Gerror on 04.03.2022.
 //
 
 #include "Quasigroup.h"
 
 namespace Quasigroup {
 
-    bool Quasigroup::isAffine() {
+    bool Quasigroup::isAffine() const {
         /*
          * latinSquare далее - матрица L, её i-я строка - s(i)
          *
@@ -140,11 +140,11 @@ namespace Quasigroup {
         return true;
     }
 
-    bool Quasigroup::isSimple() {
+    bool Quasigroup::isSimple() const {
         const int pairsCount = (order * (order - 1)) / 2;
 
         for (int j = 1; j < order; j++) {
-            UnorderedPair *pairs = new UnorderedPair[pairsCount];
+            auto *pairs = new UnorderedPair[pairsCount];
             std::queue<UnorderedPair> unrevEq;
             std::vector<int> classes[order];
             int classIndex[order];
@@ -221,6 +221,10 @@ namespace Quasigroup {
         return true;
     }
 
+    int Quasigroup::getOrder() const {
+        return order;
+    }
+
     std::ostream &operator<<(std::ostream &out, const Quasigroup &q) {
         for (int i = 0; i < q.order; i++) {
             for (int j = 0; j < q.order; j++)
@@ -228,24 +232,6 @@ namespace Quasigroup {
             out << std::endl;
         }
         return out;
-    }
-
-    bool operator==(const Quasigroup &q1, const Quasigroup &q2) {
-        if (q1.order != q2.order) {
-            return false;
-        }
-
-        int order = q1.order;
-
-        for (int i = 0; i < order; i++) {
-            for (int j = 0; j < order; j++) {
-                if (q1.getProduct(i, j) != q2.getProduct(i, j)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
 }

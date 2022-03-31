@@ -1,5 +1,5 @@
 //
-// Created by rzhig on 18.02.2022.
+// Created by Gerror on 18.02.2022.
 //
 
 #ifndef QUASIGROUP_TESTS_H
@@ -10,8 +10,7 @@
 #include <time.h>
 #include <chrono>
 #include <fstream>
-#include "Quasigroup.h"
-#include "JMQuasigroup.h"
+#include "quasigroup/Quasigroup.h"
 #include "IncidenceCube.h"
 
 using namespace std;

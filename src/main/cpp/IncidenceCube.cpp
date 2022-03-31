@@ -4,6 +4,7 @@ namespace Quasigroup {
 
     IncidenceCube::IncidenceCube(int size) {
         this->size = size;
+        this->proper = true;
 
         unitXY = new int *[size];
         unitXZ = new int *[size];
@@ -23,7 +24,6 @@ namespace Quasigroup {
             }
         }
 
-        proper = true;
     }
 
     IncidenceCube::~IncidenceCube() {
@@ -60,6 +60,26 @@ namespace Quasigroup {
             out << "\n";
         }
         return out;
+    }
+
+    bool IncidenceCube::isProper() const {
+        return this->proper;
+    }
+
+    void IncidenceCube::setProper(bool newProper) {
+        this->proper = newProper;
+    }
+
+    int IncidenceCube::getUnitXY(int x, int y) {
+        return unitXY[x][y];
+    }
+
+    int IncidenceCube::getUnitXZ(int x, int z) {
+        return unitXZ[x][z];
+    }
+
+    int IncidenceCube::getUnitYZ(int y, int z) {
+        return unitYZ[y][z];
     }
 
 }
