@@ -7,7 +7,6 @@
 namespace Quasigroup {
 
     PFQuasigroup::PFQuasigroup(const ProperFamily &properFamily, unsigned long long int seed) : FunctionalQuasigroup(properFamily) {
-        this->order = pow(k, n);
         piValue = new int[n * k * k];
         generate();
     }

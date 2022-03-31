@@ -32,6 +32,11 @@ add_executable(Quasigroup
         src/main/cpp/function_family/FunctionFamily.h
         src/main/cpp/function_family/ProperFamily.cpp
         src/main/cpp/function_family/ProperFamily.h
+        src/main/cpp/function_family/TotalPermutation.cpp
+        src/main/cpp/function_family/TotalPermutation.h
         src/main/cpp/quasigroup/functional/FunctionalQuasigroup.cpp
         src/main/cpp/quasigroup/functional/FunctionalQuasigroup.h
-        src/main/cpp/quasigroup/functional/PFQuasigroup.cpp src/main/cpp/quasigroup/functional/PFQuasigroup.h)
+        src/main/cpp/quasigroup/functional/PFQuasigroup.cpp
+        src/main/cpp/quasigroup/functional/PFQuasigroup.h
+        src/main/cpp/quasigroup/functional/TPQuasigroup.cpp
+        src/main/cpp/quasigroup/functional/TPQuasigroup.h)

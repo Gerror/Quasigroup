@@ -10,6 +10,7 @@ namespace Quasigroup {
         this->k = functionFamily.getK();
         this->n = functionFamily.getN();
         this->functionFamily = functionFamily;
+        this->order = pow(k, n);
     }
     
 }
