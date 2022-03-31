@@ -1,5 +1,5 @@
 //
-// Created by rzhig on 05.03.2022.
+// Created by Gerror on 05.03.2022.
 //
 
 #ifndef QUASIGROUP_HELPER_H
@@ -7,7 +7,7 @@
 
 
 #include <vector>
-#include <math.h>
+#include <cmath>
 
 namespace Quasigroup {
 
