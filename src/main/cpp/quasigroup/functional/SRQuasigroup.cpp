@@ -1,16 +1,16 @@
 //
-// Created by rzhig on 08.03.2022.
+// Created by Gerror on 08.03.2022.
 //
 
-#include "TPQuasigroup.h"
+#include "SRQuasigroup.h"
 
 namespace Quasigroup {
 
-    TPQuasigroup::TPQuasigroup(const TotalPermutation &totalPermutation) : FunctionalQuasigroup(totalPermutation) {}
+    SRQuasigroup::SRQuasigroup(const ShiftRegister &shiftRegister) : FunctionalQuasigroup(shiftRegister) {}
 
-    TPQuasigroup::TPQuasigroup(int k, int n, unsigned long long int seed) : TPQuasigroup(TotalPermutation(k, n, seed)) {}
+    SRQuasigroup::SRQuasigroup(int k, int n, unsigned long long int seed) : SRQuasigroup(ShiftRegister(k, n, seed)) {}
 
-    int TPQuasigroup::getProduct(int x, int y) const {
+    int SRQuasigroup::getProduct(int x, int y) const {
         int xArray[n];
         int yArray[n];
         int result[n];

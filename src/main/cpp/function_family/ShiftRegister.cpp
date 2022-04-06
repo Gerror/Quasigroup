@@ -1,17 +1,17 @@
 //
-// Created by rzhig on 06.03.2022.
+// Created by Gerror on 06.03.2022.
 //
 
-#include "TotalPermutation.h"
+#include "ShiftRegister.h"
 
 namespace Quasigroup {
 
-    TotalPermutation::TotalPermutation(int k, int n, unsigned long long int seed) :
+    ShiftRegister::ShiftRegister(int k, int n, unsigned long long int seed) :
     FunctionFamily(k, n, 1, pow(k, n - 1)), GeneratedObject(seed) {
         generate();
     }
 
-    void TotalPermutation::generate() {
+    void ShiftRegister::generate() {
         for (int i = 0; i < getFunctionSize() / k; i++) {
             int kArray[n - 2];
             int newKArray[n - 1];
