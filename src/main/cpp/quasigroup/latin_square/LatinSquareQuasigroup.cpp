@@ -35,6 +35,15 @@ namespace Quasigroup {
         }
     }
 
+    LatinSquareQuasigroup::LatinSquareQuasigroup(const FunctionalQuasigroup& functionalQuasigroup)
+    : LatinSquareQuasigroup(functionalQuasigroup.getOrder()) {
+        for (int x = 0; x < order; x++) {
+            for (int y = 0; y < order; y++) {
+                this->latinSquare[x][y] = functionalQuasigroup.getProduct(x, y);
+            }
+        }
+    }
+
     LatinSquareQuasigroup::~LatinSquareQuasigroup() {
         for (int i = 0; i < order; i++) {
             delete[] (latinSquare[i]);
