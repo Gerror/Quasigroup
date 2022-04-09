@@ -30,6 +30,14 @@ namespace Quasigroup {
 
     class Quasigroup {
     public:
+        class QuasigroupHash {
+        public:
+            size_t operator() (const Quasigroup *quasigroup) const;
+        };
+        class QuasigroupEqualHash {
+        public:
+            bool operator()(const Quasigroup *q1, const Quasigroup *q2) const;
+        };
         virtual int getProduct(int x, int y) const = 0;
         int getOrder() const;
         bool isAffine() const;

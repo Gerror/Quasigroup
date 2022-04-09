@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(Quasigroup)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 include_directories(
         src/test/cpp
@@ -9,6 +9,7 @@ include_directories(
         src/main/cpp/quasigroup
         src/main/cpp/quasigroup/functional
         src/main/cpp/quasigroup/latin_square
+        src/main/cpp/quasigroup/factory
         src/main/cpp/function_family
 )
 
@@ -43,4 +44,14 @@ add_executable(Quasigroup
         src/main/cpp/function_family/FeistelNetwork.cpp
         src/main/cpp/function_family/FeistelNetwork.h
         src/main/cpp/quasigroup/functional/FNQuasigroup.cpp
-        src/main/cpp/quasigroup/functional/FNQuasigroup.h)
+        src/main/cpp/quasigroup/functional/FNQuasigroup.h
+        src/main/cpp/quasigroup/factory/LatinSquareQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/FunctionalQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/JMQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/JMQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/SRQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/SRQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/FNQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/FNQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/PFQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/PFQuasigroupFactory.h)

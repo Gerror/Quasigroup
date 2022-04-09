@@ -126,4 +126,23 @@ namespace Quasigroup {
         return result % k;
     }
 
+    std::tuple<int, double, double, double> increaseResult(std::tuple<int, double, double, double> &result, double time, bool sign, int size) {
+        int count = std::get<0>(result);
+        double worseTime = std::get<1>(result), averageTime = std::get<2>(result), bestTime = std::get<3>(result);
+        if (sign) {
+            count++;
+        }
+
+        averageTime += time / size;
+        if (time > worseTime) {
+            worseTime = time;
+        }
+
+        if (bestTime < 0 || time < bestTime) {
+            bestTime = time;
+        }
+
+        return {count, worseTime, averageTime, bestTime};
+    }
+
 }

@@ -234,4 +234,21 @@ namespace Quasigroup {
         return out;
     }
 
+    size_t Quasigroup::QuasigroupHash::operator()(const Quasigroup *quasigroup) const {
+        std::hash<std::string> hasher;
+        std::string hash = "";
+        for (int y = 0; y < quasigroup->getOrder(); y++) {
+            for (int x = 0; x < quasigroup->getOrder(); x++) {
+                hash += std::to_string(quasigroup->getProduct(x, y)) + " ";
+            }
+            hash += "\n";
+        }
+        return hasher(hash);
+    }
+
+    bool Quasigroup::QuasigroupEqualHash::operator()(const Quasigroup *q1, const Quasigroup *q2) const {
+        Quasigroup::QuasigroupHash hasher;
+        return hasher(q1) == hasher(q2);
+    }
+
 }

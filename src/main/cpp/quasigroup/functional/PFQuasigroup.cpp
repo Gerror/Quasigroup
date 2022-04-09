@@ -47,4 +47,21 @@ namespace Quasigroup {
         }
     }
 
+    bool operator==(const PFQuasigroup &q1, const PFQuasigroup &q2) {
+        if (!(q1.functionFamily == q2.functionFamily)) {
+            return false;
+        }
+
+        int n = q1.functionFamily.getN();
+        int k = q1.functionFamily.getK();
+
+        for (int i = 0; i < n * k * k; i++) {
+            if (q1.piValue[i] != q2.piValue[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
