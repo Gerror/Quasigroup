@@ -17,4 +17,8 @@ namespace Quasigroup {
         return (q1.functionFamily == q2.functionFamily);
     }
 
+    FunctionFamily &FunctionalQuasigroup::getFunctionFamily() {
+        return functionFamily;
+    }
+
 }
