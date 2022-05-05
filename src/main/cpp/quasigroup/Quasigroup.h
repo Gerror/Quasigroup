@@ -10,13 +10,15 @@
 #include <iostream>
 #include <queue>
 #include <ctime>
+#include <cstdlib>
+#include <cstring>
 
 #include "Helper.h"
 
 namespace Quasigroup {
 
     /*
-     * Unordered pair of elements required for primality test
+     * Неупорядоченные пары, необходимые для проверки простоты
      */
 
     struct UnorderedPair {
@@ -25,10 +27,16 @@ namespace Quasigroup {
     };
 
     /*
-     * Abstract class of quasigroups
+     * Абстрактный класс квазигрупп
      */
 
     class Quasigroup {
+    private:
+        // Две функции, необходимые для поиска подквазигрупп
+        int nextStep(unsigned int *step, int border) const;
+        int checkStep(unsigned int *step,
+                      int border, unsigned int *a_sq,
+                      unsigned int *a_sqi, unsigned int *a_q) const;
     public:
         class QuasigroupHash {
         public:
@@ -42,6 +50,7 @@ namespace Quasigroup {
         int getOrder() const;
         bool isAffine() const;
         bool isSimple() const;
+        int findSubquasigroup(int border, unsigned int **a_sq) const;
         friend std::ostream &operator<<(std::ostream &out, const Quasigroup &q);
     protected:
         int order;
