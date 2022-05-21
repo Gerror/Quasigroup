@@ -8,6 +8,9 @@
 
 #include <vector>
 #include <cmath>
+#include <random>
+#include <ctime>
+#include <tuple>
 
 namespace Quasigroup {
 
@@ -35,6 +38,19 @@ namespace Quasigroup {
     int min(int a, int b, int k);
 
     int max(int a, int b, int k);
+
+    // Ставит числу value в соответствие число из кольца вычетов по модулю k
+    int mod(int value, int k);
+
+    std::vector<int> generateRandomPermutation(int size, unsigned long long int seed = time(NULL));
+
+    /*
+     * Кортеж вида <count, worstTime, averageTime, bestTime>
+     * Добавляет 1 к count, если sign = true и меняет кортеж result в зависимости от time
+     * size - размер множества, над которым проводится тестирование
+     */
+    std::tuple<int, double, double, double> increaseResult(std::tuple<int, double, double, double> &result, double time, bool sign, int size);
+
 }
 
 #endif //QUASIGROUP_HELPER_H

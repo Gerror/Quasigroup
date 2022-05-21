@@ -23,6 +23,7 @@ namespace Quasigroup {
         explicit PFQuasigroup(const ProperFamily& properFamily, unsigned long long int seed = 0);
         PFQuasigroup(int k, int n, unsigned long long int seed = 0);
         ~PFQuasigroup();
+        friend bool operator==(const PFQuasigroup &q1, const PFQuasigroup &q2);
     protected:
         void generate() override;
     };

@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include "Quasigroup.h"
+#include "FunctionalQuasigroup.h"
 
 namespace Quasigroup {
 
@@ -21,6 +22,7 @@ namespace Quasigroup {
         explicit LatinSquareQuasigroup(int order);
         LatinSquareQuasigroup(int order, std::ifstream &input);
         LatinSquareQuasigroup(int order, int **latinSquare);
+        explicit LatinSquareQuasigroup(const FunctionalQuasigroup& functionalQuasigroup);
         ~LatinSquareQuasigroup();
         friend bool operator==(const LatinSquareQuasigroup &q1, const LatinSquareQuasigroup &q2);
     protected:

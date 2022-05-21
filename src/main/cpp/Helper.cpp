@@ -105,4 +105,44 @@ namespace Quasigroup {
         return b;
     }
 
+    std::vector<int> generateRandomPermutation(int size, unsigned long long int seed) {
+        std::vector<int> result;
+        std::mt19937 mersenne(seed);
+        for (int i = 0; i <= size - 1; i++) {
+            result.push_back(i);
+        }
+        for (int i = 0; i < size - 1; i++) {
+            int j = mersenne() % (size - i) + i;
+            std::swap(result[i], result[j]);
+        }
+        return result;
+    }
+
+    int mod(int value, int k) {
+        int result = value % k;
+        while (result < 0) {
+            result += k;
+        }
+        return result % k;
+    }
+
+    std::tuple<int, double, double, double> increaseResult(std::tuple<int, double, double, double> &result, double time, bool sign, int size) {
+        int count = std::get<0>(result);
+        double worseTime = std::get<1>(result), averageTime = std::get<2>(result), bestTime = std::get<3>(result);
+        if (sign) {
+            count++;
+        }
+
+        averageTime += time / size;
+        if (time > worseTime) {
+            worseTime = time;
+        }
+
+        if (bestTime < 0 || time < bestTime) {
+            bestTime = time;
+        }
+
+        return {count, worseTime, averageTime, bestTime};
+    }
+
 }

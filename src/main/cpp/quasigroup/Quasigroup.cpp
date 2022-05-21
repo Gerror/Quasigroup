@@ -234,4 +234,166 @@ namespace Quasigroup {
         return out;
     }
 
+    int Quasigroup::findSubquasigroup(int border, unsigned int **a_sq) const {
+        unsigned int *seed, *a_sqi, *a_q;
+        int i, last, retval;
+
+        (*a_sq) = nullptr;
+        a_sqi = nullptr;
+        a_q = nullptr;
+        retval = -1;
+
+        seed = (unsigned int *) malloc (border * sizeof (unsigned int));
+        if (seed == nullptr) {
+            printf ("Failed to allocate memory\n");
+            return -1;
+        }
+
+        do {
+            (*a_sq) = (unsigned int *) malloc (sizeof (unsigned int) * order);
+            if (a_sq == nullptr) {
+                printf ("Failed to allocate memory\n");
+                break;
+            }
+            a_sqi = (unsigned int *) malloc (sizeof (unsigned int) * order);
+            if (a_sqi == nullptr) {
+                printf ("Failed to allocate memory\n");
+                break;
+            }
+            a_q = (unsigned int *) malloc (sizeof (unsigned int) * order);
+            if (a_q == nullptr) {
+                printf ("Failed to allocate memory\n");
+                break;
+            }
+
+            for (i = 0; i < border; i++) {
+                seed [i] = (unsigned int) i;
+            }
+
+            do {
+                retval = checkStep(seed, border, *a_sq, a_sqi, a_q);
+                if (retval != 0) {
+                    break;
+                }
+                last = nextStep(seed, border);
+                retval = checkStep(seed, border, *a_sq, a_sqi, a_q);
+            } while (last == 0);
+        } while (false);
+
+        free (seed);
+        if (((*a_sq) != nullptr) && (retval <= 0)) {
+            free (*a_sq);
+            (*a_sq) = nullptr;
+        }
+        if (a_sqi != nullptr) {
+            free (a_sqi);
+        }
+        if (a_q != nullptr) {
+            free (a_q);
+        }
+
+        return retval;
+    }
+
+    int Quasigroup::nextStep(unsigned int *step, int border) const {
+        int i, cur;
+
+        for (i = border - 1; i >= 0; i--) {
+            if (step[i] < (order - 1) - (border - 1 - i)) {
+                break;
+            }
+        }
+
+        (step[i])++;
+        cur = step[i] + 1;
+        for (i = i + 1; i < border; i++) {
+            step [i] = cur;
+            cur++;
+        }
+
+        if (step [0] == order - border) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    int Quasigroup::checkStep(unsigned int *step, int border, unsigned int *a_sq,
+                              unsigned int *a_sqi, unsigned int *a_q) const {
+        int i, sqlen, retval, first, last;
+        unsigned int cur, tmp;
+
+        sqlen = border;
+        first = 0;
+        last = border;
+        retval = 0;
+
+        // initialization
+        memset (a_sq, 0, sizeof (unsigned int) * order);
+        memset (a_sqi, 0, sizeof (unsigned int) * order);
+        memset (a_q, 0, sizeof (unsigned int) * order);
+        for (i = 0; i < border; i++) {
+            a_sq [i] = step [i];
+            a_sqi [step [i]] = 3;
+            a_q [i] = step [i];
+        }
+
+        // build the closure of the seed
+        while (last - first > 0) {
+            cur = a_q [first];
+            first++;
+
+            tmp = getProduct(cur, cur);
+            if (a_sqi [tmp] == 0) {
+                a_q [last] = tmp;
+                a_sqi [tmp] = 2;
+                last++;
+            }
+
+            for (i = 0; i < sqlen; i++) {
+                tmp = getProduct(a_sq[i], cur);
+                if (a_sqi [tmp] == 0) {
+                    a_q [last] = tmp;
+                    a_sqi [tmp] = 2;
+                    last++;
+                }
+                tmp = getProduct(cur, a_sq [i]);
+                if (a_sqi [tmp] == 0) {
+                    a_q [last] = tmp;
+                    a_sqi [tmp] = 2;
+                    last++;
+                }
+            }
+
+            if ((a_sqi [cur] % 2) == 0) {
+                a_sq [sqlen] = cur;
+                a_sqi [cur] = 1;
+                sqlen++;
+            }
+        }
+        if (last - first + sqlen <= order / 2) {
+            // a subquasigroup is found
+            retval = sqlen;
+        }
+
+        return retval;
+    }
+
+    size_t Quasigroup::QuasigroupHash::operator()(const Quasigroup *quasigroup) const {
+        std::hash<std::string> hasher;
+        std::string hash = "";
+        for (int y = 0; y < quasigroup->getOrder(); y++) {
+            for (int x = 0; x < quasigroup->getOrder(); x++) {
+                hash += std::to_string(quasigroup->getProduct(x, y)) + " ";
+            }
+            hash += "\n";
+        }
+        return hasher(hash);
+    }
+
+    bool Quasigroup::QuasigroupEqualHash::operator()(const Quasigroup *q1, const Quasigroup *q2) const {
+        Quasigroup::QuasigroupHash hasher;
+        return hasher(q1) == hasher(q2);
+    }
+
 }

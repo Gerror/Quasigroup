@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(Quasigroup)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 include_directories(
         src/test/cpp
@@ -9,6 +9,7 @@ include_directories(
         src/main/cpp/quasigroup
         src/main/cpp/quasigroup/functional
         src/main/cpp/quasigroup/latin_square
+        src/main/cpp/quasigroup/factory
         src/main/cpp/function_family
 )
 
@@ -32,6 +33,25 @@ add_executable(Quasigroup
         src/main/cpp/function_family/FunctionFamily.h
         src/main/cpp/function_family/ProperFamily.cpp
         src/main/cpp/function_family/ProperFamily.h
+        src/main/cpp/function_family/ShiftRegister.cpp
+        src/main/cpp/function_family/ShiftRegister.h
         src/main/cpp/quasigroup/functional/FunctionalQuasigroup.cpp
         src/main/cpp/quasigroup/functional/FunctionalQuasigroup.h
-        src/main/cpp/quasigroup/functional/PFQuasigroup.cpp src/main/cpp/quasigroup/functional/PFQuasigroup.h)
+        src/main/cpp/quasigroup/functional/PFQuasigroup.cpp
+        src/main/cpp/quasigroup/functional/PFQuasigroup.h
+        src/main/cpp/quasigroup/functional/SRQuasigroup.cpp
+        src/main/cpp/quasigroup/functional/SRQuasigroup.h
+        src/main/cpp/function_family/FeistelNetwork.cpp
+        src/main/cpp/function_family/FeistelNetwork.h
+        src/main/cpp/quasigroup/functional/FNQuasigroup.cpp
+        src/main/cpp/quasigroup/functional/FNQuasigroup.h
+        src/main/cpp/quasigroup/factory/LatinSquareQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/FunctionalQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/JMQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/JMQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/SRQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/SRQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/FNQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/FNQuasigroupFactory.h
+        src/main/cpp/quasigroup/factory/PFQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/PFQuasigroupFactory.h)
