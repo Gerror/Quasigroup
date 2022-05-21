@@ -251,5 +251,50 @@ namespace Quasigroup {
         return result;
     }
 
+    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial) {
+        int result = 0;
+
+        for (auto const &item: quasigroups) {
+            unsigned int *sqg;
+            int subgroupOrder;
+
+            sqg = nullptr;
+
+            int findSubgroupResult = item->findSubquasigroup(nonTrivial + 1, &sqg);
+            if (findSubgroupResult > 0) {
+                result++;
+            }
+
+            if (sqg != nullptr) {
+                free (sqg);
+            }
+        }
+
+        return result;
+    }
+
+    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial) {
+        int result = 0;
+
+        for (auto const &item: quasigroups) {
+            LatinSquareQuasigroup quasigroup(*item);
+
+            unsigned int *sqg;
+            int subgroupOrder;
+
+            sqg = nullptr;
+
+            int findSubgroupResult = quasigroup.findSubquasigroup(nonTrivial + 1, &sqg);
+            if (findSubgroupResult > 0) {
+                result++;
+            }
+
+            if (sqg != nullptr) {
+                free (sqg);
+            }
+        }
+
+        return result;
+    }
 
 }

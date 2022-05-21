@@ -93,6 +93,19 @@ namespace Quasigroup {
      * Возвращает колличество, худшее время, среднее время, лучшее время
      */
     tuple<int, double, double, double> affineTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
+
+    /*
+     * Считает колличество функциональных квазигрупп у которых есть подквазигруппы
+     * Если nonTrivial=true ищет только собственные подквазигруппы (порядка >= 2)
+     */
+    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial = false);
+
+    /*
+    * Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы
+    * Если nonTrivial=true ищет только собственные подквазигруппы (порядка >= 2)
+    */
+    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial = false);
+
 }
 
 #endif //QUASIGROUP_TESTS_H
