@@ -18,7 +18,7 @@ namespace Quasigroup {
         intValueToKArray(x, k, xArray, 2);
         intValueToKArray(y, k, yArray, 2);
 
-        result[0] = functionFamily.getFunctionValue(mod(xArray[1] + yArray[1], k));
+        result[0] = mod(functionFamily.getFunctionValue(mod(xArray[1] + yArray[1], k)) - yArray[0], k);
         result[1] = mod(xArray[0] + yArray[0] + functionFamily.getFunctionValue(mod(xArray[1] + yArray[1], k), 1) - yArray[1], k);
         return kArrayToIntValue(k, result, 2);
     }
