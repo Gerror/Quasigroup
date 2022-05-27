@@ -44,36 +44,63 @@ namespace Quasigroup {
         return true;
     }
 
-    std::map<int, double> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount) {
-        std::map<int, double> result;
+    std::map<int, tuple<int, double, double, double>> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount, int count) {
+        std::map<int, tuple<int, double, double, double>> result;
+
         for (int i = 0; i < stepCount; i++) {
             int order = minOrder + i * step;
-            auto begin = chrono::steady_clock::now();
-            LatinSquareQuasigroup *latinSquareQuasigroup = latinSquareQuasigroupFactory.createQuasigroup(order);
-            auto end = chrono::steady_clock::now();
-            auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
-            double time = elapsed.count()/1000000.0;
+            tuple<int, double, double, double> values = {0, 0.0, 0.0, -1.0};
 
-            result.insert(std::make_pair(order, time));
-            delete latinSquareQuasigroup;
+            for (int j = 0; j < count; j++) {
+                auto begin = chrono::steady_clock::now();
+
+                LatinSquareQuasigroup *latinSquareQuasigroup = latinSquareQuasigroupFactory.createQuasigroup(order);
+
+                auto end = chrono::steady_clock::now();
+
+                auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
+                double time = elapsed.count() / 1000000.0;
+
+                values = increaseResult(values, time, true, count);
+
+                delete latinSquareQuasigroup;
+            }
+
+            result.insert(std::make_pair(order, values));
         }
         return result;
     }
 
-    std::map<int, double> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount) {
-        std::map<int, double> result;
+    std::map<int, tuple<int, double, double, double>> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount, int count) {
+        std::map<int, tuple<int, double, double, double>> result;
+
         for (int i = 0; i < stepCount; i++) {
             int k = startK + i * kStep;
             int n = startN + i * nStep;
-            auto begin = chrono::steady_clock::now();
-            FunctionalQuasigroup *functionalQuasigroup = functionalQuasigroupFactory.createQuasigroup(k, n);
-            LatinSquareQuasigroup latinSquareQuasigroup(*functionalQuasigroup);
-            auto end = chrono::steady_clock::now();
-            auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
-            double time = elapsed.count()/1000000.0;
+            int order;
+            tuple<int, double, double, double> values = {0, 0.0, 0.0, -1.0};
 
-            result.insert(std::make_pair(functionalQuasigroup->getOrder(), time));
-            delete functionalQuasigroup;
+            for (int j = 0; j < count; j++) {
+                std::cout << j << std::endl;
+
+                auto begin = chrono::steady_clock::now();
+
+                FunctionalQuasigroup *functionalQuasigroup = functionalQuasigroupFactory.createQuasigroup(k, n);
+                LatinSquareQuasigroup latinSquareQuasigroup(*functionalQuasigroup);
+
+                auto end = chrono::steady_clock::now();
+
+                auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
+                double time = elapsed.count() / 1000000.0;
+
+                values = increaseResult(values, time, true, count);
+
+                order = functionalQuasigroup->getOrder();
+
+                delete functionalQuasigroup;
+            }
+
+            result.insert(std::make_pair(order, values));
         }
         return result;
     }

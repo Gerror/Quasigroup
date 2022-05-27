@@ -30,15 +30,17 @@ namespace Quasigroup {
 
     /*
      * Генерирует квазигруппы, представленные в виде латинских квадратов, начиная от порядка minOrder
-     * с шагом step и числом шагов stepCount. Замеряет время работы и возвращает список вида order: time
+     * с шагом step и числом шагов stepCount в количестве count штук.
+     * Замеряет время работы и возвращает map вида order: <count, worst time, average time, best time>
      */
-    std::map<int, double> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount);
+    std::map<int, tuple<int, double, double, double>> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount, int count);
 
     /*
      * Генерирует квазигруппы, задаваемые функционально, перебирая различные варианты k и n
-     * с шагами kStep и nStep и числом шагов stepCount. Замеряет время работы и возвращает список вида order: time
+     * с шагами kStep и nStep и числом шагов stepCount в количестве count штук.
+     * Замеряет время работы и возвращает map вида order: <count, worst time, average time, best time>
      */
-    std::map<int, double> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount);
+    std::map<int, tuple<int, double, double, double>> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount, int count);
 
     /*
      * Генерация и проверка на простоту квазигрупп, задаваемых латинскими квадратами
