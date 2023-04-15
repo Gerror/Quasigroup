@@ -12,6 +12,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <cstring>
+#include <unordered_set>
 
 #include "Helper.h"
 
@@ -50,7 +51,10 @@ namespace Quasigroup {
         int getOrder() const;
         bool isAffine() const;
         bool isSimple() const;
+        bool isAssociative() const;
+        bool isLoop() const;
         int findSubquasigroup(int border, unsigned int **a_sq) const;
+        std::unordered_set<int> getGenerationSystem();
         friend std::ostream &operator<<(std::ostream &out, const Quasigroup &q);
     protected:
         int order;

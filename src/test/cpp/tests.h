@@ -97,17 +97,18 @@ namespace Quasigroup {
     tuple<int, double, double, double> affineTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
 
     /*
-     * Считает колличество функциональных квазигрупп у которых есть подквазигруппы
-     * Если nonTrivial=true ищет только собственные подквазигруппы (порядка >= 2)
+     * Считает колличество функциональных квазигрупп у которых есть подквазигруппы порядка не менее чем border
      */
-    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial = false);
+    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border);
 
     /*
-    * Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы
-    * Если nonTrivial=true ищет только собственные подквазигруппы (порядка >= 2)
+    * Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы порядка не менее чем border
     */
-    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial = false);
+    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border);
 
+    int idempotentElementTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
+
+    int idempotentElementTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
 }
 
 #endif //QUASIGROUP_TESTS_H

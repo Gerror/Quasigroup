@@ -278,16 +278,14 @@ namespace Quasigroup {
         return result;
     }
 
-    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial) {
+    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border) {
         int result = 0;
 
         for (auto const &item: quasigroups) {
             unsigned int *sqg;
-            int subgroupOrder;
-
             sqg = nullptr;
 
-            int findSubgroupResult = item->findSubquasigroup(nonTrivial + 1, &sqg);
+            int findSubgroupResult = item->findSubquasigroup(border, &sqg);
             if (findSubgroupResult > 0) {
                 result++;
             }
@@ -300,18 +298,16 @@ namespace Quasigroup {
         return result;
     }
 
-    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial) {
+    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border) {
         int result = 0;
 
         for (auto const &item: quasigroups) {
             LatinSquareQuasigroup quasigroup(*item);
 
             unsigned int *sqg;
-            int subgroupOrder;
-
             sqg = nullptr;
 
-            int findSubgroupResult = quasigroup.findSubquasigroup(nonTrivial + 1, &sqg);
+            int findSubgroupResult = quasigroup.findSubquasigroup(border, &sqg);
             if (findSubgroupResult > 0) {
                 result++;
             }
@@ -321,6 +317,34 @@ namespace Quasigroup {
             }
         }
 
+        return result;
+    }
+
+    int idempotentElementTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups) {
+        int result = 0;
+
+        for (auto const &item: quasigroups) {
+            for (int i = 0; i < item->getOrder(); i++) {
+                if (item->getProduct(i, i) == i) {
+                    result++;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    int idempotentElementTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups) {
+        int result = 0;
+
+        for (auto const &item: quasigroups) {
+            for (int i = 0; i < item->getOrder(); i++) {
+                if (item->getProduct(i, i) == i) {
+                    result++;
+                    break;
+                }
+            }
+        }
         return result;
     }
 

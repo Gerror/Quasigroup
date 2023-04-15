@@ -6,6 +6,34 @@
 
 namespace Quasigroup {
 
+    bool Quasigroup::isLoop() const {
+        for (int i = 0; i < order; i++) {
+            for (int j = i + 1; j < order; j++) {
+                if (getProduct(j, i) != getProduct(i, j)) {
+                    return false;
+                }
+            }
+
+            if (getProduct(0, i) != i || getProduct(i, 0) != i) {
+                return  false;
+            }
+        }
+        return true;
+    }
+
+    bool Quasigroup::isAssociative() const {
+        for (int r = 0; r < order; r++) {
+            for (int s = 0; s < order; s++) {
+                for (int t = 0; t < order; t++) {
+                    if (getProduct(r, getProduct(s, t)) != getProduct(getProduct(r, s), t)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     bool Quasigroup::isAffine() const {
         /*
          * latinSquare далее - матрица L, её i-я строка - s(i)
@@ -377,6 +405,62 @@ namespace Quasigroup {
         }
 
         return retval;
+    }
+
+    std::unordered_set<int> Quasigroup::getGenerationSystem() {
+        std::unordered_set<int> *generationSystem = new std::unordered_set<int>();
+        std::unordered_set<int> *tempQ = new std::unordered_set<int>();
+        std::unordered_set<int> *newQ = new std::unordered_set<int>();
+
+        generationSystem->insert(0);
+        newQ->insert(0);
+        for (int i = 1; i < order; i++) {
+            tempQ->insert(i);
+        }
+
+        int currentSize = newQ->size();
+        int currentElement = 0;
+        do {
+            currentSize = newQ->size();
+            currentElement = getProduct(0, currentElement);
+            newQ->insert(currentElement);
+            if (newQ->size() != currentSize) {
+                tempQ->erase(currentElement);
+            }
+        } while(newQ->size() != currentSize);
+
+        while (!tempQ->empty()) {
+            int begin = (*tempQ->begin());
+            generationSystem->insert(begin);
+            for (const auto& elem: *newQ) {
+                newQ->insert(getProduct(elem, begin));
+                newQ->insert(getProduct(begin, elem));
+
+                if (tempQ->count(getProduct(elem, begin)) > 0) {
+                    tempQ->erase(getProduct(elem, begin));
+                }
+
+                if (tempQ->count(getProduct(begin, elem)) > 0) {
+                    tempQ->erase(getProduct(begin, elem));
+                }
+            }
+
+            newQ->insert(begin);
+            tempQ->erase(begin);
+
+            int currentSize;
+            int currentElement = begin;
+            do {
+                currentSize = newQ->size();
+                currentElement = getProduct(begin, currentElement);
+                newQ->insert(currentElement);
+                if (newQ->size() != currentSize) {
+                    tempQ->erase(currentElement);
+                }
+            } while(newQ->size() != currentSize);
+        }
+
+        return *generationSystem;
     }
 
     size_t Quasigroup::QuasigroupHash::operator()(const Quasigroup *quasigroup) const {

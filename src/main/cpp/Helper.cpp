@@ -119,11 +119,7 @@ namespace Quasigroup {
     }
 
     int mod(int value, int k) {
-        int result = value % k;
-        while (result < 0) {
-            result += k;
-        }
-        return result % k;
+        return (value % k + k) % k;
     }
 
     std::tuple<int, double, double, double> increaseResult(std::tuple<int, double, double, double> &result, double time, bool sign, int size) {

@@ -28,9 +28,11 @@ namespace Quasigroup {
 
             // generate variable number
             int number = mersenne() % n;
+            int oldNumber = number;
+
+            int newProperFamily[n][order];
 
             // Поменять местами переменную number с последней
-            int newProperFamily[n][order];
             for (int j = 0; j < n; j++) {
                 for (int m = 0; m < order; m++) {
                     int kArray[n];
@@ -50,7 +52,7 @@ namespace Quasigroup {
                 newProperFamily[n - 1][j] = temp;
             }
 
-            // Вернуть семейство как было
+            // Присвоить текущему семейству значения нового
             for (int j = 0; j < n; j++) {
                 for (int m = 0; m < order; m++) {
                     functionFamily[j][m] = newProperFamily[j][m];
@@ -149,6 +151,35 @@ namespace Quasigroup {
                             functionFamily[n - 1][m * k + p] = value;
                         }
                     }
+                }
+            }
+
+            int properFamily[n][order];
+            //Возвращаем обратно n-ю переменную и n-ю функцию
+            // Поменять местами переменную number с последней
+            for (int j = 0; j < n; j++) {
+                for (int m = 0; m < order; m++) {
+                    int kArray[n];
+                    intValueToKArray(m, k, kArray, n);
+
+                    int temp = kArray[oldNumber];
+                    kArray[oldNumber] = kArray[n - 1];
+                    kArray[n - 1] = temp;
+
+                    properFamily[j][m] = functionFamily[j][kArrayToIntValue(k, kArray, n)];
+                }
+            }
+            // Поменять местами функцию number с последней
+            for (int j = 0; j < order; j++) {
+                int temp = properFamily[oldNumber][j];
+                properFamily[oldNumber][j] = properFamily[n - 1][j];
+                properFamily[n - 1][j] = temp;
+            }
+
+            // Присвоить текущему семейству значения нового
+            for (int j = 0; j < n; j++) {
+                for (int m = 0; m < order; m++) {
+                    functionFamily[j][m] = properFamily[j][m];
                 }
             }
         }
