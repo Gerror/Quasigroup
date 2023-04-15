@@ -66,8 +66,11 @@ namespace Quasigroup {
          * (L'' хранится так же в tempMatrix)
          */
 
-        for (int i = 1; i < order; i++)
-            swapLines(&tempMatrix, i, tempMatrix[i * order], order);
+        for (int i = 1; i < order; i++) {
+            while (i != tempMatrix[i * order]) {
+                swapLines(&tempMatrix, i, tempMatrix[i * order], order);
+            }
+        }
 
         /*
          * (3)
@@ -75,8 +78,9 @@ namespace Quasigroup {
          * Если не симметрична, то неудача
          */
 
-        if (!isSymmetricMatrix(tempMatrix, order))
+        if (!isSymmetricMatrix(tempMatrix, order)) {
             return false;
+        }
 
         /*
          * (4)
@@ -140,6 +144,7 @@ namespace Quasigroup {
                         != tempMatrix[getProduct(j, alpha) + getProduct(i, alpha) * order]
                         || getProduct(beta, tempMatrix[j + i * order])
                         != tempMatrix[getProduct(beta, j) + getProduct(beta, i) * order]) {
+
                     return false;
                 }
             }
