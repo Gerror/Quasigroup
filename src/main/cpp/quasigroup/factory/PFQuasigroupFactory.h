@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 07.04.2022.
-//
-
 #ifndef QUASIGROUP_PFQUASIGROUPFACTORY_H
 #define QUASIGROUP_PFQUASIGROUPFACTORY_H
 

@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 06.04.2022.
-//
-
 #ifndef QUASIGROUP_FEISTELNETWORK_H
 #define QUASIGROUP_FEISTELNETWORK_H
 

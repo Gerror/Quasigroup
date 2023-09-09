@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 07.04.2022.
-//
-
 #ifndef QUASIGROUP_SRQUASIGROUPFACTORY_H
 #define QUASIGROUP_SRQUASIGROUPFACTORY_H
 
@@ -11,7 +7,10 @@
 namespace Quasigroup {
 
     class SRQuasigroupFactory : public FunctionalQuasigroupFactory {
+    private:
+        bool inverseOperations;
     public:
+        SRQuasigroupFactory(bool inverseOperations = false);
         FunctionalQuasigroup *createQuasigroup(int k, int n) override;
     };
 

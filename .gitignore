@@ -1,4 +1,6 @@
 cmake-build-*
+CMakeFiles
+CMakeCache.txt
 .idea
 .vscode
 build

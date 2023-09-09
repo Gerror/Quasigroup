@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 31.03.2022.
-//
-
 #ifndef QUASIGROUP_FUNCTIONFAMILY_H
 #define QUASIGROUP_FUNCTIONFAMILY_H
 

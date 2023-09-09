@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 31.03.2022.
-//
-
 #include "JMQuasigroup.h"
 
 namespace Quasigroup {
@@ -51,7 +47,8 @@ namespace Quasigroup {
         int minusY;
         int minusZ;
 
-        while (i < order * order * order || !cube.isProper()) {
+        int stepsCount = 2 * (order - 1) * (order - 1) * (order - 1);
+        while (i < stepsCount || !cube.isProper()) {
             if (cube.isProper()) {
                 do {
                     pickX = mersenne() % order;

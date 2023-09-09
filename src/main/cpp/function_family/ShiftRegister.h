@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 06.03.2022.
-//
-
 #ifndef QUASIGROUP_SHIFTREGISTER_H
 #define QUASIGROUP_SHIFTREGISTER_H
 

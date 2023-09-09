@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 07.04.2022.
-//
-
 #ifndef QUASIGROUP_FNQUASIGROUPFACTORY_H
 #define QUASIGROUP_FNQUASIGROUPFACTORY_H
 
@@ -11,8 +7,11 @@
 namespace Quasigroup {
 
     class FNQuasigroupFactory : public FunctionalQuasigroupFactory {
+    private:
+        bool inverseOperations;
     public:
-        FunctionalQuasigroup *createQuasigroup(int k, int n) override;
+        FNQuasigroupFactory(bool inverseOperations = false);
+        FunctionalQuasigroup *createQuasigroup(int k, int n = 2) override;
     };
 
 }

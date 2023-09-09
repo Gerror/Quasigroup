@@ -34,7 +34,7 @@ namespace Quasigroup {
         return true;
     }
 
-    bool Quasigroup::isAffine() const {
+    bool Quasigroup::isAffine(bool useLightTest) const {
         /*
          * latinSquare далее - матрица L, её i-я строка - s(i)
          *
@@ -82,20 +82,73 @@ namespace Quasigroup {
             return false;
         }
 
-        /*
-         * (4)
-         * Проверяем ассоциативность f'', т.е. для всех r,s,t,
-         * 1 <= r,s,t <= order
-         * f''(f''(qr, qs), qt) == f''(qr, f''(qs, qt))
-         * Если не ассоциативна, то неудача
-         */
+        if (useLightTest) {
+            /*
+             * (4) Проверяем ассоциативность с использованием теста Лайта.
+             * Т.е., находим порождающее множество S для L'' и проверяем тождества
+             * (x * g) * y = x * (g * y) для всех элементов x, y из квазигруппы и для
+             * всех элементов g из S.
+             */
 
-        for (int r = 0; r < order; r++) {
-            for (int s = 0; s < order; s++) {
-                for (int t = 0; t < order; t++) {
-                    if (tempMatrix[t + tempMatrix[s + r * order] * order]
+            std::unordered_set<int> S, R, T;
+            for (int i = 0; i < order; i++) {
+                T.insert(i);
+            }
+
+            while(!T.empty()) {
+                int currentRSize;
+                int newRSize;
+                int begin = (*T.begin());
+                S.insert(begin);
+                R.insert(begin);
+                T.erase(begin);
+
+                do {
+                    currentRSize = R.size();
+                    for (auto const& element : R) {
+                        int lelement = tempMatrix[element + begin * order];
+                        int relement = tempMatrix[begin + element * order];
+
+                        if (T.count(lelement) != 0) {
+                            T.erase(lelement);
+                            R.insert(lelement);
+                        }
+
+                        if (T.count(relement) != 0) {
+                            T.erase(relement);
+                            R.insert(relement);
+                        }
+                    }
+                    newRSize = R.size();
+                } while(currentRSize != newRSize);
+            }
+
+            for (int r = 0; r < order; r++) {
+                for (auto const &s : S) {
+                    for (int t = 0; t < order; t++) {
+                        if (tempMatrix[t + tempMatrix[s + r * order] * order]
                             != tempMatrix[tempMatrix[t + s * order] + r * order]) {
-                        return false;
+                            return false;
+                        }
+                    }
+                }
+            }
+        } else {
+            /*
+             * (4)
+             * Проверяем ассоциативность f'', т.е. для всех r,s,t,
+             * 1 <= r,s,t <= order
+             * f''(f''(qr, qs), qt) == f''(qr, f''(qs, qt))
+             * Если не ассоциативна, то неудача
+             */
+
+            for (int r = 0; r < order; r++) {
+                for (int s = 0; s < order; s++) {
+                    for (int t = 0; t < order; t++) {
+                        if (tempMatrix[t + tempMatrix[s + r * order] * order]
+                            != tempMatrix[tempMatrix[t + s * order] + r * order]) {
+                            return false;
+                        }
                     }
                 }
             }

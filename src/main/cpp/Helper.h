@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 05.03.2022.
-//
-
 #ifndef QUASIGROUP_HELPER_H
 #define QUASIGROUP_HELPER_H
 
