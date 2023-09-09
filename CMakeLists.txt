@@ -54,4 +54,9 @@ add_executable(Quasigroup
         src/main/cpp/quasigroup/factory/FNQuasigroupFactory.cpp
         src/main/cpp/quasigroup/factory/FNQuasigroupFactory.h
         src/main/cpp/quasigroup/factory/PFQuasigroupFactory.cpp
-        src/main/cpp/quasigroup/factory/PFQuasigroupFactory.h)
+        src/main/cpp/quasigroup/factory/PFQuasigroupFactory.h
+        src/main/cpp/quasigroup/latin_square/AffineQuasigroup.cpp
+        src/main/cpp/quasigroup/latin_square/AffineQuasigroup.h
+        src/main/cpp/quasigroup/factory/AffineQuasigroupFactory.cpp
+        src/main/cpp/quasigroup/factory/AffineQuasigroupFactory.h
+)

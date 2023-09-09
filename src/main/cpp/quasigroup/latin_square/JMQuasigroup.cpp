@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 31.03.2022.
-//
-
 #include "JMQuasigroup.h"
 
 namespace Quasigroup {
@@ -9,6 +5,18 @@ namespace Quasigroup {
     JMQuasigroup::JMQuasigroup(int order, unsigned long long int seed) : LatinSquareQuasigroup(order), GeneratedObject(seed) {
         if (order == 1) {
             latinSquare[0][0] = 0;
+        } else if (order == 2) {
+            if (mersenne() % 2 == 0) {
+                latinSquare[0][0] = 0;
+                latinSquare[0][1] = 1;
+                latinSquare[1][0] = 1;
+                latinSquare[1][1] = 0;
+            } else {
+                latinSquare[0][0] = 1;
+                latinSquare[0][1] = 0;
+                latinSquare[1][0] = 0;
+                latinSquare[1][1] = 1;
+            }
         }
         else {
             generate();
@@ -39,7 +47,8 @@ namespace Quasigroup {
         int minusY;
         int minusZ;
 
-        while (i < order * order * order || !cube.isProper()) {
+        int stepsCount = 2 * (order - 1) * (order - 1) * (order - 1);
+        while (i < stepsCount || !cube.isProper()) {
             if (cube.isProper()) {
                 do {
                     pickX = mersenne() % order;

@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 07.04.2022.
-//
-
 #include "PFQuasigroupFactory.h"
 
 namespace Quasigroup {

@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 31.03.2022.
-//
-
 #include "GeneratedObject.h"
 
 namespace Quasigroup {

@@ -6,7 +6,35 @@
 
 namespace Quasigroup {
 
-    bool Quasigroup::isAffine() const {
+    bool Quasigroup::isLoop() const {
+        for (int i = 0; i < order; i++) {
+            for (int j = i + 1; j < order; j++) {
+                if (getProduct(j, i) != getProduct(i, j)) {
+                    return false;
+                }
+            }
+
+            if (getProduct(0, i) != i || getProduct(i, 0) != i) {
+                return  false;
+            }
+        }
+        return true;
+    }
+
+    bool Quasigroup::isAssociative() const {
+        for (int r = 0; r < order; r++) {
+            for (int s = 0; s < order; s++) {
+                for (int t = 0; t < order; t++) {
+                    if (getProduct(r, getProduct(s, t)) != getProduct(getProduct(r, s), t)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    bool Quasigroup::isAffine(bool useLightTest) const {
         /*
          * latinSquare далее - матрица L, её i-я строка - s(i)
          *
@@ -38,8 +66,11 @@ namespace Quasigroup {
          * (L'' хранится так же в tempMatrix)
          */
 
-        for (int i = 1; i < order; i++)
-            swapLines(&tempMatrix, i, tempMatrix[i * order], order);
+        for (int i = 1; i < order; i++) {
+            while (i != tempMatrix[i * order]) {
+                swapLines(&tempMatrix, i, tempMatrix[i * order], order);
+            }
+        }
 
         /*
          * (3)
@@ -47,23 +78,77 @@ namespace Quasigroup {
          * Если не симметрична, то неудача
          */
 
-        if (!isSymmetricMatrix(tempMatrix, order))
+        if (!isSymmetricMatrix(tempMatrix, order)) {
             return false;
+        }
 
-        /*
-         * (4)
-         * Проверяем ассоциативность f'', т.е. для всех r,s,t,
-         * 1 <= r,s,t <= order
-         * f''(f''(qr, qs), qt) == f''(qr, f''(qs, qt))
-         * Если не ассоциативна, то неудача
-         */
+        if (useLightTest) {
+            /*
+             * (4) Проверяем ассоциативность с использованием теста Лайта.
+             * Т.е., находим порождающее множество S для L'' и проверяем тождества
+             * (x * g) * y = x * (g * y) для всех элементов x, y из квазигруппы и для
+             * всех элементов g из S.
+             */
 
-        for (int r = 0; r < order; r++) {
-            for (int s = 0; s < order; s++) {
-                for (int t = 0; t < order; t++) {
-                    if (tempMatrix[t + tempMatrix[s + r * order] * order]
+            std::unordered_set<int> S, R, T;
+            for (int i = 0; i < order; i++) {
+                T.insert(i);
+            }
+
+            while(!T.empty()) {
+                int currentRSize;
+                int newRSize;
+                int begin = (*T.begin());
+                S.insert(begin);
+                R.insert(begin);
+                T.erase(begin);
+
+                do {
+                    currentRSize = R.size();
+                    for (auto const& element : R) {
+                        int lelement = tempMatrix[element + begin * order];
+                        int relement = tempMatrix[begin + element * order];
+
+                        if (T.count(lelement) != 0) {
+                            T.erase(lelement);
+                            R.insert(lelement);
+                        }
+
+                        if (T.count(relement) != 0) {
+                            T.erase(relement);
+                            R.insert(relement);
+                        }
+                    }
+                    newRSize = R.size();
+                } while(currentRSize != newRSize);
+            }
+
+            for (int r = 0; r < order; r++) {
+                for (auto const &s : S) {
+                    for (int t = 0; t < order; t++) {
+                        if (tempMatrix[t + tempMatrix[s + r * order] * order]
                             != tempMatrix[tempMatrix[t + s * order] + r * order]) {
-                        return false;
+                            return false;
+                        }
+                    }
+                }
+            }
+        } else {
+            /*
+             * (4)
+             * Проверяем ассоциативность f'', т.е. для всех r,s,t,
+             * 1 <= r,s,t <= order
+             * f''(f''(qr, qs), qt) == f''(qr, f''(qs, qt))
+             * Если не ассоциативна, то неудача
+             */
+
+            for (int r = 0; r < order; r++) {
+                for (int s = 0; s < order; s++) {
+                    for (int t = 0; t < order; t++) {
+                        if (tempMatrix[t + tempMatrix[s + r * order] * order]
+                            != tempMatrix[tempMatrix[t + s * order] + r * order]) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -112,6 +197,7 @@ namespace Quasigroup {
                         != tempMatrix[getProduct(j, alpha) + getProduct(i, alpha) * order]
                         || getProduct(beta, tempMatrix[j + i * order])
                         != tempMatrix[getProduct(beta, j) + getProduct(beta, i) * order]) {
+
                     return false;
                 }
             }
@@ -377,6 +463,62 @@ namespace Quasigroup {
         }
 
         return retval;
+    }
+
+    std::unordered_set<int> Quasigroup::getGenerationSystem() {
+        std::unordered_set<int> *generationSystem = new std::unordered_set<int>();
+        std::unordered_set<int> *tempQ = new std::unordered_set<int>();
+        std::unordered_set<int> *newQ = new std::unordered_set<int>();
+
+        generationSystem->insert(0);
+        newQ->insert(0);
+        for (int i = 1; i < order; i++) {
+            tempQ->insert(i);
+        }
+
+        int currentSize = newQ->size();
+        int currentElement = 0;
+        do {
+            currentSize = newQ->size();
+            currentElement = getProduct(0, currentElement);
+            newQ->insert(currentElement);
+            if (newQ->size() != currentSize) {
+                tempQ->erase(currentElement);
+            }
+        } while(newQ->size() != currentSize);
+
+        while (!tempQ->empty()) {
+            int begin = (*tempQ->begin());
+            generationSystem->insert(begin);
+            for (const auto& elem: *newQ) {
+                newQ->insert(getProduct(elem, begin));
+                newQ->insert(getProduct(begin, elem));
+
+                if (tempQ->count(getProduct(elem, begin)) > 0) {
+                    tempQ->erase(getProduct(elem, begin));
+                }
+
+                if (tempQ->count(getProduct(begin, elem)) > 0) {
+                    tempQ->erase(getProduct(begin, elem));
+                }
+            }
+
+            newQ->insert(begin);
+            tempQ->erase(begin);
+
+            int currentSize;
+            int currentElement = begin;
+            do {
+                currentSize = newQ->size();
+                currentElement = getProduct(begin, currentElement);
+                newQ->insert(currentElement);
+                if (newQ->size() != currentSize) {
+                    tempQ->erase(currentElement);
+                }
+            } while(newQ->size() != currentSize);
+        }
+
+        return *generationSystem;
     }
 
     size_t Quasigroup::QuasigroupHash::operator()(const Quasigroup *quasigroup) const {

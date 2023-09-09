@@ -44,7 +44,7 @@ namespace Quasigroup {
         return true;
     }
 
-    std::map<int, tuple<int, double, double, double>> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount, int count) {
+    std::map<int, tuple<int, double, double, double>> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount, int count, bool printResult) {
         std::map<int, tuple<int, double, double, double>> result;
 
         for (int i = 0; i < stepCount; i++) {
@@ -68,10 +68,21 @@ namespace Quasigroup {
 
             result.insert(std::make_pair(order, values));
         }
+
+        if (printResult) {
+            for (auto &item: result) {
+                std::cout << "order " << item.first << std::endl <<
+                          "count " << get<0>(item.second) << std::endl <<
+                          "worst time " << get<1>(item.second) << std::endl <<
+                          "average time " << get<2>(item.second) << std::endl <<
+                          "best time " << get<3>(item.second) << std::endl << std::endl;
+            }
+        }
+
         return result;
     }
 
-    std::map<int, tuple<int, double, double, double>> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount, int count) {
+    std::map<int, tuple<int, double, double, double>> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount, int count, bool printResult) {
         std::map<int, tuple<int, double, double, double>> result;
 
         for (int i = 0; i < stepCount; i++) {
@@ -102,6 +113,17 @@ namespace Quasigroup {
 
             result.insert(std::make_pair(order, values));
         }
+
+        if (printResult) {
+            for (auto &item: result) {
+                std::cout << "order " << item.first << std::endl <<
+                             "count " << get<0>(item.second) << std::endl <<
+                             "worst time " << get<1>(item.second) << std::endl <<
+                             "average time " << get<2>(item.second) << std::endl <<
+                             "best time " << get<3>(item.second) << std::endl << std::endl;
+            }
+        }
+
         return result;
     }
 
@@ -208,7 +230,7 @@ namespace Quasigroup {
         return result;
     }
 
-    tuple<int, double, double, double> simpleTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups) {
+    tuple<int, double, double, double> simpleTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult) {
         tuple<int, double, double, double> result = {0, 0.0, 0.0, -1.0};
         for (auto const &item: quasigroups) {
             auto begin = chrono::steady_clock::now();
@@ -221,15 +243,24 @@ namespace Quasigroup {
 
             result = increaseResult(result, time, isSimple, quasigroups.size());
         }
+
+        if (printResult) {
+            std::cout <<
+                      "Simple count " << get<0>(result) << std::endl <<
+                      "Simple worst time " << get<1>(result) << std::endl <<
+                      "Simple average time " << get<2>(result) << std::endl <<
+                      "Simple best time " << get<3>(result) << std::endl << std::endl;
+        }
+
         return result;
     }
 
-    tuple<int, double, double, double> affineTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups) {
+    tuple<int, double, double, double> affineTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool useLightTest, bool printResult) {
         tuple<int, double, double, double> result = {0, 0.0, 0.0, -1.0};
         for (auto const &item: quasigroups) {
             auto begin = chrono::steady_clock::now();
 
-            bool isAffine = item->isAffine();
+            bool isAffine = item->isAffine(useLightTest);
 
             auto end = chrono::steady_clock::now();
             auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
@@ -237,10 +268,19 @@ namespace Quasigroup {
 
             result = increaseResult(result, time, isAffine, quasigroups.size());
         }
+
+        if (printResult) {
+            std::cout <<
+                      "Affine count " << get<0>(result) << std::endl <<
+                      "Affine worst time " << get<1>(result) << std::endl <<
+                      "Affine average time " << get<2>(result) << std::endl <<
+                      "Affine best time " << get<3>(result) << std::endl << std::endl;
+        }
+
         return result;
     }
 
-    tuple<int, double, double, double> simpleTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups) {
+    tuple<int, double, double, double> simpleTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult) {
         tuple<int, double, double, double> result = {0, 0.0, 0.0, -1.0};
         for (auto const &item: quasigroups) {
             LatinSquareQuasigroup latinSquareQuasigroup(*item);
@@ -256,17 +296,25 @@ namespace Quasigroup {
             result = increaseResult(result, time, isSimple, quasigroups.size());
         }
 
+        if (printResult) {
+            std::cout <<
+              "Simple count " << get<0>(result) << std::endl <<
+              "Simple worst time " << get<1>(result) << std::endl <<
+              "Simple average time " << get<2>(result) << std::endl <<
+              "Simple best time " << get<3>(result) << std::endl << std::endl;
+        }
+
         return result;
     }
 
-    tuple<int, double, double, double> affineTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups) {
+    tuple<int, double, double, double> affineTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool useLightTest, bool printResult) {
         tuple<int, double, double, double> result = {0, 0.0, 0.0, -1.0};
         for (auto const &item: quasigroups) {
             LatinSquareQuasigroup latinSquareQuasigroup(*item);
 
             auto begin = chrono::steady_clock::now();
 
-            bool isAffine = latinSquareQuasigroup.isAffine();
+            bool isAffine = latinSquareQuasigroup.isAffine(useLightTest);
 
             auto end = chrono::steady_clock::now();
             auto elapsed = chrono::duration_cast<chrono::microseconds>(end - begin);
@@ -275,19 +323,25 @@ namespace Quasigroup {
             result = increaseResult(result, time, isAffine, quasigroups.size());
         }
 
+        if (printResult) {
+            std::cout <<
+                      "Affine count " << get<0>(result) << std::endl <<
+                      "Affine worst time " << get<1>(result) << std::endl <<
+                      "Affine average time " << get<2>(result) << std::endl <<
+                      "Affine best time " << get<3>(result) << std::endl << std::endl;
+        }
+
         return result;
     }
 
-    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial) {
+    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border, bool printResult) {
         int result = 0;
 
         for (auto const &item: quasigroups) {
             unsigned int *sqg;
-            int subgroupOrder;
-
             sqg = nullptr;
 
-            int findSubgroupResult = item->findSubquasigroup(nonTrivial + 1, &sqg);
+            int findSubgroupResult = item->findSubquasigroup(border, &sqg);
             if (findSubgroupResult > 0) {
                 result++;
             }
@@ -297,21 +351,20 @@ namespace Quasigroup {
             }
         }
 
+        if (printResult) {
+            std::cout << "Non trivial subgroups: " << result << std::endl;
+        }
+
         return result;
     }
 
-    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial) {
+    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border, bool printResult) {
         int result = 0;
-
         for (auto const &item: quasigroups) {
-            LatinSquareQuasigroup quasigroup(*item);
-
             unsigned int *sqg;
-            int subgroupOrder;
-
             sqg = nullptr;
 
-            int findSubgroupResult = quasigroup.findSubquasigroup(nonTrivial + 1, &sqg);
+            int findSubgroupResult = item->findSubquasigroup(border, &sqg);
             if (findSubgroupResult > 0) {
                 result++;
             }
@@ -319,6 +372,48 @@ namespace Quasigroup {
             if (sqg != nullptr) {
                 free (sqg);
             }
+        }
+
+        if (printResult) {
+            std::cout << "Non trivial subgroups: " << result << std::endl;
+        }
+
+        return result;
+    }
+
+    int idempotentElementTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult) {
+        int result = 0;
+
+        for (auto const &item: quasigroups) {
+            for (int i = 0; i < item->getOrder(); i++) {
+                if (item->getProduct(i, i) == i) {
+                    result++;
+                    break;
+                }
+            }
+        }
+
+        if (printResult) {
+            std::cout << "Trivial subgroups: " << result << std::endl;
+        }
+
+        return result;
+    }
+
+    int idempotentElementTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult) {
+        int result = 0;
+
+        for (auto const &item: quasigroups) {
+            for (int i = 0; i < item->getOrder(); i++) {
+                if (item->getProduct(i, i) == i) {
+                    result++;
+                    break;
+                }
+            }
+        }
+
+        if (printResult) {
+            std::cout << "Trivial subgroups: " << result << std::endl;
         }
 
         return result;

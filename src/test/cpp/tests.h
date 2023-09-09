@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 18.02.2022.
-//
-
 #ifndef QUASIGROUP_TESTS_H
 #define QUASIGROUP_TESTS_H
 
@@ -33,14 +29,14 @@ namespace Quasigroup {
      * с шагом step и числом шагов stepCount в количестве count штук.
      * Замеряет время работы и возвращает map вида order: <count, worst time, average time, best time>
      */
-    std::map<int, tuple<int, double, double, double>> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount, int count);
+    std::map<int, tuple<int, double, double, double>> checkLatinSquareQuasigroupGenerateTime(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int minOrder, int step, int stepCount, int count, bool printResult = false);
 
     /*
      * Генерирует квазигруппы, задаваемые функционально, перебирая различные варианты k и n
      * с шагами kStep и nStep и числом шагов stepCount в количестве count штук.
      * Замеряет время работы и возвращает map вида order: <count, worst time, average time, best time>
      */
-    std::map<int, tuple<int, double, double, double>> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount, int count);
+    std::map<int, tuple<int, double, double, double>> checkFunctionalQuasigroupGenerateTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount, int count, bool printResult = false);
 
     /*
      * Генерация и проверка на простоту квазигрупп, задаваемых латинскими квадратами
@@ -76,38 +72,45 @@ namespace Quasigroup {
      * Посчитать число простых квазигрупп, заданных латинскими квадратами в множестве qusigroups
      * Возвращает колличество, худшее время, среднее время, лучшее время
      */
-    tuple<int, double, double, double> simpleTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
+    tuple<int, double, double, double> simpleTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
 
     /*
      * Посчитать число аффинных квазигрупп, заданных латинскими квадратами в множестве qusigroups
      * Возвращает колличество, худшее время, среднее время, лучшее время
      */
-    tuple<int, double, double, double> affineTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
+    tuple<int, double, double, double> affineTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool useLightTest = false, bool printResult = false);
 
     /*
      * Посчитать число простых квазигрупп, заданных функционально в множестве qusigroups
      * Возвращает колличество, худшее время, среднее время, лучшее время
      */
-    tuple<int, double, double, double> simpleTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
+    tuple<int, double, double, double> simpleTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
 
     /*
      * Посчитать число аффинных квазигрупп, заданных функционально в множестве qusigroups.
      * Возвращает колличество, худшее время, среднее время, лучшее время
      */
-    tuple<int, double, double, double> affineTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups);
+    tuple<int, double, double, double> affineTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool useLightTest = false, bool printResult = false);
 
     /*
-     * Считает колличество функциональных квазигрупп у которых есть подквазигруппы
-     * Если nonTrivial=true ищет только собственные подквазигруппы (порядка >= 2)
+     * Считает колличество функциональных квазигрупп у которых есть подквазигруппы порядка не менее чем border
      */
-    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial = false);
+    int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border, bool printResult = false);
 
     /*
-    * Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы
-    * Если nonTrivial=true ищет только собственные подквазигруппы (порядка >= 2)
+    * Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы порядка не менее чем border
     */
-    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool nonTrivial = false);
+    int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border, bool printResult = false);
 
+    /*
+    * Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы порядка 1
+    */
+    int idempotentElementTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
+
+    /*
+    * Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы порядка 1
+    */
+    int idempotentElementTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
 }
 
 #endif //QUASIGROUP_TESTS_H

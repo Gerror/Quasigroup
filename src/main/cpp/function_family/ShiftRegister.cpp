@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 06.03.2022.
-//
-
 #include "ShiftRegister.h"
 
 namespace Quasigroup {
