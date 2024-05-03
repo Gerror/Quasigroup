@@ -1,8 +1,5 @@
-//
-// Created by Gerror on 04.03.2022.
-//
-
 #include "Quasigroup.h"
+#include "LatinSquareQuasigroup.h"
 
 namespace Quasigroup {
 
@@ -21,16 +18,195 @@ namespace Quasigroup {
         return true;
     }
 
+    bool Quasigroup::isIdempotent() const {
+        for (int x = 0; x < order; x++) {
+            if (getProduct(x, x) != x) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool Quasigroup::hasLeftUnit() const {
+        for (int x = 0; x < order; x++) {
+            auto count = 0;
+            for (int y = 0; y < order; y++) {
+                if (getProduct(x, y) != y) {
+                    break;
+                } else {
+                    count++;
+                }
+            }
+
+            if (count == order) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool Quasigroup::hasRightUnit() const {
+        for (int x = 0; x < order; x++) {
+            auto count = 0;
+            for (int y = 0; y < order; y++) {
+                if (getProduct(y, x) != y) {
+                    break;
+                } else {
+                    count++;
+                }
+            }
+
+            if (count == order) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool Quasigroup::containsNonTrivialSubqusigroup() const {
+        unsigned int *sqg;
+        sqg = nullptr;
+        auto nonTrivialBorder = 2;
+
+        int findSubgroupResult = findSubquasigroup(nonTrivialBorder, &sqg);
+        if (sqg != nullptr) {
+            free(sqg);
+        }
+
+        return findSubgroupResult > 0;
+    }
+
+    /*
+     * A quasigroup (Q, ∗) of order N is said to be shapeless iff it is
+     * non-idempotent, non-commutative, non-associative, it does not
+     * have neither left nor right unit, it does not contain proper (non-trivial)
+     * sub-quasigroups, and there is no k < 2N such that identities of the
+     * kinds x * (x * ... * (x  * y)) = y, y = ((y * x) * ... * x) (k times)
+     */
+    bool Quasigroup::isShapeless() const {
+        auto preResult = !isIdempotent() &&
+                !isCommutative() &&
+                !isAssociativeByLightTest() &&
+                !hasLeftUnit() &&
+                !hasRightUnit() &&
+                !containsNonTrivialSubqusigroup();
+
+        if (!preResult) {
+            return false;
+        }
+
+        for (int k = 1; k < 2 * order; k++) {
+            auto identityIsSatisfied = true;
+
+            for (int x = 0; x < order; x++) {
+                for (int y = 0; y < order; y++) {
+                    auto leftProduct = y;
+                    auto rightProduct = y;
+
+                    for (int i = 0; i < k; i++) {
+                        leftProduct = getProduct(x, leftProduct);
+                        rightProduct = getProduct(rightProduct, x);
+                    }
+
+                    if (leftProduct != y || rightProduct != y) {
+                        identityIsSatisfied = false;
+                        break;
+                    }
+                }
+
+                if (!identityIsSatisfied) {
+                    break;
+                }
+            }
+
+            if (identityIsSatisfied) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     bool Quasigroup::isAssociative() const {
-        for (int r = 0; r < order; r++) {
-            for (int s = 0; s < order; s++) {
-                for (int t = 0; t < order; t++) {
-                    if (getProduct(r, getProduct(s, t)) != getProduct(getProduct(r, s), t)) {
+        for (int i = 0; i < order; i++) {
+            for (int j = 0; j < order; j++) {
+                for (int k = 0; k < order; k++) {
+                    if (getProduct(i, getProduct(j, k)) != getProduct(getProduct(i, j), k)) {
                         return false;
                     }
                 }
             }
         }
+
+        return true;
+    }
+
+    /*
+     * Light test to check associativity:
+     * Find the generating set S and check the identities
+     * (x * g) * y = x * (g * y) for all elements x, y from the quasigroup and
+     * for all elements g of S.
+     */
+    bool Quasigroup::isAssociativeByLightTest() const {
+        std::unordered_set<int> S, R, T;
+        for (int i = 0; i < order; i++) {
+            T.insert(i);
+        }
+
+        while(!T.empty()) {
+            int currentRSize;
+            int newRSize;
+            int begin = (*T.begin());
+
+            S.insert(begin);
+            R.insert(begin);
+            T.erase(begin);
+
+            do {
+                currentRSize = R.size();
+                for (auto const& element : R) {
+                    int lelement = getProduct(begin, element);
+                    int relement = getProduct(element, begin);
+
+                    if (T.count(lelement) != 0) {
+                        T.erase(lelement);
+                        R.insert(lelement);
+                    }
+
+                    if (T.count(relement) != 0) {
+                        T.erase(relement);
+                        R.insert(relement);
+                    }
+                }
+                newRSize = R.size();
+            } while(currentRSize != newRSize);
+        }
+
+        for (int x = 0; x < order; x++) {
+            for (auto const &g : S) {
+                for (int y = 0; y < order; y++) {
+                    if (getProduct(getProduct(x, g), y) != getProduct(x, getProduct(g, y))) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool Quasigroup::isCommutative() const {
+        for (int x = 0; x < order; x++) {
+            for (int y = x + 1; y < order; y++) {
+                if (getProduct(x, y) != getProduct(y, x)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -39,119 +215,53 @@ namespace Quasigroup {
          * latinSquare далее - матрица L, её i-я строка - s(i)
          *
          * (1)
-         * По матрице L строим матрицу L' (tempMatrix), в которой при каждом i = 1, ..., order
+         * По матрице L строим матрицу L' (tempQuasigroup), в которой при каждом i = 1, ..., order
          * строка с номером i содержит перестановку s(i) * (s(1))^-1
          */
 
-        std::vector<int> tempMatrix(order * order);
-        std::vector<int> firstLine(order);
-        std::vector<int> reverseFirstLine(order);
+        int reverseFirstLine[order];
         int alpha, beta;
 
-        for (int i = 0; i < order; i++)
-            firstLine[i] = getProduct(0, i);
-
-        reverseFirstLine = calculateReversePermutation(firstLine);
-
         for (int i = 0; i < order; i++) {
-            for (int j = 0; j < order; j++)
-                tempMatrix[j + i * order] = getProduct(i, reverseFirstLine[j]);
+            reverseFirstLine[getProduct(0, i)] = i;
         }
+
+        auto productOfTempQuasigroup { [&](int x, int y) { return getProduct(x, reverseFirstLine[y]); } };
+        auto tempQuasigroup = std::make_unique<LatinSquareQuasigroup>(order, productOfTempQuasigroup);
 
         /*
          * (2)
-         * По матрице L' (tempMatrix) строим матрицу L'', полученную из L' перестановкой строк,
+         * По матрице L' (tempQuasigroup) строим матрицу L'', полученную из L' перестановкой строк,
          * строк, такой что первый столбец L'' совпадает с первой строкой
          * Далее операция, порожденная матрицей L'' будем обозначать f''
-         * (L'' хранится так же в tempMatrix)
+         * (L'' хранится так же в tempQuasigroup)
          */
 
         for (int i = 1; i < order; i++) {
-            while (i != tempMatrix[i * order]) {
-                swapLines(&tempMatrix, i, tempMatrix[i * order], order);
+            while (i != tempQuasigroup->getProduct(i, 0)) {
+                tempQuasigroup->swapRows(i, tempQuasigroup->getProduct(i, 0));
             }
         }
 
         /*
          * (3)
          * Проверяем симметричность L'' (коммутативность f'')
-         * Если не симметрична, то неудача
+         * Если не симметрична, то квазигруппа не аффинна
          */
 
-        if (!isSymmetricMatrix(tempMatrix, order)) {
+        if (!tempQuasigroup->isCommutative()) {
             return false;
         }
 
-        if (useLightTest) {
-            /*
-             * (4) Проверяем ассоциативность с использованием теста Лайта.
-             * Т.е., находим порождающее множество S для L'' и проверяем тождества
-             * (x * g) * y = x * (g * y) для всех элементов x, y из квазигруппы и для
-             * всех элементов g из S.
-             */
-
-            std::unordered_set<int> S, R, T;
-            for (int i = 0; i < order; i++) {
-                T.insert(i);
-            }
-
-            while(!T.empty()) {
-                int currentRSize;
-                int newRSize;
-                int begin = (*T.begin());
-                S.insert(begin);
-                R.insert(begin);
-                T.erase(begin);
-
-                do {
-                    currentRSize = R.size();
-                    for (auto const& element : R) {
-                        int lelement = tempMatrix[element + begin * order];
-                        int relement = tempMatrix[begin + element * order];
-
-                        if (T.count(lelement) != 0) {
-                            T.erase(lelement);
-                            R.insert(lelement);
-                        }
-
-                        if (T.count(relement) != 0) {
-                            T.erase(relement);
-                            R.insert(relement);
-                        }
-                    }
-                    newRSize = R.size();
-                } while(currentRSize != newRSize);
-            }
-
-            for (int r = 0; r < order; r++) {
-                for (auto const &s : S) {
-                    for (int t = 0; t < order; t++) {
-                        if (tempMatrix[t + tempMatrix[s + r * order] * order]
-                            != tempMatrix[tempMatrix[t + s * order] + r * order]) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        } else {
-            /*
-             * (4)
-             * Проверяем ассоциативность f'', т.е. для всех r,s,t,
-             * 1 <= r,s,t <= order
-             * f''(f''(qr, qs), qt) == f''(qr, f''(qs, qt))
-             * Если не ассоциативна, то неудача
-             */
-
-            for (int r = 0; r < order; r++) {
-                for (int s = 0; s < order; s++) {
-                    for (int t = 0; t < order; t++) {
-                        if (tempMatrix[t + tempMatrix[s + r * order] * order]
-                            != tempMatrix[tempMatrix[t + s * order] + r * order]) {
-                            return false;
-                        }
-                    }
-                }
-            }
+        /*
+        * (4) Проверяем ассоциативность
+        * Если не ассоциативна, то квазигруппа не аффинна
+        */
+        if (
+            (useLightTest && !tempQuasigroup->isAssociativeByLightTest()) ||
+            (!useLightTest && !tempQuasigroup->isAssociative())
+        ) {
+            return false;
         }
 
         /*
@@ -160,9 +270,8 @@ namespace Quasigroup {
          * совпадает с левым верхним элементом L''
          * Обозначаем заданную этим столбцем перестановку (номер столбца) за alpha
          */
-
         for (int i = 0; i < order; i++) {
-            if (getProduct(0, i) == tempMatrix[0]) {
+            if (getProduct(0, i) == tempQuasigroup->getProduct(0, 0)) {
                 alpha = i;
                 break;
             }
@@ -174,9 +283,8 @@ namespace Quasigroup {
          * совпадает с левым верхним элементом L''
          * Обозначаем заданную этой строкой перестановку (номер строки) за beta
          */
-
         for (int i = 0; i < order; i++) {
-            if (getProduct(i, 0) == tempMatrix[0]) {
+            if (getProduct(i, 0) == tempQuasigroup->getProduct(0, 0)) {
                 beta = i;
                 break;
             }
@@ -190,14 +298,14 @@ namespace Quasigroup {
          * beta(f''(qi,qj)) == f''(beta(qi), beta(qj))
          * Если неравенство хотя бы для одной пары, то неудача
          */
-
         for (int i = 0; i < order; i++) {
             for (int j = 0; j < order; j++) {
-                if (getProduct(tempMatrix[j + i * order], alpha)
-                        != tempMatrix[getProduct(j, alpha) + getProduct(i, alpha) * order]
-                        || getProduct(beta, tempMatrix[j + i * order])
-                        != tempMatrix[getProduct(beta, j) + getProduct(beta, i) * order]) {
-
+                if (
+                        (getProduct(tempQuasigroup->getProduct(i, j), alpha) !=
+                        tempQuasigroup->getProduct(getProduct(i, alpha), getProduct(j, alpha))) ||
+                        (getProduct(beta, tempQuasigroup->getProduct(i, j)) !=
+                        tempQuasigroup->getProduct(getProduct(beta, i), getProduct(beta, j)))
+                ) {
                     return false;
                 }
             }
@@ -209,15 +317,18 @@ namespace Quasigroup {
          * Проверяем что для любой пары 1 <= i, j <= order
          * выполнено равенство:
          * f(qi,qj) = f''(f''(alpha(qi), beta(qj)), c)
-         * Если хотя бы для одной пары неравенство, то неудача
-         * В противном случае - успех.
+         * Если хотя бы для одной пары неравенство, то квазигруппа не аффинна
+         * В противном случае - аффинна.
          */
-
         for (int i = 0; i < order; i++) {
             for (int j = 0; j < order; j++) {
-                if (getProduct(i, j)
-                        != tempMatrix[getProduct(0, 0)
-                        + tempMatrix[getProduct(beta, j) + getProduct(i, alpha) * order] * order]) {
+                auto c = getProduct(0, 0);
+                auto left = getProduct(i, j);
+                auto alphaqi = getProduct(i, alpha);
+                auto betaqj = getProduct(beta, j);
+                auto right = tempQuasigroup->getProduct(tempQuasigroup->getProduct(alphaqi, betaqj), c);
+
+                if (left != right) {
                     return false;
                 }
             }
@@ -325,7 +436,6 @@ namespace Quasigroup {
         int i, last, retval;
 
         (*a_sq) = nullptr;
-        a_sqi = nullptr;
         a_q = nullptr;
         retval = -1;
 
@@ -337,10 +447,6 @@ namespace Quasigroup {
 
         do {
             (*a_sq) = (unsigned int *) malloc (sizeof (unsigned int) * order);
-            if (a_sq == nullptr) {
-                printf ("Failed to allocate memory\n");
-                break;
-            }
             a_sqi = (unsigned int *) malloc (sizeof (unsigned int) * order);
             if (a_sqi == nullptr) {
                 printf ("Failed to allocate memory\n");
@@ -519,6 +625,123 @@ namespace Quasigroup {
         }
 
         return *generationSystem;
+    }
+
+    bool Quasigroup::isPolynomiallyComplete() const {
+        return !isAffine() && isSimple();
+    }
+
+    /*
+     * (x * y) * x = (z * x) * (y * z)
+     */
+    bool Quasigroup::isQuadratical() const {
+        for (int x = 0; x < getOrder(); x++) {
+            for (int y = 0; y < getOrder(); y++) {
+                for (int z = 0; z < getOrder(); z++) {
+                    if (getProduct(getProduct(x, y), x) != getProduct(getProduct(z, x), getProduct(y, z))) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /*
+     * (x * y) * x = y
+     */
+    bool Quasigroup::isHexagonal() const {
+        for (int x = 0; x < getOrder(); x++) {
+            for (int y = 0; y < getOrder(); y++) {
+                if (getProduct(getProduct(x, y), x) != y) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /*
+     * ((x * y) * z) * z = y
+     */
+    bool Quasigroup::isGoldenSquare() const {
+        for (int x = 0; x < getOrder(); x++) {
+            for (int y = 0; y < getOrder(); y++) {
+                for (int z = 0; z < getOrder(); z++) {
+                    if (getProduct(getProduct(getProduct(x, y), z), z) != y) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /*
+     * (x * y) * z = (z * y) * x
+     */
+    bool Quasigroup::isRightModular() const {
+        for (int x = 0; x < getOrder(); x++) {
+            for (int y = 0; y < getOrder(); y++) {
+                for (int z = 0; z < getOrder(); z++) {
+                    if (getProduct(getProduct(x, y), z) != getProduct(getProduct(z, y), x)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /*
+     * x * (y * z) = z * (y * x)
+     */
+    bool Quasigroup::isLeftModular() const {
+        for (int x = 0; x < getOrder(); x++) {
+            for (int y = 0; y < getOrder(); y++) {
+                for (int z = 0; z < getOrder(); z++) {
+                    if (getProduct(x, getProduct(y, z)) != getProduct(z, getProduct(y, x))) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /*
+     * (x * y) * y = (y * x) * x
+     */
+    bool Quasigroup::isAffineRegularOctagonal() const {
+        for (int x = 0; x < getOrder(); x++) {
+            for (int y = 0; y < getOrder(); y++) {
+                if (getProduct(getProduct(x, y), y) != getProduct(getProduct(y, x), x)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /*
+     * (((x * y) * x) * y) * x = y
+     */
+    bool Quasigroup::isPentagonal() const {
+        for (int x = 0; x < getOrder(); x++) {
+            for (int y = 0; y < getOrder(); y++) {
+                if (getProduct(getProduct(getProduct(getProduct(x, y), x), y), x) != y) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     size_t Quasigroup::QuasigroupHash::operator()(const Quasigroup *quasigroup) const {

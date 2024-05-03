@@ -2,23 +2,6 @@
 
 namespace Quasigroup {
 
-    void swapLines(std::vector<int> *matrix, int i, int j, int order) {
-        for (int k = 0; k < order; k++) {
-            std::swap((*matrix)[k + i * order], (*matrix)[k + j * order]);
-        }
-    }
-
-    bool isSymmetricMatrix(std::vector<int> matrix, int order) {
-        for (int i = 0; i < order; i++) {
-            for (int j = i + 1; j < order; j++) {
-                if (matrix[j + i * order] != matrix[i + j * order]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     std::vector<int> calculateReversePermutation(std::vector<int> permutation) {
         std::vector<int> revPermutation(permutation.size());
 

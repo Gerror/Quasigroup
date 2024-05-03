@@ -1,7 +1,3 @@
-//
-// Created by Gerror on 04.03.2022.
-//
-
 #ifndef QUASIGROUP_QUASIGROUP_H
 #define QUASIGROUP_QUASIGROUP_H
 
@@ -13,6 +9,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <unordered_set>
+#include <memory>
 
 #include "Helper.h"
 
@@ -53,8 +50,23 @@ namespace Quasigroup {
         int getOrder() const;
         bool isAffine(bool useLightTest = true) const;
         bool isSimple() const;
+        bool isPolynomiallyComplete() const;
         bool isAssociative() const;
+        bool isAssociativeByLightTest() const;
+        bool isCommutative() const;
+        bool isIdempotent() const;
+        bool hasLeftUnit() const;
+        bool hasRightUnit() const;
+        bool isShapeless() const;
         bool isLoop() const;
+        bool containsNonTrivialSubqusigroup() const;
+        bool isQuadratical() const;
+        bool isHexagonal() const;
+        bool isGoldenSquare() const;
+        bool isRightModular() const;
+        bool isLeftModular() const;
+        bool isAffineRegularOctagonal() const;
+        bool isPentagonal() const;
         int findSubquasigroup(int border, unsigned int **a_sq) const;
         std::unordered_set<int> getGenerationSystem();
 

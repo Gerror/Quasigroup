@@ -40,6 +40,15 @@ namespace Quasigroup {
         }
     }
 
+    LatinSquareQuasigroup::LatinSquareQuasigroup(int order, std::function<int(int, int)> product)
+    : LatinSquareQuasigroup(order) {
+        for (int x = 0; x < order; x++) {
+            for (int y = 0; y < order; y++) {
+                this->latinSquare[x][y] = product(x, y);
+            }
+        }
+    }
+
     LatinSquareQuasigroup::~LatinSquareQuasigroup() {
         for (int i = 0; i < order; i++) {
             delete[] (latinSquare[i]);
@@ -64,5 +73,11 @@ namespace Quasigroup {
 
         return true;
     }
-    
+
+    void LatinSquareQuasigroup::swapRows(int firstLineNumber, int secondLineNumber) {
+        for (int i = 0; i < order; i++) {
+            std::swap(latinSquare[firstLineNumber][i], latinSquare[secondLineNumber][i]);
+        }
+    }
+
 }

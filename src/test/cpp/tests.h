@@ -59,14 +59,27 @@ namespace Quasigroup {
     std::map<int, double> checkFunctionalQuasigroupIsAffineTime(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int startK, int startN, int kStep, int nStep, int stepCount);
 
     /*
-     * Генерирует множество квазигрупп, задаваемых латинскими квадратами с порядком order в колличестве count штук.
+     * Генерирует множество квазигрупп, задаваемых латинскими квадратами с порядком order в колличестве count штук, удаляя повторы
      */
     std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> generateLatinSquareQuasigroupSet(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int order, int count);
 
     /*
-     * Генерирует множество квазигрупп, задаваемых функционально с порядком k^n в колличестве count штук
+     * Генерирует множество квазигрупп, задаваемых функционально с порядком k^n в колличестве count штук, удаляя повторы
      */
     std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> generateFunctionalQuasigroupSet(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int k, int n, int count);
+
+    /*
+     * Генерирует множество уникальных квазигрупп, задаваемых латинскими квадратами с порядком order размера count.
+     * WARNING: Может продолжаться бесконечно долго, если квазигрупп существует меньше, чем count
+     */
+    std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> generateLatinSquareQuasigroupUniqueSet(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int order, int count);
+
+    /*
+     * Генерирует множество уникальных квазигрупп, задаваемых функционально с порядком k^n размера count.
+     * WARNING: Может продолжаться бесконечно долго, если квазигрупп существует меньше, чем count
+     */
+    std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> generateFunctionalQuasigroupUniqueSet(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int k, int n, int count);
+
 
     /*
      * Посчитать число простых квазигрупп, заданных латинскими квадратами в множестве qusigroups

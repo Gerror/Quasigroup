@@ -215,6 +215,21 @@ namespace Quasigroup {
         return result;
     }
 
+    std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> generateLatinSquareQuasigroupUniqueSet(LatinSquareQuasigroupFactory &latinSquareQuasigroupFactory, int order, int count) {
+        std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> result;
+        int sizeBefore, sizeAfter;
+        while(result.size() != count) {
+            LatinSquareQuasigroup *latinSquareQuasigroup = latinSquareQuasigroupFactory.createQuasigroup(order);
+            sizeBefore = result.size();
+            result.insert(latinSquareQuasigroup);
+            sizeAfter = result.size();
+            if (sizeAfter == sizeBefore) {
+                delete latinSquareQuasigroup;
+            }
+        }
+        return result;
+    }
+
     std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> generateFunctionalQuasigroupSet(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int k, int n, int count) {
         std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> result;
         int sizeBefore, sizeAfter;
@@ -226,6 +241,22 @@ namespace Quasigroup {
             if (sizeAfter == sizeBefore) {
                 delete functionalQuasigroup;
             }
+        }
+        return result;
+    }
+
+    std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> generateFunctionalQuasigroupUniqueSet(FunctionalQuasigroupFactory &functionalQuasigroupFactory, int k, int n, int count) {
+        std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> result;
+        int sizeBefore, sizeAfter;
+        while(result.size() != count) {
+            FunctionalQuasigroup *functionalQuasigroup = functionalQuasigroupFactory.createQuasigroup(k, n);
+            sizeBefore = result.size();
+            result.insert(functionalQuasigroup);
+            sizeAfter = result.size();
+            if (sizeAfter == sizeBefore) {
+                delete functionalQuasigroup;
+            }
+            std::cout << result.size() << std::endl;
         }
         return result;
     }
