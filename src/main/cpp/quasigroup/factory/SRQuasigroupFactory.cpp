@@ -2,12 +2,8 @@
 
 namespace Quasigroup {
 
-    FunctionalQuasigroup *SRQuasigroupFactory::createQuasigroup(int k, int n) {
+    SRQuasigroup* SRQuasigroupFactory::create() {
         return new SRQuasigroup(k, n, inverseOperations);
-    }
-
-    SRQuasigroupFactory::SRQuasigroupFactory(bool inverseOperations) {
-        this->inverseOperations = inverseOperations;
     }
 
 }

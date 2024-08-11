@@ -2,7 +2,7 @@
 
 namespace Quasigroup {
 
-    FunctionalQuasigroup *PFQuasigroupFactory::createQuasigroup(int k, int n) {
+    PFQuasigroup* PFQuasigroupFactory::create() {
         return new PFQuasigroup(k, n);
     }
 

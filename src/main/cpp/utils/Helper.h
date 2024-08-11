@@ -10,12 +10,6 @@
 
 namespace Quasigroup {
 
-    void swapLines(std::vector<int> *matrix, int i, int j, int order);
-
-    bool isSymmetricMatrix(std::vector<int> matrix, int order);
-
-    std::vector<int> calculateReversePermutation(std::vector<int> permutation);
-
     int calculateUnorderedPairIndex(int t1, int t2, int order);
 
     // @return размер полученного класса

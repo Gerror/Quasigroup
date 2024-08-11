@@ -2,8 +2,8 @@
 #define QUASIGROUP_PFQUASIGROUP_H
 
 #include "FunctionalQuasigroup.h"
-#include "GeneratedObject.h"
-#include "ProperFamily.h"
+#include "generator/GeneratedObject.h"
+#include "function/family/ProperFamily.h"
 
 namespace Quasigroup {
 

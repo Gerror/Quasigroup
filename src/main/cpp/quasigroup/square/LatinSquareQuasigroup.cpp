@@ -31,11 +31,32 @@ namespace Quasigroup {
         }
     }
 
+    LatinSquareQuasigroup::LatinSquareQuasigroup(std::initializer_list<std::initializer_list<int>> latinSquare) : LatinSquareQuasigroup(latinSquare.size()) {
+        int i = 0;
+        for (auto row : latinSquare) {
+            int j = 0;
+            for (auto element : row) {
+                this->latinSquare[i][j] = element;
+                j++;
+            }
+            i++;
+        }
+    }
+
     LatinSquareQuasigroup::LatinSquareQuasigroup(const FunctionalQuasigroup& functionalQuasigroup)
     : LatinSquareQuasigroup(functionalQuasigroup.getOrder()) {
         for (int x = 0; x < order; x++) {
             for (int y = 0; y < order; y++) {
                 this->latinSquare[x][y] = functionalQuasigroup.getProduct(x, y);
+            }
+        }
+    }
+
+    LatinSquareQuasigroup::LatinSquareQuasigroup(int order, std::function<int(int, int)> product)
+    : LatinSquareQuasigroup(order) {
+        for (int x = 0; x < order; x++) {
+            for (int y = 0; y < order; y++) {
+                this->latinSquare[x][y] = product(x, y);
             }
         }
     }
@@ -64,5 +85,11 @@ namespace Quasigroup {
 
         return true;
     }
-    
+
+    void LatinSquareQuasigroup::swapRows(int firstLineNumber, int secondLineNumber) {
+        for (int i = 0; i < order; i++) {
+            std::swap(latinSquare[firstLineNumber][i], latinSquare[secondLineNumber][i]);
+        }
+    }
+
 }

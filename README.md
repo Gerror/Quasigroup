@@ -1,7 +1,8 @@
 # Quasigroup
 
 ##### Генерация квазигрупп
-Генерировать квазигруппы можно с помощью фабрик. 
+Генерировать квазигруппы можно с помощью класса-генератора *QuasigroupGenerator*, передав
+ему необходимую фабрику квазигрупп в конструктор. 
 На данный момент реализованы следующие фабрики:
 * *JMQuasigroupFactory* генерирует квазигруппы методом Джейкобсона-Мэтьюза
 * *FNQuasigroupFactory* генерирует квазигруппы на основе обобщенных сетей Фейстеля
@@ -9,30 +10,168 @@
 * *SRQuasigroupFactory* генерирует квазигруппы на основе обобщенных регистров сдвига с обратной связью
 * *AffineQuasigroupFactory* генерирует только аффинные квазигруппы
 ```c++
-int quasigroupOrder = 16;
-Quasigroup::JMQuasigroupFactory factory; // здесь фабрика нужного вида
-Quasigroup::Quasigroup *q = factory.createQuasigroup(quasigroupOrder);
+// Порождение одной квазигруппы порядка 16 методом Джейкобсона-Мэтьюза
+
+Quasigroup::JMQuasigroupFactory factory(16);
+Quasigroup::QuasigroupGenerator generator(&factory);
+
+auto q = generator.generate();
 
 // какие-то действия с квазигруппой q
 
 delete q;
 ```
+```c++
+// Порождение набора из 1000 квазигрупп порядка 16 методом Джейкобсона-Мэтьюза 
+// (возможно повторяющихся)
+
+Quasigroup::JMQuasigroupFactory factory(16);
+Quasigroup::QuasigroupGenerator generator(&factory);
+
+auto qVector = generator.generateVector(1000);
+
+for (auto q : qVector) {
+    // какие-то действия с квазигруппой q
+    delete q;
+}
+```
+```c++
+// Порождение набора из 1000 уникальных квазигрупп порядка 16 методом Джейкобсона-Мэтьюза
+
+Quasigroup::JMQuasigroupFactory factory(16);
+Quasigroup::QuasigroupGenerator generator(&factory);
+
+auto qSet = generator.generateSet(1000);
+
+for (auto q : qSet) {
+    // какие-то действия с квазигруппой q
+    delete q;
+}
+```
+
+В методы *generate* и *generateSet* дополнительно можно передать lambda-функцию с набором свойств, которыми должны обладать получаемые квазигруппы.
+```c++
+// Порождение одной бесформенной полиномиально полной 
+// квазигруппы порядка 16 методом Джейкобсона-Мэтьюза
+
+Quasigroup::JMQuasigroupFactory factory(16);
+Quasigroup::QuasigroupGenerator generator(&factory);
+
+auto q = generator.generate(
+        [](Quasigroup::Quasigroup* q) {
+            return q->isShapeless() && q->isPolynomiallyComplete(); // логическое условие какой должна быть квазигруппа
+        }
+);
+
+// какие-то действия с квазигруппой q
+
+delete q;
+```
+```c++
+// Порождение набора из 1000 уникальных полиномиально полных бесформенных
+// квазигрупп порядка 16 методом Джейкобсона-Мэтьюза
+
+Quasigroup::JMQuasigroupFactory factory(16);
+Quasigroup::QuasigroupGenerator generator(&factory);
+
+auto qSet = generator.generateSet(
+        1000,
+        [](Quasigroup::Quasigroup* q) {
+            return q->isShapeless() && q->isPolynomiallyComplete(); // логическое условие какой должна быть квазигруппа
+        }
+);
+
+for (auto q : qSet) {
+    // какие-то действия с квазигруппой q
+    delete q;
+}
+```
 
 ##### Проверка свойств квазигрупп
 
-Для проверки известных свойств доступны следующие методы класса *Quasigroup*:
+Для проверки известных свойств доступны следующие методы класса *Quasigroup*. Каждое из bool свойств
+можно задать в lambda-функции для генерации квазигруппы с необходимыми свойствами.
 ```c++
 /* 
+ * Проверка аффинности
  * При передаче useLightTest = false будет использован оригинальный
  * алгоритм проверки аффинности. По умолчанию используется оптимизированный
  * вариант, использующий тест Лайта.
 */ 
- bool isAffine(bool useLightTest = true) const;
-```
-```c++
+bool isAffine(bool useLightTest = true) const;
+
+// Проверка простоты
 bool isSimple() const;
-```
-```c++
+
+// Проверка ассоциативности
+// DEPRECATED
+bool isAssociative() const;
+
+// Проверка ассоциативности
+bool isAssociativeByLightTest() const;
+
+// Проверка коммутативности
+bool isCommutative() const;
+
+// Проверка идемпотентности
+bool isIdempotent() const;
+
+// Проверка наличия левой единицы
+bool hasLeftUnit() const;
+
+// Проверка наличия правой единицы
+bool hasRightUnit() const;
+
+// Проверка наличия единицы
+bool hasUnit() const;
+
+// Проверка бесформенности
+bool isShapeless() const;
+
+// Проверка того, что тождества вида
+// (x * ( ... * x * (x * y)) = y и (((y * x) * x) * ... * x) (k раз)
+// выполняются для всех k < 2 * N, где N порядок квазигруппы
+bool shapelessIdentitiesIsSatisfied() const;
+
+// Проверка того, что тождества вида
+// (x * ( ... * x * (x * y)) = y и (((y * x) * x) * ... * x) (k раз)
+// выполняются для конкретного k
+bool shapelessIdentitiesIsSatisfied(int k) const;
+
+// Проверка того, что квазигруппа является лупой
+// Равносильно hasUnit
+bool isLoop() const;
+
+// Проверка того, что квазигруппа является группой
+bool isGroup() const;
+
+// Проверка того, что квазигруппа является абелевой группой
+bool isAbelianGroup() const;
+
+// Проверка того, что квазигруппа содержит собственную подквазигруппу
+bool containsProperSubqusigroup() const;
+
+// Проверка что выполнено тождество (x * y) * x = (z * x) * (y * z)
+bool isQuadratical() const;
+
+// Проверка что выполнено тождество (x * y) * x = y
+bool isHexagonal() const;
+
+// Проверка что выполнено тождество ((x * y) * z) * z = y
+bool isGoldenSquare() const;
+
+// Проверка что выполнено тождество (x * y) * z = (z * y) * x
+bool isRightModular() const;
+
+// Проверка что выполнено тождество x * (y * z) = z * (y * x)
+bool isLeftModular() const;
+
+// Проверка что выполнено тождество (x * y) * y = (y * x) * x
+bool isAffineRegularOctagonal() const;
+
+// Проверка что выполнено тождество (((x * y) * x) * y) * x = y
+bool isPentagonal() const;
+
 /*
  * Ищет подквазигруппу наименьшего размера с порядком не меньше чем border. 
  * Возвращает порядок найденной подквазигруппы.
@@ -45,186 +184,183 @@ int findSubquasigroup(int border, unsigned int **a_sq) const;
 ```
 
 ##### Эксперименты
-
-Для проведения экспериментов можно использовать некоторые заранее 
-готовые методы из *src/test*. Например, *generateLatinSquareQuasigroupSet* и *generateFunctionalQuasigroupSet*
-позволяют получить сразу множество с необходимым количеством квазигрупп определенного порядка.
+Эксперименты запускаются вызовом метода *run* класса *ExperimentsRunner*. Сигнатура метода:
 ```c++
-/*
- * Сгенерирует 100 квазигрупп порядка 4 алгоритмом Джейкобсона-Мэтьюза, среди которых уберет дубликаты.
- * Задав заранее достаточно большое значение quasigroupCount можно попробовать получить
- * все квазигруппы заданного порядка.
- */
+// iterations - число итераций эксперимента
+// objectsPerIteration - количество обрабатываемых объектов в одной итерации эксперимента
+// experiment - проводимый эксперимент
+ExperimentalReport *run(int iterations, int objectsPerIteration, Experiment *experiment);
+```
+На данный момент реализованы следующие эксперименты:
+* *QuantitiveExperiment* проводит эксперимент, связанный с измерением типичности свойств объектом
+* *GenerationTimeExperiment* измеряет время генерации квазигрупп
+* *CheckPropertyTimeExperiment* измеряет время проверки свойств квазигрупп
 
-Quasigroup::JMQuasigroupFactory factory;
+Результатом работы каждого эксперимента на одной итерации является число: количество подходящих квазигрупп \ 
+общее время генерации \ общее время проверки свойств и тд.
+На выходе эксперимента будет получен объект класса *ExperimentalReport*, содержающий следующие поля:
+```c++
+// Порядок квазигрупп, над которыми проводился эксперимент
+int quasigroupOrder;
 
-int quasigroupOrder = 4;
-int quasigroupCount = 100;
+// Число итераций эксперимента
+uint iterations;
 
-auto quasiSet = generateLatinSquareQuasigroupSet(factory, quasigroupOrder, quasigroupCount);
+// Число обрабатываемых объектов на одной итерации
+uint objectsPerIteration;
 
-for (auto &q: quasiSet) {
-    // желаемые действия с квазигруппой q
+// Набор с результатами работы каждый итерации
+std::vector<double> results;
 
-    delete q;
+// Среднее арифметическое элементов вектора results
+double averageResult;
+
+// Максимальное значение в векторе results
+double maxResult;
+
+// Минимальное значение в векторе results
+double minResult;
+
+// Вектор отношений результатов эксперимента к objectsPerIteration
+std::vector<double> fractions;
+
+// averageResult / objectsPerIteration
+double averageFraction;
+
+// maxResult / objectsPerIteration
+double maxFraction;
+
+// minResult / objectsPerIteration
+double minFraction;
+```
+Класс *ExperimentalReport* записывается в консоль и файл в формате json, для удобства дальнейшей визуализации результатов.
+```c++
+// Генерирует 3 раза по 10000 квазигрупп порядка 5 методом Джейкобсона-Мэтьюза
+// и считает сколько из них являются полиномиально полными
+
+Quasigroup::JMQuasigroupFactory factory(5);
+Quasigroup::ExperimentsRunner runner(&factory);
+Quasigroup::QuantitiveExperiment experiment(
+    [](Quasigroup::Quasigroup *q) {
+        return q->isPolynomiallyComplete(); // логическое условие какой должна быть квазигруппа
+    }
+);
+
+auto report = runner.run(3, 10000, &experiment);
+
+std::cout << *report << std::endl;
+
+delete report;
+```
+```json
+{
+	"type": "experimental_report",
+	"results": [
+		9959,
+		9964,
+		9962
+	],
+	"fractions": [
+		0.9959,
+		0.9964,
+		0.9962
+	],
+	"quasigroup_order": 5,
+	"iterations": 3,
+	"objects_per_iteration": 10000,
+	"average_result": 9961.67,
+	"min_result": 9959,
+	"max_result": 9964,
+	"average_fraction": 0.996167,
+	"min_fraction": 0.9959,
+	"max_fraction": 0.9964
 }
 ```
 ```c++
-/*
- * Сгенерирует 100 квазигрупп порядка 4^2 на основе регистров сдвига с обратной связью, 
- * среди которых уберет дубликаты.
- * Задав заранее достаточно большое значение quasigroupCount можно попробовать получить
- * все квазигруппы заданного порядка.
- */
+// Генерирует 5 раз по 1 квазигруппе порядка 128 
+// и измеряет сколько времени заняла генерация
 
-int k = 4;
-int n = 2;
-int quasigroupCount = 100;
-Quasigroup::SRQuasigroupFactory factory;
+Quasigroup::JMQuasigroupFactory factory(128);
+Quasigroup::ExperimentsRunner runner(&factory);
+Quasigroup::GenerationTimeExperiment experiment;
 
-auto quasiSet = generateFunctionalQuasigroupSet(factory, k, n, quasigroupCount);
+auto report = runner.run(5, 1, &experiment);
 
-for (auto &q: quasiSet) {
-    // желаемые действия с квазигруппой q
+std::cout << *report;
 
-    delete q;
+delete report;
+```
+```json
+{
+	"type": "experimental_report",
+	"results": [
+		0.371899,
+		0.379093,
+		0.359035,
+		0.368913,
+		0.361926
+	],
+	"fractions": [
+		0.371899,
+		0.379093,
+		0.359035,
+		0.368913,
+		0.361926
+	],
+	"quasigroup_order": 128,
+	"iterations": 5,
+	"objects_per_iteration": 1,
+	"average_result": 0.368173,
+	"min_result": 0.359035,
+	"max_result": 0.379093,
+	"average_fraction": 0.368173,
+	"min_fraction": 0.359035,
+	"max_fraction": 0.379093
 }
 ```
-
-Полученные множества также можно использовать для передачи в другие методы для экспериментов:
 ```c++
-/*
- * Посчитать число простых квазигрупп, заданных латинскими квадратами в множестве qusigroups
- * Возвращает колличество, худшее время, среднее время, лучшее время
- */
-tuple<int, double, double, double> simpleTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
+// Генерирует 5 раз по 1 квазигруппе порядка 128 
+// и измеряет сколько времени проверка полиномиальной полноты
 
-/*
- * Посчитать число аффинных квазигрупп, заданных латинскими квадратами в множестве qusigroups
- * Возвращает колличество, худшее время, среднее время, лучшее время
- */
-tuple<int, double, double, double> affineTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool useLightTest = false, bool printResult = false);
+Quasigroup::JMQuasigroupFactory factory(128);
+Quasigroup::ExperimentsRunner runner(&factory);
+Quasigroup::CheckPropertyTimeExperiment experiment(
+    [](Quasigroup::Quasigroup *q) {
+        q->isPolynomiallyComplete(); // вызов тех методов, скорость работы которых нужно измерить
+    }
+);
 
-/*
- * Посчитать число простых квазигрупп, заданных функционально в множестве qusigroups
- * Возвращает колличество, худшее время, среднее время, лучшее время
- */
-tuple<int, double, double, double> simpleTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
+auto report = runner.run(5, 1, &experiment);
 
-/*
- * Посчитать число аффинных квазигрупп, заданных функционально в множестве qusigroups.
- * Возвращает колличество, худшее время, среднее время, лучшее время
- */
-tuple<int, double, double, double> affineTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool useLightTest = false, bool printResult = false);
+std::cout << *report;
 
-/*
- * Считает колличество функциональных квазигрупп у которых есть подквазигруппы порядка не менее чем border
- */
-int subquasigroupTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border, bool printResult = false);
-
-/*
-* Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы порядка не менее чем border
-*/
-int subquasigroupTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, int border, bool printResult = false);
-
-/*
-* Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы порядка 1
-*/
-int idempotentElementTestForFunctionalQuasigroups(const std::unordered_set<FunctionalQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
-
-/*
-* Считает колличество квазигрупп, заданных латинскими квадратами, у которых есть подквазигруппы порядка 1
-*/
-int idempotentElementTestForLatinSquareQuasigroups(const std::unordered_set<LatinSquareQuasigroup*, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>& quasigroups, bool printResult = false);
+delete report;
 ```
-
-##### Примеры
-```c++
-/*
- * Генерация квазигруппы порядка 8 алгоритмом Джейкобсона-Мэтьюза. Проверка аффиности и простоты.
- * Поиск подквазигруппы порядка не меньше 3.
- */
-
-int quasigroupOrder = 8;
-Quasigroup::JMQuasigroupFactory factory;
-Quasigroup::Quasigroup *q = factory.createQuasigroup(quasigroupOrder);
-
-std::cout << "Quasigroup: " << std::endl;
-std::cout << *q << std::endl;
-
-std::cout << "Is affine: " << q->isAffine() << std::endl;
-std::cout << "Is simple: " << q->isSimple() << std::endl;
-
-unsigned int *sqg;
-sqg = nullptr;
-
-int sqgMinOrder = 3;
-int sqgOrder = q->findSubquasigroup(sqgMinOrder, &sqg);
-
-std::cout << "Subquasigroup order: " << sqgOrder << std::endl;
-
-std::cout << "Subquasigroup: " << std::endl;
-for (int i = 0; i < sqgOrder; i++) std::cout << sqg[i] << " ";
-
-if (sqg != nullptr) {
-    free(sqg);
+```json
+{
+	"type": "experimental_report",
+	"results": [
+		0.008323,
+		0.008492,
+		0.00806,
+		0.007765,
+		0.007774
+	],
+	"fractions": [
+		0.008323,
+		0.008492,
+		0.00806,
+		0.007765,
+		0.007774
+	],
+	"quasigroup_order": 128,
+	"iterations": 5,
+	"objects_per_iteration": 1,
+	"average_result": 0.0080828,
+	"min_result": 0.007765,
+	"max_result": 0.008492,
+	"average_fraction": 0.0080828,
+	"min_fraction": 0.007765,
+	"max_fraction": 0.008492
 }
-delete q;
-
->>>>>>>>>>>>>>>>>>>>>>>>>> Output
-
-Quasigroup: 
-5 7 4 1 3 0 6 2 
-7 5 6 0 4 2 1 3 
-3 0 2 6 1 4 7 5 
-2 6 1 3 5 7 4 0 
-4 2 5 7 0 1 3 6 
-0 3 7 4 2 6 5 1 
-6 1 3 2 7 5 0 4 
-1 4 0 5 6 3 2 7 
-
-Is affine: 0
-Is simple: 1
-Subquasigroup order: 3
-Subquasigroup: 
-0 5 6 
-```
-```c++
-/*
- * Пробуем сгенерировать все возможные квазигруппы на основе регистров сдвига с обратной связью при k = n = 2.
- * Если сгенерировать сразу 100 квазигрупп, возможно среди них удастся получить все 4 желаемые квазигруппы.
- */
-
-int k = 2;
-int n = 2;
-int quasigroupCount = 100;
-Quasigroup::SRQuasigroupFactory factory;
-
-auto quasiSet = generateFunctionalQuasigroupSet(factory, k, n, quasigroupCount);
-
-for (auto &q: quasiSet) {
-    std::cout << *q << std::endl;
-    delete q;
-}
-
->>>>>>>>>>>>>>>>>>>>>>>>>> Output
-0 2 3 1 
-3 1 0 2 
-1 3 2 0 
-2 0 1 3 
-
-3 1 0 2 
-0 2 3 1 
-2 0 1 3 
-1 3 2 0 
-
-1 3 2 0 
-2 0 1 3 
-0 2 3 1 
-3 1 0 2 
-
-2 0 1 3 
-1 3 2 0 
-3 1 0 2 
-0 2 3 1 
 ```

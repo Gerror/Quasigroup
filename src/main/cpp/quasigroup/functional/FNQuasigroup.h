@@ -2,7 +2,7 @@
 #define QUASIGROUP_FNQUASIGROUP_H
 
 #include "FunctionalQuasigroup.h"
-#include "FeistelNetwork.h"
+#include "function/family/FeistelNetwork.h"
 
 namespace Quasigroup {
 

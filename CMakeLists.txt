@@ -1,48 +1,50 @@
 cmake_minimum_required(VERSION 3.16)
 project(Quasigroup)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 include_directories(
-        src/test/cpp
         src/main/cpp
         src/main/cpp/quasigroup
         src/main/cpp/quasigroup/functional
-        src/main/cpp/quasigroup/latin_square
+        src/main/cpp/quasigroup/square
         src/main/cpp/quasigroup/factory
-        src/main/cpp/function_family
+        src/main/cpp/quasigroup/group
+        src/main/cpp/function
+        src/main/cpp/function/family
+        src/main/cpp/generator
+        src/main/cpp/statistics
+        src/main/cpp/statistics/experiment
 )
 
 add_executable(Quasigroup
         src/main/cpp/main.cpp
-        src/main/cpp/IncidenceCube.cpp
-        src/main/cpp/IncidenceCube.h
-        src/test/cpp/tests.h
-        src/test/cpp/tests.cpp
+        src/main/cpp/utils/IncidenceCube.cpp
+        src/main/cpp/utils/IncidenceCube.h
         src/main/cpp/quasigroup/Quasigroup.cpp
         src/main/cpp/quasigroup/Quasigroup.h
-        src/main/cpp/Helper.cpp
-        src/main/cpp/Helper.h
-        src/main/cpp/GeneratedObject.cpp
-        src/main/cpp/GeneratedObject.h
-        src/main/cpp/quasigroup/latin_square/LatinSquareQuasigroup.cpp
-        src/main/cpp/quasigroup/latin_square/LatinSquareQuasigroup.h
-        src/main/cpp/quasigroup/latin_square/JMQuasigroup.cpp
-        src/main/cpp/quasigroup/latin_square/JMQuasigroup.h
-        src/main/cpp/function_family/FunctionFamily.cpp
-        src/main/cpp/function_family/FunctionFamily.h
-        src/main/cpp/function_family/ProperFamily.cpp
-        src/main/cpp/function_family/ProperFamily.h
-        src/main/cpp/function_family/ShiftRegister.cpp
-        src/main/cpp/function_family/ShiftRegister.h
+        src/main/cpp/utils/Helper.cpp
+        src/main/cpp/utils/Helper.h
+        src/main/cpp/generator/GeneratedObject.cpp
+        src/main/cpp/generator/GeneratedObject.h
+        src/main/cpp/quasigroup/square/LatinSquareQuasigroup.cpp
+        src/main/cpp/quasigroup/square/LatinSquareQuasigroup.h
+        src/main/cpp/quasigroup/square/JMQuasigroup.cpp
+        src/main/cpp/quasigroup/square/JMQuasigroup.h
+        src/main/cpp/function/family/FunctionFamily.cpp
+        src/main/cpp/function/family/FunctionFamily.h
+        src/main/cpp/function/family/ProperFamily.cpp
+        src/main/cpp/function/family/ProperFamily.h
+        src/main/cpp/function/family/ShiftRegister.cpp
+        src/main/cpp/function/family/ShiftRegister.h
         src/main/cpp/quasigroup/functional/FunctionalQuasigroup.cpp
         src/main/cpp/quasigroup/functional/FunctionalQuasigroup.h
         src/main/cpp/quasigroup/functional/PFQuasigroup.cpp
         src/main/cpp/quasigroup/functional/PFQuasigroup.h
         src/main/cpp/quasigroup/functional/SRQuasigroup.cpp
         src/main/cpp/quasigroup/functional/SRQuasigroup.h
-        src/main/cpp/function_family/FeistelNetwork.cpp
-        src/main/cpp/function_family/FeistelNetwork.h
+        src/main/cpp/function/family/FeistelNetwork.cpp
+        src/main/cpp/function/family/FeistelNetwork.h
         src/main/cpp/quasigroup/functional/FNQuasigroup.cpp
         src/main/cpp/quasigroup/functional/FNQuasigroup.h
         src/main/cpp/quasigroup/factory/LatinSquareQuasigroupFactory.h
@@ -55,8 +57,26 @@ add_executable(Quasigroup
         src/main/cpp/quasigroup/factory/FNQuasigroupFactory.h
         src/main/cpp/quasigroup/factory/PFQuasigroupFactory.cpp
         src/main/cpp/quasigroup/factory/PFQuasigroupFactory.h
-        src/main/cpp/quasigroup/latin_square/AffineQuasigroup.cpp
-        src/main/cpp/quasigroup/latin_square/AffineQuasigroup.h
+        src/main/cpp/quasigroup/square/AffineQuasigroup.cpp
+        src/main/cpp/quasigroup/square/AffineQuasigroup.h
         src/main/cpp/quasigroup/factory/AffineQuasigroupFactory.cpp
         src/main/cpp/quasigroup/factory/AffineQuasigroupFactory.h
+        src/main/cpp/generator/QuasigroupGenerator.cpp
+        src/main/cpp/generator/QuasigroupGenerator.h
+        src/main/cpp/quasigroup/factory/QuasigroupFactory.h
+        src/main/cpp/quasigroup/group/AbelianGroup.cpp
+        src/main/cpp/quasigroup/group/AbelianGroup.h
+        src/main/cpp/function/AbelianGroupAutomirphism.cpp
+        src/main/cpp/function/AbelianGroupAutomorphism.h
+        src/main/cpp/statistics/experiment/Experiment.h
+        src/main/cpp/statistics/experiment/QuantitiveExperiment.cpp
+        src/main/cpp/statistics/experiment/QuantitiveExperiment.h
+        src/main/cpp/statistics/experiment/GenerationTimeExperiment.cpp
+        src/main/cpp/statistics/experiment/GenerationTimeExperiment.h
+        src/main/cpp/statistics/experiment/CheckPropertyTimeExperiment.cpp
+        src/main/cpp/statistics/experiment/CheckPropertyTimeExperiment.h
+        src/main/cpp/statistics/ExperimentalReport.cpp
+        src/main/cpp/statistics/ExperimentalReport.h
+        src/main/cpp/statistics/ExperimentsRunner.cpp
+        src/main/cpp/statistics/ExperimentsRunner.h
 )

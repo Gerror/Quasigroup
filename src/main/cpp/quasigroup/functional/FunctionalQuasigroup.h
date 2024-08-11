@@ -2,7 +2,7 @@
 #define QUASIGROUP_FUNCTIONALQUASIGROUP_H
 
 #include "Quasigroup.h"
-#include "FunctionFamily.h"
+#include "function/family/FunctionFamily.h"
 
 namespace Quasigroup {
 

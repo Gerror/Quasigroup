@@ -2,13 +2,13 @@
 #define QUASIGROUP_FEISTELNETWORK_H
 
 #include "FunctionFamily.h"
-#include "GeneratedObject.h"
-#include "Helper.h"
+#include "generator/GeneratedObject.h"
+#include "utils/Helper.h"
 
 namespace Quasigroup {
 
     /*
-     * Обобщенная сеть Фейстеля
+     * Generated Feistel Network
      */
 
     class FeistelNetwork : public FunctionFamily, public GeneratedObject {

@@ -2,12 +2,17 @@
 #define QUASIGROUP_FUNCTIONALQUASIGROUPFACTORY_H
 
 #include "FunctionalQuasigroup.h"
+#include "QuasigroupFactory.h"
 
 namespace Quasigroup {
 
-    class FunctionalQuasigroupFactory {
+    class FunctionalQuasigroupFactory : public QuasigroupFactory {
+    protected:
+        int k;
+        int n;
     public:
-        virtual FunctionalQuasigroup *createQuasigroup(int k, int n) = 0;
+        FunctionalQuasigroupFactory(int k, int n): k(k), n(n) {};
+        int getOrder() override { return pow(k, n); }
     };
 
 }

@@ -8,7 +8,8 @@ namespace Quasigroup {
 
     class PFQuasigroupFactory : public FunctionalQuasigroupFactory {
     public:
-        FunctionalQuasigroup *createQuasigroup(int k, int n) override;
+        PFQuasigroupFactory(int k, int n) : FunctionalQuasigroupFactory(k, n) {}
+        PFQuasigroup* create() override;
     };
 
 }

@@ -5,9 +5,9 @@
 #include <random>
 #include <iostream>
 
-#include "Helper.h"
+#include "utils/Helper.h"
 #include "FunctionFamily.h"
-#include "GeneratedObject.h"
+#include "generator/GeneratedObject.h"
 
 namespace Quasigroup {
 

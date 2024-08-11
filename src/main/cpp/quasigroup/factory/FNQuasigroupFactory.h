@@ -10,8 +10,8 @@ namespace Quasigroup {
     private:
         bool inverseOperations;
     public:
-        FNQuasigroupFactory(bool inverseOperations = false);
-        FunctionalQuasigroup *createQuasigroup(int k, int n = 2) override;
+        explicit FNQuasigroupFactory(int k, bool inverseOperations = false): inverseOperations(inverseOperations), FunctionalQuasigroupFactory(k, 2) {};
+        FNQuasigroup* create() override;
     };
 
 }
