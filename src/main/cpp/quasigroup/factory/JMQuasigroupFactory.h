@@ -8,7 +8,8 @@ namespace Quasigroup {
 
     class JMQuasigroupFactory : public LatinSquareQuasigroupFactory {
     public:
-        LatinSquareQuasigroup *createQuasigroup(int order) override;
+        explicit JMQuasigroupFactory(int order) : LatinSquareQuasigroupFactory(order) {};
+        JMQuasigroup* create() override;
     };
 
 }

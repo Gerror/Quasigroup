@@ -2,12 +2,17 @@
 #define QUASIGROUP_LATINSQUAREQUASIGROUPFACTORY_H
 
 #include "LatinSquareQuasigroup.h"
+#include "QuasigroupFactory.h"
 
 namespace Quasigroup {
 
-    class LatinSquareQuasigroupFactory {
+    class LatinSquareQuasigroupFactory : public QuasigroupFactory {
+    protected:
+        int order;
     public:
-        virtual LatinSquareQuasigroup *createQuasigroup(int order) = 0;
+        LatinSquareQuasigroupFactory(int order): order{order} {}
+        virtual LatinSquareQuasigroup* create() override = 0;
+        int getOrder() override { return order; };
     };
 
 }

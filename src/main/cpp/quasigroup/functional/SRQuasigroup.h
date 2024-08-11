@@ -1,7 +1,7 @@
 #ifndef QUASIGROUP_SRQUASIGROUP_H
 #define QUASIGROUP_SRQUASIGROUP_H
 
-#include "ShiftRegister.h"
+#include "function/family/ShiftRegister.h"
 #include "FunctionalQuasigroup.h"
 
 namespace Quasigroup {

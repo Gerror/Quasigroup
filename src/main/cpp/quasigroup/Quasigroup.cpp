@@ -3,21 +3,6 @@
 
 namespace Quasigroup {
 
-    bool Quasigroup::isLoop() const {
-        for (int i = 0; i < order; i++) {
-            for (int j = i + 1; j < order; j++) {
-                if (getProduct(j, i) != getProduct(i, j)) {
-                    return false;
-                }
-            }
-
-            if (getProduct(0, i) != i || getProduct(i, 0) != i) {
-                return  false;
-            }
-        }
-        return true;
-    }
-
     bool Quasigroup::isIdempotent() const {
         for (int x = 0; x < order; x++) {
             if (getProduct(x, x) != x) {
@@ -29,10 +14,10 @@ namespace Quasigroup {
     }
 
     bool Quasigroup::hasLeftUnit() const {
-        for (int x = 0; x < order; x++) {
+        for (int e = 0; e < order; e++) {
             auto count = 0;
             for (int y = 0; y < order; y++) {
-                if (getProduct(x, y) != y) {
+                if (getProduct(e, y) != y) {
                     break;
                 } else {
                     count++;
@@ -48,10 +33,10 @@ namespace Quasigroup {
     }
 
     bool Quasigroup::hasRightUnit() const {
-        for (int x = 0; x < order; x++) {
+        for (int e = 0; e < order; e++) {
             auto count = 0;
             for (int y = 0; y < order; y++) {
-                if (getProduct(y, x) != y) {
+                if (getProduct(y, e) != y) {
                     break;
                 } else {
                     count++;
@@ -66,12 +51,43 @@ namespace Quasigroup {
         return false;
     }
 
-    bool Quasigroup::containsNonTrivialSubqusigroup() const {
+    bool Quasigroup::hasUnit() const {
+        for (int e = 0; e < order; e++) {
+            auto count = 0;
+            for (int x = 0; x < order; x++) {
+                if (getProduct(e, x) != x || getProduct(x, e) != x) {
+                    break;
+                } else {
+                    count++;
+                }
+            }
+
+            if (count == order) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool Quasigroup::isLoop() const {
+        return hasUnit();
+    }
+
+    bool Quasigroup::isGroup() const {
+        return isLoop() && isAssociativeByLightTest();
+    }
+
+    bool Quasigroup::isAbelianGroup() const {
+        return isGroup() && isCommutative();
+    }
+
+    bool Quasigroup::containsProperSubqusigroup() const {
         unsigned int *sqg;
         sqg = nullptr;
-        auto nonTrivialBorder = 2;
+        auto properBorder = 1;
 
-        int findSubgroupResult = findSubquasigroup(nonTrivialBorder, &sqg);
+        int findSubgroupResult = findSubquasigroup(properBorder, &sqg);
         if (sqg != nullptr) {
             free(sqg);
         }
@@ -87,43 +103,45 @@ namespace Quasigroup {
      * kinds x * (x * ... * (x  * y)) = y, y = ((y * x) * ... * x) (k times)
      */
     bool Quasigroup::isShapeless() const {
-        auto preResult = !isIdempotent() &&
+        return  !isIdempotent() &&
                 !isCommutative() &&
                 !isAssociativeByLightTest() &&
                 !hasLeftUnit() &&
                 !hasRightUnit() &&
-                !containsNonTrivialSubqusigroup();
+                !containsProperSubqusigroup() &&
+                !shapelessIdentitiesIsSatisfied();
+    }
 
-        if (!preResult) {
-            return false;
+    bool Quasigroup::shapelessIdentitiesIsSatisfied() const {
+        for (int k = 1; k < 2 * order; k++) {
+            if (shapelessIdentitiesIsSatisfied(k)) {
+                return true;
+            }
         }
 
-        for (int k = 1; k < 2 * order; k++) {
-            auto identityIsSatisfied = true;
+        return false;
+    }
 
-            for (int x = 0; x < order; x++) {
-                for (int y = 0; y < order; y++) {
-                    auto leftProduct = y;
-                    auto rightProduct = y;
+    bool Quasigroup::shapelessIdentitiesIsSatisfied(int k) const {
+        auto leftProductIsSatisfied = true;
+        auto rightProductIsSatisfied = true;
 
-                    for (int i = 0; i < k; i++) {
-                        leftProduct = getProduct(x, leftProduct);
-                        rightProduct = getProduct(rightProduct, x);
-                    }
+        for (int x = 0; x < order; x++) {
+            for (int y = 0; y < order; y++) {
+                auto leftProduct = y;
+                auto rightProduct = y;
 
-                    if (leftProduct != y || rightProduct != y) {
-                        identityIsSatisfied = false;
-                        break;
-                    }
+                for (int i = 0; i < k; i++) {
+                    leftProduct = getProduct(x, leftProduct);
+                    rightProduct = getProduct(rightProduct, x);
                 }
 
-                if (!identityIsSatisfied) {
-                    break;
-                }
-            }
+                leftProductIsSatisfied = leftProductIsSatisfied && (leftProduct == y);
+                rightProductIsSatisfied = rightProductIsSatisfied && (rightProduct == y);
 
-            if (identityIsSatisfied) {
-                return false;
+                if (!leftProductIsSatisfied && !rightProductIsSatisfied) {
+                    return false;
+                }
             }
         }
 
@@ -248,7 +266,6 @@ namespace Quasigroup {
          * Проверяем симметричность L'' (коммутативность f'')
          * Если не симметрична, то квазигруппа не аффинна
          */
-
         if (!tempQuasigroup->isCommutative()) {
             return false;
         }
@@ -582,7 +599,7 @@ namespace Quasigroup {
             tempQ->insert(i);
         }
 
-        int currentSize = newQ->size();
+        int currentSize;
         int currentElement = 0;
         do {
             currentSize = newQ->size();
@@ -612,8 +629,7 @@ namespace Quasigroup {
             newQ->insert(begin);
             tempQ->erase(begin);
 
-            int currentSize;
-            int currentElement = begin;
+            currentElement = begin;
             do {
                 currentSize = newQ->size();
                 currentElement = getProduct(begin, currentElement);

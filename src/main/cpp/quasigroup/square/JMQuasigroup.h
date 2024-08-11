@@ -1,9 +1,9 @@
 #ifndef QUASIGROUP_JMQUASIGROUP_H
 #define QUASIGROUP_JMQUASIGROUP_H
 
-#include "IncidenceCube.h"
+#include "utils/IncidenceCube.h"
 #include "LatinSquareQuasigroup.h"
-#include "GeneratedObject.h"
+#include "generator/GeneratedObject.h"
 
 namespace Quasigroup {
 

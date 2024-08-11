@@ -31,6 +31,18 @@ namespace Quasigroup {
         }
     }
 
+    LatinSquareQuasigroup::LatinSquareQuasigroup(std::initializer_list<std::initializer_list<int>> latinSquare) : LatinSquareQuasigroup(latinSquare.size()) {
+        int i = 0;
+        for (auto row : latinSquare) {
+            int j = 0;
+            for (auto element : row) {
+                this->latinSquare[i][j] = element;
+                j++;
+            }
+            i++;
+        }
+    }
+
     LatinSquareQuasigroup::LatinSquareQuasigroup(const FunctionalQuasigroup& functionalQuasigroup)
     : LatinSquareQuasigroup(functionalQuasigroup.getOrder()) {
         for (int x = 0; x < order; x++) {

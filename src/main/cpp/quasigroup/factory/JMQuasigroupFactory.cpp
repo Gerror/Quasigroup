@@ -2,7 +2,7 @@
 
 namespace Quasigroup {
 
-    LatinSquareQuasigroup *JMQuasigroupFactory::createQuasigroup(int order) {
+    JMQuasigroup* JMQuasigroupFactory::create() {
         return new JMQuasigroup(order);
     }
 

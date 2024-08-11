@@ -4,8 +4,8 @@
 #define STEP_COUNT order * order
 
 #include "FunctionFamily.h"
-#include "GeneratedObject.h"
-#include "Helper.h"
+#include "generator/GeneratedObject.h"
+#include "utils/Helper.h"
 
 namespace Quasigroup {
 

@@ -2,7 +2,7 @@
 
 namespace Quasigroup {
 
-    LatinSquareQuasigroup *AffineQuasigroupFactory::createQuasigroup(int order) {
+    LatinSquareQuasigroup* AffineQuasigroupFactory::create() {
         return new AffineQuasigroup(order);
     }
 

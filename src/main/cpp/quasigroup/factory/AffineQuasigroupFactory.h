@@ -9,7 +9,8 @@ namespace Quasigroup {
 
     class AffineQuasigroupFactory : public LatinSquareQuasigroupFactory {
     public:
-        LatinSquareQuasigroup *createQuasigroup(int order) override;
+        explicit AffineQuasigroupFactory(int order): LatinSquareQuasigroupFactory(order) {}
+        LatinSquareQuasigroup* create() override;
     };
 
 }
