@@ -23,13 +23,38 @@ namespace Quasigroup {
     }
 
     std::unordered_set<Quasigroup *, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>
+    QuasigroupGenerator::generateUnorderedSet(int count) {
+        return generateUnorderedSet(count, [](Quasigroup *q) { return true; });
+    }
+
+    std::unordered_set<Quasigroup *, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>
+    QuasigroupGenerator::generateUnorderedSet(int count, const std::function<bool(Quasigroup *)> &condition) {
+        std::unordered_set<Quasigroup *, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> result;
+        int sizeBefore, sizeAfter;
+
+        while (result.size() != count) {
+            auto q = generate(condition);
+
+            sizeBefore = result.size();
+            result.insert(q);
+            sizeAfter = result.size();
+
+            if (sizeAfter == sizeBefore) {
+                delete q;
+            }
+        }
+
+        return result;
+    }
+
+    std::set<Quasigroup *, Quasigroup::QuasigroupPointerComparator>
     QuasigroupGenerator::generateSet(int count) {
         return generateSet(count, [](Quasigroup *q) { return true; });
     }
 
-    std::unordered_set<Quasigroup *, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>
+    std::set<Quasigroup *, Quasigroup::QuasigroupPointerComparator>
     QuasigroupGenerator::generateSet(int count, const std::function<bool(Quasigroup *)> &condition) {
-        std::unordered_set<Quasigroup *, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash> result;
+        std::set<Quasigroup *, Quasigroup::QuasigroupPointerComparator> result;
         int sizeBefore, sizeAfter;
 
         while (result.size() != count) {

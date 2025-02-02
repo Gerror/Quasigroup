@@ -1,3 +1,5 @@
+#include "DihedralGroup.h"
+#include "AlternatingGroup.h"
 #include "CheckPropertyTimeExperiment.h"
 #include "GenerationTimeExperiment.h"
 #include "QuantitiveExperiment.h"
@@ -18,7 +20,5 @@
 #include "AbelianGroupAutomorphism.h"
 
 int main() {
-    // no-op
-
     return 0;
 }

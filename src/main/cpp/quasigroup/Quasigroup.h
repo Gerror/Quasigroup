@@ -32,13 +32,17 @@ namespace Quasigroup {
     private:
         // Two functions needed to find subquasigroups
         int nextStep(unsigned int *step, int border) const;
+
         int checkStep(unsigned int *step,
                       int border, unsigned int *a_sq,
                       unsigned int *a_sqi, unsigned int *a_q) const;
+
+        std::string getRowsConcatenation() const;
+
     public:
         class QuasigroupHash {
         public:
-            size_t operator() (const Quasigroup *quasigroup) const;
+            size_t operator()(const Quasigroup *quasigroup) const;
         };
 
         class QuasigroupEqualHash {
@@ -46,41 +50,88 @@ namespace Quasigroup {
             bool operator()(const Quasigroup *q1, const Quasigroup *q2) const;
         };
 
+        struct QuasigroupPointerComparator {
+            bool operator()(const Quasigroup *lhs, const Quasigroup *rhs) const {
+                return *lhs < *rhs;
+            }
+        };
+
         virtual ~Quasigroup() {};
 
         virtual int getProduct(int x, int y) const = 0;
+
         int getOrder() const;
+
         bool isAffine(bool useLightTest = true) const;
+
         bool isSimple() const;
+
         bool isPolynomiallyComplete() const;
+
         // deprecated, use isAssociativeByLightTest
         bool isAssociative() const;
+
         bool isAssociativeByLightTest() const;
+
         bool isCommutative() const;
+
         bool isIdempotent() const;
+
         bool hasLeftUnit() const;
+
         bool hasRightUnit() const;
+
         bool hasUnit() const;
+
         bool isShapeless() const;
+
         bool shapelessIdentitiesIsSatisfied() const;
+
         bool shapelessIdentitiesIsSatisfied(int k) const;
+
         bool isLoop() const;
+
         bool isGroup() const;
+
         bool isAbelianGroup() const;
+
         bool containsProperSubqusigroup() const;
+
         bool isQuadratical() const;
+
         bool isHexagonal() const;
+
         bool isGoldenSquare() const;
+
         bool isRightModular() const;
+
         bool isLeftModular() const;
+
         bool isAffineRegularOctagonal() const;
+
         bool isPentagonal() const;
+
         int findSubquasigroup(int border, unsigned int **a_sq) const;
+
         std::unordered_set<int> getGenerationSystem();
 
         friend std::ostream &operator<<(std::ostream &out, const Quasigroup &q);
+
+        friend bool operator==(const Quasigroup &left, const Quasigroup &right);
+
+        friend bool operator!=(const Quasigroup &left, const Quasigroup &right);
+
+        friend bool operator<(const Quasigroup &left, const Quasigroup &right);
+
+        friend bool operator<=(const Quasigroup &left, const Quasigroup &right);
+
+        friend bool operator>(const Quasigroup &left, const Quasigroup &right);
+
+        friend bool operator>=(const Quasigroup &left, const Quasigroup &right);
+
     protected:
         int order;
+
         Quasigroup() = default;
     };
 

@@ -3,6 +3,7 @@
 
 #include <quasigroup/factory/QuasigroupFactory.h>
 #include <functional>
+#include <set>
 
 namespace Quasigroup {
 
@@ -19,9 +20,15 @@ namespace Quasigroup {
         std::vector<Quasigroup *> generateVector(int count);
 
         std::unordered_set<Quasigroup *, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>
-        generateSet(int count);
+        generateUnorderedSet(int count);
 
         std::unordered_set<Quasigroup *, Quasigroup::QuasigroupHash, Quasigroup::QuasigroupEqualHash>
+        generateUnorderedSet(int count, const std::function<bool(Quasigroup *)> &condition);
+
+        std::set<Quasigroup *, Quasigroup::QuasigroupPointerComparator>
+        generateSet(int count);
+
+        std::set<Quasigroup *, Quasigroup::QuasigroupPointerComparator>
         generateSet(int count, const std::function<bool(Quasigroup *)> &condition);
     };
 

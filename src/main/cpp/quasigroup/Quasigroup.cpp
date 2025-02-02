@@ -103,13 +103,13 @@ namespace Quasigroup {
      * kinds x * (x * ... * (x  * y)) = y, y = ((y * x) * ... * x) (k times)
      */
     bool Quasigroup::isShapeless() const {
-        return  !isIdempotent() &&
-                !isCommutative() &&
-                !isAssociativeByLightTest() &&
-                !hasLeftUnit() &&
-                !hasRightUnit() &&
-                !containsProperSubqusigroup() &&
-                !shapelessIdentitiesIsSatisfied();
+        return !isIdempotent() &&
+               !isCommutative() &&
+               !isAssociativeByLightTest() &&
+               !hasLeftUnit() &&
+               !hasRightUnit() &&
+               !containsProperSubqusigroup() &&
+               !shapelessIdentitiesIsSatisfied();
     }
 
     bool Quasigroup::shapelessIdentitiesIsSatisfied() const {
@@ -174,7 +174,7 @@ namespace Quasigroup {
             T.insert(i);
         }
 
-        while(!T.empty()) {
+        while (!T.empty()) {
             int currentRSize;
             int newRSize;
             int begin = (*T.begin());
@@ -185,7 +185,7 @@ namespace Quasigroup {
 
             do {
                 currentRSize = R.size();
-                for (auto const& element : R) {
+                for (auto const &element : R) {
                     int lelement = getProduct(begin, element);
                     int relement = getProduct(element, begin);
 
@@ -200,7 +200,7 @@ namespace Quasigroup {
                     }
                 }
                 newRSize = R.size();
-            } while(currentRSize != newRSize);
+            } while (currentRSize != newRSize);
         }
 
         for (int x = 0; x < order; x++) {
@@ -244,7 +244,7 @@ namespace Quasigroup {
             reverseFirstLine[getProduct(0, i)] = i;
         }
 
-        auto productOfTempQuasigroup { [&](int x, int y) { return getProduct(x, reverseFirstLine[y]); } };
+        auto productOfTempQuasigroup{[&](int x, int y) { return getProduct(x, reverseFirstLine[y]); }};
         auto tempQuasigroup = std::make_unique<LatinSquareQuasigroup>(order, productOfTempQuasigroup);
 
         /*
@@ -275,9 +275,9 @@ namespace Quasigroup {
         * Если не ассоциативна, то квазигруппа не аффинна
         */
         if (
-            (useLightTest && !tempQuasigroup->isAssociativeByLightTest()) ||
-            (!useLightTest && !tempQuasigroup->isAssociative())
-        ) {
+                (useLightTest && !tempQuasigroup->isAssociativeByLightTest()) ||
+                (!useLightTest && !tempQuasigroup->isAssociative())
+                ) {
             return false;
         }
 
@@ -319,10 +319,10 @@ namespace Quasigroup {
             for (int j = 0; j < order; j++) {
                 if (
                         (getProduct(tempQuasigroup->getProduct(i, j), alpha) !=
-                        tempQuasigroup->getProduct(getProduct(i, alpha), getProduct(j, alpha))) ||
+                         tempQuasigroup->getProduct(getProduct(i, alpha), getProduct(j, alpha))) ||
                         (getProduct(beta, tempQuasigroup->getProduct(i, j)) !=
-                        tempQuasigroup->getProduct(getProduct(beta, i), getProduct(beta, j)))
-                ) {
+                         tempQuasigroup->getProduct(getProduct(beta, i), getProduct(beta, j)))
+                        ) {
                     return false;
                 }
             }
@@ -370,7 +370,7 @@ namespace Quasigroup {
 
             for (int t1 = 0; t1 < order; t1++) {
                 for (int t2 = t1 + 1; t2 < order; t2++) {
-                    pairs[calculateUnorderedPairIndex(t1, t2, order)] = { t1, t2 };
+                    pairs[calculateUnorderedPairIndex(t1, t2, order)] = {t1, t2};
                 }
                 classes[t1].push_back(t1);
                 classIndex[t1] = t1;
@@ -400,8 +400,10 @@ namespace Quasigroup {
                         unrevEq.push(pairs[calculateUnorderedPairIndex(sa_line, sb_line, order)]);
 
                         // Сливаем классы
-                        equalPairsCount += (int) classes[classIndex[sa_line]].size() * (int) classes[classIndex[sb_line]].size();
-                        int newClassSize = mergeUnorderedPairClasses(classes, classIndex, classIndex[sa_line], classIndex[sb_line]);
+                        equalPairsCount +=
+                                (int) classes[classIndex[sa_line]].size() * (int) classes[classIndex[sb_line]].size();
+                        int newClassSize = mergeUnorderedPairClasses(classes, classIndex, classIndex[sa_line],
+                                                                     classIndex[sb_line]);
                         if (newClassSize > maxClassSize) {
                             maxClassSize = newClassSize;
                         }
@@ -411,8 +413,10 @@ namespace Quasigroup {
                         unrevEq.push(pairs[calculateUnorderedPairIndex(sa_column, sb_column, order)]);
 
                         // Сливаем классы
-                        equalPairsCount += (int) classes[classIndex[sa_column]].size() * (int) classes[classIndex[sb_column]].size();
-                        int newClassSize = mergeUnorderedPairClasses(classes, classIndex, classIndex[sa_column], classIndex[sb_column]);
+                        equalPairsCount += (int) classes[classIndex[sa_column]].size() *
+                                           (int) classes[classIndex[sb_column]].size();
+                        int newClassSize = mergeUnorderedPairClasses(classes, classIndex, classIndex[sa_column],
+                                                                     classIndex[sb_column]);
                         if (newClassSize > maxClassSize) {
                             maxClassSize = newClassSize;
                         }
@@ -456,27 +460,27 @@ namespace Quasigroup {
         a_q = nullptr;
         retval = -1;
 
-        seed = (unsigned int *) malloc (border * sizeof (unsigned int));
+        seed = (unsigned int *) malloc(border * sizeof(unsigned int));
         if (seed == nullptr) {
-            printf ("Failed to allocate memory\n");
+            printf("Failed to allocate memory\n");
             return -1;
         }
 
         do {
-            (*a_sq) = (unsigned int *) malloc (sizeof (unsigned int) * order);
-            a_sqi = (unsigned int *) malloc (sizeof (unsigned int) * order);
+            (*a_sq) = (unsigned int *) malloc(sizeof(unsigned int) * order);
+            a_sqi = (unsigned int *) malloc(sizeof(unsigned int) * order);
             if (a_sqi == nullptr) {
-                printf ("Failed to allocate memory\n");
+                printf("Failed to allocate memory\n");
                 break;
             }
-            a_q = (unsigned int *) malloc (sizeof (unsigned int) * order);
+            a_q = (unsigned int *) malloc(sizeof(unsigned int) * order);
             if (a_q == nullptr) {
-                printf ("Failed to allocate memory\n");
+                printf("Failed to allocate memory\n");
                 break;
             }
 
             for (i = 0; i < border; i++) {
-                seed [i] = (unsigned int) i;
+                seed[i] = (unsigned int) i;
             }
 
             do {
@@ -489,16 +493,16 @@ namespace Quasigroup {
             } while (last == 0);
         } while (false);
 
-        free (seed);
+        free(seed);
         if (((*a_sq) != nullptr) && (retval <= 0)) {
-            free (*a_sq);
+            free(*a_sq);
             (*a_sq) = nullptr;
         }
         if (a_sqi != nullptr) {
-            free (a_sqi);
+            free(a_sqi);
         }
         if (a_q != nullptr) {
-            free (a_q);
+            free(a_q);
         }
 
         return retval;
@@ -516,11 +520,11 @@ namespace Quasigroup {
         (step[i])++;
         cur = step[i] + 1;
         for (i = i + 1; i < border; i++) {
-            step [i] = cur;
+            step[i] = cur;
             cur++;
         }
 
-        if (step [0] == order - border) {
+        if (step[0] == order - border) {
             return 1;
         } else {
             return 0;
@@ -538,45 +542,45 @@ namespace Quasigroup {
         retval = 0;
 
         // initialization
-        memset (a_sq, 0, sizeof (unsigned int) * order);
-        memset (a_sqi, 0, sizeof (unsigned int) * order);
-        memset (a_q, 0, sizeof (unsigned int) * order);
+        memset(a_sq, 0, sizeof(unsigned int) * order);
+        memset(a_sqi, 0, sizeof(unsigned int) * order);
+        memset(a_q, 0, sizeof(unsigned int) * order);
         for (i = 0; i < border; i++) {
-            a_sq [i] = step [i];
-            a_sqi [step [i]] = 3;
-            a_q [i] = step [i];
+            a_sq[i] = step[i];
+            a_sqi[step[i]] = 3;
+            a_q[i] = step[i];
         }
 
         // build the closure of the seed
         while (last - first > 0) {
-            cur = a_q [first];
+            cur = a_q[first];
             first++;
 
             tmp = getProduct(cur, cur);
-            if (a_sqi [tmp] == 0) {
-                a_q [last] = tmp;
-                a_sqi [tmp] = 2;
+            if (a_sqi[tmp] == 0) {
+                a_q[last] = tmp;
+                a_sqi[tmp] = 2;
                 last++;
             }
 
             for (i = 0; i < sqlen; i++) {
                 tmp = getProduct(a_sq[i], cur);
-                if (a_sqi [tmp] == 0) {
-                    a_q [last] = tmp;
-                    a_sqi [tmp] = 2;
+                if (a_sqi[tmp] == 0) {
+                    a_q[last] = tmp;
+                    a_sqi[tmp] = 2;
                     last++;
                 }
-                tmp = getProduct(cur, a_sq [i]);
-                if (a_sqi [tmp] == 0) {
-                    a_q [last] = tmp;
-                    a_sqi [tmp] = 2;
+                tmp = getProduct(cur, a_sq[i]);
+                if (a_sqi[tmp] == 0) {
+                    a_q[last] = tmp;
+                    a_sqi[tmp] = 2;
                     last++;
                 }
             }
 
-            if ((a_sqi [cur] % 2) == 0) {
-                a_sq [sqlen] = cur;
-                a_sqi [cur] = 1;
+            if ((a_sqi[cur] % 2) == 0) {
+                a_sq[sqlen] = cur;
+                a_sqi[cur] = 1;
                 sqlen++;
             }
         }
@@ -589,9 +593,9 @@ namespace Quasigroup {
     }
 
     std::unordered_set<int> Quasigroup::getGenerationSystem() {
-        std::unordered_set<int> *generationSystem = new std::unordered_set<int>();
-        std::unordered_set<int> *tempQ = new std::unordered_set<int>();
-        std::unordered_set<int> *newQ = new std::unordered_set<int>();
+        auto *generationSystem = new std::unordered_set<int>();
+        auto *tempQ = new std::unordered_set<int>();
+        auto *newQ = new std::unordered_set<int>();
 
         generationSystem->insert(0);
         newQ->insert(0);
@@ -608,12 +612,12 @@ namespace Quasigroup {
             if (newQ->size() != currentSize) {
                 tempQ->erase(currentElement);
             }
-        } while(newQ->size() != currentSize);
+        } while (newQ->size() != currentSize);
 
         while (!tempQ->empty()) {
             int begin = (*tempQ->begin());
             generationSystem->insert(begin);
-            for (const auto& elem: *newQ) {
+            for (const auto &elem: *newQ) {
                 newQ->insert(getProduct(elem, begin));
                 newQ->insert(getProduct(begin, elem));
 
@@ -637,7 +641,7 @@ namespace Quasigroup {
                 if (newQ->size() != currentSize) {
                     tempQ->erase(currentElement);
                 }
-            } while(newQ->size() != currentSize);
+            } while (newQ->size() != currentSize);
         }
 
         return *generationSystem;
@@ -760,9 +764,47 @@ namespace Quasigroup {
         return true;
     }
 
+    std::string Quasigroup::getRowsConcatenation() const {
+        std::string result;
+        for (int x = 0; x < order; x++) {
+            for (int y = 0; y < order; y++) {
+                result += std::to_string(getProduct(x, y));
+            }
+
+            if (x != order - 1) {
+                result += "||";
+            }
+        }
+        return result;
+    }
+
+    bool operator==(const Quasigroup &left, const Quasigroup &right) {
+        return left.getRowsConcatenation() == right.getRowsConcatenation();
+    }
+
+    bool operator!=(const Quasigroup &left, const Quasigroup &right) {
+        return !(left == right);
+    }
+
+    bool operator<(const Quasigroup &left, const Quasigroup &right) {
+        return left.getRowsConcatenation() < right.getRowsConcatenation();
+    }
+
+    bool operator<=(const Quasigroup &left, const Quasigroup &right) {
+        return left.getRowsConcatenation() <= right.getRowsConcatenation();
+    }
+
+    bool operator>(const Quasigroup &left, const Quasigroup &right) {
+        return right < left;
+    }
+
+    bool operator>=(const Quasigroup &left, const Quasigroup &right) {
+        return right <= left;
+    }
+
     size_t Quasigroup::QuasigroupHash::operator()(const Quasigroup *quasigroup) const {
         std::hash<std::string> hasher;
-        std::string hash = "";
+        std::string hash;
         for (int y = 0; y < quasigroup->getOrder(); y++) {
             for (int x = 0; x < quasigroup->getOrder(); x++) {
                 hash += std::to_string(quasigroup->getProduct(x, y)) + " ";
@@ -773,8 +815,8 @@ namespace Quasigroup {
     }
 
     bool Quasigroup::QuasigroupEqualHash::operator()(const Quasigroup *q1, const Quasigroup *q2) const {
-        Quasigroup::QuasigroupHash hasher;
-        return hasher(q1) == hasher(q2);
+        Quasigroup::QuasigroupHash hashCode;
+        return hashCode(q1) == hashCode(q2);
     }
 
 }

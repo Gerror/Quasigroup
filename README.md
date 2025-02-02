@@ -41,7 +41,7 @@ for (auto q : qVector) {
 Quasigroup::JMQuasigroupFactory factory(16);
 Quasigroup::QuasigroupGenerator generator(&factory);
 
-auto qSet = generator.generateSet(1000);
+auto qSet = generator.generateUnorderedSet(1000);
 
 for (auto q : qSet) {
     // какие-то действия с квазигруппой q
@@ -49,7 +49,7 @@ for (auto q : qSet) {
 }
 ```
 
-В методы *generate* и *generateSet* дополнительно можно передать lambda-функцию с набором свойств, которыми должны обладать получаемые квазигруппы.
+В методы *generate* и *generateUnorderedSet* дополнительно можно передать lambda-функцию с набором свойств, которыми должны обладать получаемые квазигруппы.
 ```c++
 // Порождение одной бесформенной полиномиально полной 
 // квазигруппы порядка 16 методом Джейкобсона-Мэтьюза
@@ -74,7 +74,7 @@ delete q;
 Quasigroup::JMQuasigroupFactory factory(16);
 Quasigroup::QuasigroupGenerator generator(&factory);
 
-auto qSet = generator.generateSet(
+auto qSet = generator.generateUnorderedSet(
         1000,
         [](Quasigroup::Quasigroup* q) {
             return q->isShapeless() && q->isPolynomiallyComplete(); // логическое условие какой должна быть квазигруппа

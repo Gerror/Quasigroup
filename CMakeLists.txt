@@ -17,7 +17,8 @@ include_directories(
         src/main/cpp/statistics/experiment
 )
 
-add_executable(Quasigroup
+add_executable(
+        Quasigroup
         src/main/cpp/main.cpp
         src/main/cpp/utils/IncidenceCube.cpp
         src/main/cpp/utils/IncidenceCube.h
@@ -79,4 +80,8 @@ add_executable(Quasigroup
         src/main/cpp/statistics/ExperimentalReport.h
         src/main/cpp/statistics/ExperimentsRunner.cpp
         src/main/cpp/statistics/ExperimentsRunner.h
+        src/main/cpp/quasigroup/group/DihedralGroup.cpp
+        src/main/cpp/quasigroup/group/DihedralGroup.h
+        src/main/cpp/quasigroup/group/AlternatingGroup.cpp
+        src/main/cpp/quasigroup/group/AlternatingGroup.h
 )

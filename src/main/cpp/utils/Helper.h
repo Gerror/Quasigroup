@@ -7,6 +7,8 @@
 #include <random>
 #include <ctime>
 #include <tuple>
+#include <algorithm>
+#include <sstream>
 
 namespace Quasigroup {
 
@@ -39,7 +41,24 @@ namespace Quasigroup {
      * Добавляет 1 к count, если sign = true и меняет кортеж result в зависимости от time
      * size - размер множества, над которым проводится тестирование
      */
-    std::tuple<int, double, double, double> increaseResult(std::tuple<int, double, double, double> &result, double time, bool sign, int size);
+    std::tuple<int, double, double, double>
+    increaseResult(std::tuple<int, double, double, double> &result, double time, bool sign, int size);
+
+    int factorial(int n);
+
+    int **generateAllPermutations(int n);
+
+    int **generateAllPermutationsWithSign(int n, int sign);
+
+    int **generateAllEvenPermutations(int n);
+
+    int **generateAllOddPermutations(int n);
+
+    uint calculatePermutationSign(int *permutation, int n);
+
+    int *permutationProduct(int *left, int *right, int n);
+
+    std::string permutationToString(int *permutation, int n);
 
 }
 
