@@ -15,6 +15,7 @@ include_directories(
         src/main/cpp/generator
         src/main/cpp/statistics
         src/main/cpp/statistics/experiment
+        src/main/cpp/transformer
 )
 
 add_executable(
@@ -84,4 +85,6 @@ add_executable(
         src/main/cpp/quasigroup/group/DihedralGroup.h
         src/main/cpp/quasigroup/group/AlternatingGroup.cpp
         src/main/cpp/quasigroup/group/AlternatingGroup.h
+        src/main/cpp/transformer/KepkaTransformer.cpp
+        src/main/cpp/transformer/KepkaTransformer.h
 )

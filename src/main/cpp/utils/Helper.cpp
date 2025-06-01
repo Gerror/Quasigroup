@@ -212,4 +212,19 @@ namespace Quasigroup {
         return oss.str();
     }
 
+    std::vector<int> transmutationFromCycle(std::vector<int> &cycle, int size) {
+        std::vector<int> result(size);
+        std::iota(std::begin(result), std::end(result), 0);
+
+        for (int i = -1; i < ((int) cycle.size()) - 1; i++) {
+            if (i == -1) {
+                result[cycle[cycle.size() - 1]] = cycle[0];
+            } else {
+                result[cycle[i]] = cycle[i + 1];
+            }
+        }
+
+        return result;
+    }
+
 }

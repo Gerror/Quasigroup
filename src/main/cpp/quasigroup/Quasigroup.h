@@ -37,7 +37,7 @@ namespace Quasigroup {
                       int border, unsigned int *a_sq,
                       unsigned int *a_sqi, unsigned int *a_q) const;
 
-        std::string getRowsConcatenation() const;
+        [[nodiscard]] std::string getRowsConcatenation() const;
 
     public:
         class QuasigroupHash {
@@ -56,60 +56,60 @@ namespace Quasigroup {
             }
         };
 
-        virtual ~Quasigroup() {};
+        virtual ~Quasigroup() = default;;
 
-        virtual int getProduct(int x, int y) const = 0;
+        [[nodiscard]] virtual int getProduct(int x, int y) const = 0;
 
-        int getOrder() const;
+        [[nodiscard]] int getOrder() const;
 
-        bool isAffine(bool useLightTest = true) const;
+        [[nodiscard]] bool isAffine(bool useLightTest = true) const;
 
-        bool isSimple() const;
+        [[nodiscard]] bool isSimple() const;
 
-        bool isPolynomiallyComplete() const;
+        [[nodiscard]] bool isPolynomiallyComplete() const;
 
         // deprecated, use isAssociativeByLightTest
-        bool isAssociative() const;
+        [[nodiscard]] bool isAssociative() const;
 
-        bool isAssociativeByLightTest() const;
+        [[nodiscard]] bool isAssociativeByLightTest() const;
 
-        bool isCommutative() const;
+        [[nodiscard]] bool isCommutative() const;
 
-        bool isIdempotent() const;
+        [[nodiscard]] bool isIdempotent() const;
 
-        bool hasLeftUnit() const;
+        [[nodiscard]] bool hasLeftUnit() const;
 
-        bool hasRightUnit() const;
+        [[nodiscard]] bool hasRightUnit() const;
 
-        bool hasUnit() const;
+        [[nodiscard]] bool hasUnit() const;
 
-        bool isShapeless() const;
+        [[nodiscard]] bool isShapeless() const;
 
-        bool shapelessIdentitiesIsSatisfied() const;
+        [[nodiscard]] bool shapelessIdentitiesIsSatisfied() const;
 
-        bool shapelessIdentitiesIsSatisfied(int k) const;
+        [[nodiscard]] bool shapelessIdentitiesIsSatisfied(int k) const;
 
-        bool isLoop() const;
+        [[nodiscard]] bool isLoop() const;
 
-        bool isGroup() const;
+        [[nodiscard]] bool isGroup() const;
 
-        bool isAbelianGroup() const;
+        [[nodiscard]] bool isAbelianGroup() const;
 
-        bool containsProperSubqusigroup() const;
+        [[nodiscard]] bool containsProperSubqusigroup() const;
 
-        bool isQuadratical() const;
+        [[nodiscard]] bool isQuadratical() const;
 
-        bool isHexagonal() const;
+        [[nodiscard]] bool isHexagonal() const;
 
-        bool isGoldenSquare() const;
+        [[nodiscard]] bool isGoldenSquare() const;
 
-        bool isRightModular() const;
+        [[nodiscard]] bool isRightModular() const;
 
-        bool isLeftModular() const;
+        [[nodiscard]] bool isLeftModular() const;
 
-        bool isAffineRegularOctagonal() const;
+        [[nodiscard]] bool isAffineRegularOctagonal() const;
 
-        bool isPentagonal() const;
+        [[nodiscard]] bool isPentagonal() const;
 
         int findSubquasigroup(int border, unsigned int **a_sq) const;
 
@@ -130,7 +130,7 @@ namespace Quasigroup {
         friend bool operator>=(const Quasigroup &left, const Quasigroup &right);
 
     protected:
-        int order;
+        int order{};
 
         Quasigroup() = default;
     };

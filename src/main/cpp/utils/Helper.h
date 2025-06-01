@@ -9,6 +9,7 @@
 #include <tuple>
 #include <algorithm>
 #include <sstream>
+#include <iostream>
 
 namespace Quasigroup {
 
@@ -59,6 +60,8 @@ namespace Quasigroup {
     int *permutationProduct(int *left, int *right, int n);
 
     std::string permutationToString(int *permutation, int n);
+
+    std::vector<int> transmutationFromCycle(std::vector<int> &cycle, int size);
 
 }
 

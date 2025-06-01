@@ -31,7 +31,8 @@ namespace Quasigroup {
         }
     }
 
-    LatinSquareQuasigroup::LatinSquareQuasigroup(std::initializer_list<std::initializer_list<int>> latinSquare) : LatinSquareQuasigroup(latinSquare.size()) {
+    LatinSquareQuasigroup::LatinSquareQuasigroup(std::initializer_list<std::initializer_list<int>> latinSquare)
+            : LatinSquareQuasigroup(latinSquare.size()) {
         int i = 0;
         for (auto row : latinSquare) {
             int j = 0;
@@ -43,17 +44,17 @@ namespace Quasigroup {
         }
     }
 
-    LatinSquareQuasigroup::LatinSquareQuasigroup(const FunctionalQuasigroup& functionalQuasigroup)
-    : LatinSquareQuasigroup(functionalQuasigroup.getOrder()) {
+    LatinSquareQuasigroup::LatinSquareQuasigroup(const Quasigroup &q)
+            : LatinSquareQuasigroup(q.getOrder()) {
         for (int x = 0; x < order; x++) {
             for (int y = 0; y < order; y++) {
-                this->latinSquare[x][y] = functionalQuasigroup.getProduct(x, y);
+                this->latinSquare[x][y] = q.getProduct(x, y);
             }
         }
     }
 
-    LatinSquareQuasigroup::LatinSquareQuasigroup(int order, std::function<int(int, int)> product)
-    : LatinSquareQuasigroup(order) {
+    LatinSquareQuasigroup::LatinSquareQuasigroup(int order, const std::function<int(int, int)> &product)
+            : LatinSquareQuasigroup(order) {
         for (int x = 0; x < order; x++) {
             for (int y = 0; y < order; y++) {
                 this->latinSquare[x][y] = product(x, y);
@@ -89,6 +90,34 @@ namespace Quasigroup {
     void LatinSquareQuasigroup::swapRows(int firstLineNumber, int secondLineNumber) {
         for (int i = 0; i < order; i++) {
             std::swap(latinSquare[firstLineNumber][i], latinSquare[secondLineNumber][i]);
+        }
+    }
+
+    void LatinSquareQuasigroup::swapColumns(int firstColumnNumber, int secondColumnNumber) {
+        for (int i = 0; i < order; i++) {
+            std::swap(latinSquare[i][firstColumnNumber], latinSquare[i][secondColumnNumber]);
+        }
+    }
+
+    void LatinSquareQuasigroup::setRow(int rowNumber, const std::vector<int> &values) {
+        for (int i = 0; i < order; i++) {
+            for (int j = 0; j < order; j++) {
+                if (latinSquare[rowNumber][j] == values[i]) {
+                    swapColumns(i, j);
+                    break;
+                }
+            }
+        }
+    }
+
+    void LatinSquareQuasigroup::setColumn(int columnNumber, const std::vector<int> &values) {
+        for (int i = 0; i < order; i++) {
+            for (int j = 0; j < order; j++) {
+                if (latinSquare[j][columnNumber] == values[i]) {
+                    swapRows(i, j);
+                    break;
+                }
+            }
         }
     }
 
