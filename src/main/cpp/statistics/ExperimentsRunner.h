@@ -1,25 +1,25 @@
 #ifndef QUASIGROUP_EXPERIMENTSRUNNER_H
 #define QUASIGROUP_EXPERIMENTSRUNNER_H
 
-#include <quasigroup/factory/QuasigroupFactory.h>
 #include <generator/QuasigroupGenerator.h>
-#include "ExperimentalReport.h"
+#include <quasigroup/factory/QuasigroupFactory.h>
+
 #include "Experiment.h"
+#include "ExperimentalReport.h"
 
 namespace Quasigroup {
+class ExperimentsRunner {
+  QuasigroupFactory *factory;
+  QuasigroupGenerator *generator;
 
-    class ExperimentsRunner {
-    private:
-        QuasigroupFactory *factory;
-        QuasigroupGenerator *generator;
-    public:
-        explicit ExperimentsRunner(QuasigroupFactory *factory);
+ public:
+  explicit ExperimentsRunner(QuasigroupFactory *factory);
 
-        ~ExperimentsRunner();
+  ~ExperimentsRunner();
 
-        ExperimentalReport *run(int iterations, int objectsPerIteration, Experiment *experiment);
-    };
+  ExperimentalReport *run(int iterations, int objectsPerIteration,
+                          Experiment *experiment) const;
+};
+}  // namespace Quasigroup
 
-}
-
-#endif //QUASIGROUP_EXPERIMENTSRUNNER_H
+#endif  // QUASIGROUP_EXPERIMENTSRUNNER_H

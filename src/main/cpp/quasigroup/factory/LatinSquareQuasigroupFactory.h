@@ -5,16 +5,17 @@
 #include "QuasigroupFactory.h"
 
 namespace Quasigroup {
+class LatinSquareQuasigroupFactory : public QuasigroupFactory {
+ protected:
+  int order;
 
-    class LatinSquareQuasigroupFactory : public QuasigroupFactory {
-    protected:
-        int order;
-    public:
-        LatinSquareQuasigroupFactory(int order): order{order} {}
-        virtual LatinSquareQuasigroup* create() override = 0;
-        int getOrder() override { return order; };
-    };
+ public:
+  explicit LatinSquareQuasigroupFactory(const int order) : order{order} {}
 
-}
+  LatinSquareQuasigroup *create() override = 0;
 
-#endif //QUASIGROUP_LATINSQUAREQUASIGROUPFACTORY_H
+  int getOrder() override { return order; };
+};
+}  // namespace Quasigroup
+
+#endif  // QUASIGROUP_LATINSQUAREQUASIGROUPFACTORY_H

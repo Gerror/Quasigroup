@@ -5,15 +5,17 @@
 #include "SRQuasigroup.h"
 
 namespace Quasigroup {
+class SRQuasigroupFactory final : public FunctionalQuasigroupFactory {
+  bool inverseOperations;
 
-    class SRQuasigroupFactory : public FunctionalQuasigroupFactory {
-    private:
-        bool inverseOperations;
-    public:
-        explicit SRQuasigroupFactory(int k, bool inverseOperations = false): inverseOperations(inverseOperations), FunctionalQuasigroupFactory(k, n) {};
-        SRQuasigroup* create() override;
-    };
+ public:
+  explicit SRQuasigroupFactory(const int k, const int n,
+                               const bool inverseOperations = false)
+      : FunctionalQuasigroupFactory(k, n),
+        inverseOperations(inverseOperations) {};
 
-}
+  SRQuasigroup *create() override;
+};
+}  // namespace Quasigroup
 
-#endif //QUASIGROUP_SRQUASIGROUPFACTORY_H
+#endif  // QUASIGROUP_SRQUASIGROUPFACTORY_H

@@ -1,59 +1,57 @@
 #ifndef QUASIGROUP_EXPERIMENTALREPORT_H
 #define QUASIGROUP_EXPERIMENTALREPORT_H
 
-
 #include <ostream>
 #include <vector>
 
 namespace Quasigroup {
+class ExperimentalReport {
+  int quasigroupOrder;
+  uint iterations;
+  uint objectsPerIteration;
+  std::vector<double> results;
 
-    class ExperimentalReport {
-    private:
-        int quasigroupOrder;
-        uint iterations;
-        uint objectsPerIteration;
-        std::vector<double> results;
+  double averageResult;
+  double maxResult;
+  double minResult;
 
-        double averageResult;
-        double maxResult;
-        double minResult;
+  std::vector<double> fractions;
 
-        std::vector<double> fractions;
+  double averageFraction;
+  double maxFraction;
+  double minFraction;
 
-        double averageFraction;
-        double maxFraction;
-        double minFraction;
+  void prepareReport();
 
-        void prepareReport();
+ public:
+  ExperimentalReport(int quasigroupOrder, uint iterations,
+                     uint objectsPerIteration, std::vector<double> results);
 
-    public:
-        ExperimentalReport(int quasigroupOrder, uint iterations, uint objectsPerIteration, std::vector<double> results);
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const ExperimentalReport &report);
 
-        friend std::ostream &operator<<(std::ostream &out, const ExperimentalReport &report);
+  int getQuasigroupOrder() const;
 
-        int getQuasigroupOrder();
+  uint getIterations() const;
 
-        uint getIterations();
+  uint getObjectsPerIteration() const;
 
-        uint getObjectsPerIteration();
+  std::vector<double> getResults();
 
-        std::vector<double> getResults();
+  double getAverageResult() const;
 
-        double getAverageResult();
+  double getMaxResult() const;
 
-        double getMaxResult();
+  double getMinResult() const;
 
-        double getMinResult();
+  std::vector<double> getFractions();
 
-        std::vector<double> getFractions();
+  double getAverageFraction() const;
 
-        double getAverageFraction();
+  double getMaxFraction() const;
 
-        double getMaxFraction();
+  double getMinFraction() const;
+};
+}  // namespace Quasigroup
 
-        double getMinFraction();
-    };
-}
-
-
-#endif //QUASIGROUP_EXPERIMENTALREPORT_H
+#endif  // QUASIGROUP_EXPERIMENTALREPORT_H

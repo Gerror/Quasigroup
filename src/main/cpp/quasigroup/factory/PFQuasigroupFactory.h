@@ -5,13 +5,13 @@
 #include "PFQuasigroup.h"
 
 namespace Quasigroup {
+class PFQuasigroupFactory final : public FunctionalQuasigroupFactory {
+ public:
+  PFQuasigroupFactory(const int k, const int n)
+      : FunctionalQuasigroupFactory(k, n) {}
 
-    class PFQuasigroupFactory : public FunctionalQuasigroupFactory {
-    public:
-        PFQuasigroupFactory(int k, int n) : FunctionalQuasigroupFactory(k, n) {}
-        PFQuasigroup* create() override;
-    };
+  PFQuasigroup *create() override;
+};
+}  // namespace Quasigroup
 
-}
-
-#endif //QUASIGROUP_PFQUASIGROUPFACTORY_H
+#endif  // QUASIGROUP_PFQUASIGROUPFACTORY_H

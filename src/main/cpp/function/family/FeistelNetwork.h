@@ -3,21 +3,19 @@
 
 #include "FunctionFamily.h"
 #include "generator/GeneratedObject.h"
-#include "utils/Helper.h"
 
 namespace Quasigroup {
+/*
+ * Generated Feistel Network
+ */
 
-    /*
-     * Generated Feistel Network
-     */
+class FeistelNetwork : public FunctionFamily, public GeneratedObject {
+ public:
+  explicit FeistelNetwork(int k, unsigned long long int seed = 0);
 
-    class FeistelNetwork : public FunctionFamily, public GeneratedObject {
-    public:
-        explicit FeistelNetwork(int k, unsigned long long int seed = 0);
-    protected:
-        void generate() override;
-    };
+ protected:
+  void generate() override;
+};
+}  // namespace Quasigroup
 
-}
-
-#endif //QUASIGROUP_FEISTELNETWORK_H
+#endif  // QUASIGROUP_FEISTELNETWORK_H

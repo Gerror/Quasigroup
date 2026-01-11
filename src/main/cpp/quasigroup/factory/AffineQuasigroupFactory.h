@@ -2,17 +2,16 @@
 #define QUASIGROUP_AFFINEQUASIGROUPFACTORY_H
 
 #include "LatinSquareQuasigroup.h"
-#include "AffineQuasigroup.h"
 #include "LatinSquareQuasigroupFactory.h"
 
 namespace Quasigroup {
+class AffineQuasigroupFactory final : public LatinSquareQuasigroupFactory {
+ public:
+  explicit AffineQuasigroupFactory(const int order)
+      : LatinSquareQuasigroupFactory(order) {}
 
-    class AffineQuasigroupFactory : public LatinSquareQuasigroupFactory {
-    public:
-        explicit AffineQuasigroupFactory(int order): LatinSquareQuasigroupFactory(order) {}
-        LatinSquareQuasigroup* create() override;
-    };
+  LatinSquareQuasigroup *create() override;
+};
+}  // namespace Quasigroup
 
-}
-
-#endif //QUASIGROUP_AFFINEQUASIGROUPFACTORY_H
+#endif  // QUASIGROUP_AFFINEQUASIGROUPFACTORY_H

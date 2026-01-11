@@ -1,9 +1,5 @@
 #include "JMQuasigroupFactory.h"
 
 namespace Quasigroup {
-
-    JMQuasigroup* JMQuasigroupFactory::create() {
-        return new JMQuasigroup(order);
-    }
-
-}
+JMQuasigroup *JMQuasigroupFactory::create() { return new JMQuasigroup(order); }
+}  // namespace Quasigroup

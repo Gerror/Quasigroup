@@ -5,20 +5,23 @@
 #include "function/family/FeistelNetwork.h"
 
 namespace Quasigroup {
+/*
+ * Quasigroups based on generalized Feistel networks
+ */
 
-    /*
-     * Quasigroups based on generalized Feistel networks
-     */
+class FNQuasigroup : public FunctionalQuasigroup {
+ private:
+  bool inverseOperations;
 
-    class FNQuasigroup : public FunctionalQuasigroup  {
-    private:
-        bool inverseOperations;
-    public:
-        int getProduct(int x, int y) const override;
-        explicit FNQuasigroup(const FeistelNetwork& feistelNetwork, bool inverseOperations = false);
-        FNQuasigroup(int k, bool inverseOperations = false, unsigned long long int seed = 0);
-    };
+ public:
+  int getProduct(int x, int y) const override;
 
-}
+  explicit FNQuasigroup(const FeistelNetwork &feistelNetwork,
+                        bool inverseOperations = false);
 
-#endif //QUASIGROUP_FNQUASIGROUP_H
+  FNQuasigroup(int k, bool inverseOperations = false,
+               unsigned long long int seed = 0);
+};
+}  // namespace Quasigroup
+
+#endif  // QUASIGROUP_FNQUASIGROUP_H

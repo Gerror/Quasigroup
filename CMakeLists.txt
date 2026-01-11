@@ -68,7 +68,7 @@ add_executable(
         src/main/cpp/quasigroup/factory/QuasigroupFactory.h
         src/main/cpp/quasigroup/group/AbelianGroup.cpp
         src/main/cpp/quasigroup/group/AbelianGroup.h
-        src/main/cpp/function/AbelianGroupAutomirphism.cpp
+        src/main/cpp/function/AbelianGroupAutomorphism.cpp
         src/main/cpp/function/AbelianGroupAutomorphism.h
         src/main/cpp/statistics/experiment/Experiment.h
         src/main/cpp/statistics/experiment/QuantitiveExperiment.cpp
