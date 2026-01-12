@@ -10,6 +10,12 @@ AbelianGroupAutomorphism::AbelianGroupAutomorphism(
   AbelianGroupAutomorphism::generate();
 }
 
+AbelianGroupAutomorphism::AbelianGroupAutomorphism(
+    AbelianGroup *group, const std::vector<int> &images) {
+  this->group = group;
+  this->images = images;
+}
+
 void AbelianGroupAutomorphism::generate() {
   std::vector<int> generatingSetImages(group->getCyclicGroupsOrders().size());
   int i = 0;

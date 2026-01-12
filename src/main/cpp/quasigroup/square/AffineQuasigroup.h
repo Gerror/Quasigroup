@@ -14,18 +14,24 @@ class AffineQuasigroup final : public LatinSquareQuasigroup,
   AbelianGroupAutomorphism *beta;
   int c;
 
+  void initializeLatinSquare() const;
+
  public:
   explicit AffineQuasigroup(int order, unsigned long long int seed = 0);
 
+  explicit AffineQuasigroup(AbelianGroup *abelian_group,
+                            AbelianGroupAutomorphism *alpha,
+                            AbelianGroupAutomorphism *beta, int c);
+
   ~AffineQuasigroup() override;
 
-  AbelianGroup *getAbelianGroup() const;
+  [[nodiscard]] AbelianGroup *getAbelianGroup() const;
 
-  AbelianGroupAutomorphism *getAlpha() const;
+  [[nodiscard]] AbelianGroupAutomorphism *getAlpha() const;
 
-  AbelianGroupAutomorphism *getBeta() const;
+  [[nodiscard]] AbelianGroupAutomorphism *getBeta() const;
 
-  int getC() const;
+  [[nodiscard]] int getC() const;
 
  protected:
   void generate() override;

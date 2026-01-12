@@ -13,9 +13,12 @@ class AbelianGroupAutomorphism final : public GeneratedObject {
   explicit AbelianGroupAutomorphism(AbelianGroup *group,
                                     unsigned long long int seed = 0);
 
-  int getImage(int x) const;
+  explicit AbelianGroupAutomorphism(AbelianGroup *group,
+                                    const std::vector<int> &images);
 
-  bool isCorrectHomomorphism() const;
+  [[nodiscard]] int getImage(int x) const;
+
+  [[nodiscard]] bool isCorrectHomomorphism() const;
 
   friend std::ostream &operator<<(std::ostream &out,
                                   const AbelianGroupAutomorphism &a);

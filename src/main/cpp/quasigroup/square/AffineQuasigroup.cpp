@@ -11,6 +11,27 @@ AffineQuasigroup::AffineQuasigroup(const int order,
   generate();
 }
 
+AffineQuasigroup::AffineQuasigroup(AbelianGroup *abelian_group,
+                                   AbelianGroupAutomorphism *alpha,
+                                   AbelianGroupAutomorphism *beta, const int c)
+    : LatinSquareQuasigroup(abelian_group->getOrder()) {
+  this->abelianGroup = abelian_group;
+  this->alpha = alpha;
+  this->beta = beta;
+  this->c = c;
+
+  initializeLatinSquare();
+}
+
+void AffineQuasigroup::initializeLatinSquare() const {
+  for (int x = 0; x < order; x++) {
+    for (int y = 0; y < order; y++) {
+      latinSquare[x][y] = abelianGroup->getProduct(
+          abelianGroup->getProduct(alpha->getImage(x), beta->getImage(y)), c);
+    }
+  }
+}
+
 void AffineQuasigroup::generate() {
   std::vector<int> orderFactorization;
   int tmpOrder = order;
@@ -50,12 +71,7 @@ void AffineQuasigroup::generate() {
   this->beta = new AbelianGroupAutomorphism(abelianGroup, getSeed() + 3);
   this->c = mersenne() % order;
 
-  for (int x = 0; x < order; x++) {
-    for (int y = 0; y < order; y++) {
-      latinSquare[x][y] = abelianGroup->getProduct(
-          abelianGroup->getProduct(alpha->getImage(x), beta->getImage(y)), c);
-    }
-  }
+  initializeLatinSquare();
 }
 
 AffineQuasigroup::~AffineQuasigroup() {
