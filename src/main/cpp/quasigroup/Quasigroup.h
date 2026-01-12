@@ -74,9 +74,9 @@ class Quasigroup {
 
   [[nodiscard]] bool isShapeless() const;
 
-  [[nodiscard]] bool shapelessIdentitiesIsSatisfied() const;
+  [[nodiscard]] bool oneOfShapelessIdentitiesIsSatisfied() const;
 
-  [[nodiscard]] bool shapelessIdentitiesIsSatisfied(int k) const;
+  [[nodiscard]] bool oneOfShapelessIdentitiesIsSatisfiedForK(int k) const;
 
   [[nodiscard]] bool isLoop() const;
 

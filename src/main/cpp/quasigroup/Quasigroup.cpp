@@ -108,12 +108,12 @@ bool Quasigroup::containsProperSubquasigroup() const {
 bool Quasigroup::isShapeless() const {
   return !isIdempotent() && !isCommutative() && !isAssociativeByLightTest() &&
          !hasLeftUnit() && !hasRightUnit() && !containsProperSubquasigroup() &&
-         !shapelessIdentitiesIsSatisfied();
+         !oneOfShapelessIdentitiesIsSatisfied();
 }
 
-bool Quasigroup::shapelessIdentitiesIsSatisfied() const {
+bool Quasigroup::oneOfShapelessIdentitiesIsSatisfied() const {
   for (int k = 1; k < 2 * order; k++) {
-    if (shapelessIdentitiesIsSatisfied(k)) {
+    if (oneOfShapelessIdentitiesIsSatisfiedForK(k)) {
       return true;
     }
   }
@@ -121,7 +121,7 @@ bool Quasigroup::shapelessIdentitiesIsSatisfied() const {
   return false;
 }
 
-bool Quasigroup::shapelessIdentitiesIsSatisfied(const int k) const {
+bool Quasigroup::oneOfShapelessIdentitiesIsSatisfiedForK(const int k) const {
   auto leftProductIsSatisfied = true;
   auto rightProductIsSatisfied = true;
 
