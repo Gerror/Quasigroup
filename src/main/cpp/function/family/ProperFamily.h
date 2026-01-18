@@ -20,6 +20,8 @@ class ProperFamily final : public FunctionFamily, public GeneratedObject {
 
   ProperFamily(int k, int n, unsigned long long int seed = 0);
 
+  ProperFamily(int k, int n, int** functionFamily);
+
  protected:
   void generate() override;
 };

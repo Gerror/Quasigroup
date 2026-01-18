@@ -16,6 +16,9 @@ class FunctionFamily {
 
   FunctionFamily(const FunctionFamily &ff);
 
+  FunctionFamily(int k, int n, int numberOfFunctions, int functionSize,
+                 int **functionFamily);
+
   FunctionFamily() = default;
 
   virtual ~FunctionFamily();

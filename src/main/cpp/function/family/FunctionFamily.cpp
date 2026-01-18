@@ -35,6 +35,15 @@ FunctionFamily::FunctionFamily(const int k, const int n,
   }
 }
 
+FunctionFamily::FunctionFamily(const int k, const int n,
+                               const int numberOfFunctions,
+                               const int functionSize, int **functionFamily)
+    : numberOfFunctions(numberOfFunctions),
+      functionSize(functionSize),
+      k(k),
+      n(n),
+      functionFamily(functionFamily) {}
+
 FunctionFamily::~FunctionFamily() {
   for (int i = 0; i < numberOfFunctions; i++) {
     delete[] (functionFamily[i]);

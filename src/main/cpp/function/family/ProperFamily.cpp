@@ -5,10 +5,14 @@
 namespace Quasigroup {
 ProperFamily::ProperFamily(const int k, const int n,
                            const unsigned long long int seed)
-    : FunctionFamily(k, n, n, pow(k, n)), GeneratedObject(seed) {
-  this->order = pow(k, n);
+    : FunctionFamily(k, n, n, pow(k, n)),
+      GeneratedObject(seed),
+      order(pow(k, n)) {
   ProperFamily::generate();
 }
+
+ProperFamily::ProperFamily(const int k, const int n, int** functionFamily)
+    : FunctionFamily(k, n, n, pow(k, n), functionFamily), order(pow(k, n)) {}
 
 void ProperFamily::generate() {
   const int stepCount = STEP_COUNT;

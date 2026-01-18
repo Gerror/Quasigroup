@@ -87,4 +87,6 @@ add_executable(
         src/main/cpp/quasigroup/group/AlternatingGroup.h
         src/main/cpp/transformer/KepkaTransformer.cpp
         src/main/cpp/transformer/KepkaTransformer.h
+        src/main/cpp/function/family/catalog/WellKnownProperFamilyCatalog.h
+        src/main/cpp/function/family/catalog/WellKnownProperFamilyCatalog.cpp
 )

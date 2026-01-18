@@ -1,0 +1,1 @@
+#include "WellKnownProperFamilyCatalog.h"
