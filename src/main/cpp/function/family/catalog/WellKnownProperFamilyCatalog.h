@@ -8,16 +8,16 @@
  *
  * Example of adding new static family:
  *
- * static Quasigroup::ProperFamily createFamily() {
+ * static ProperFamily createFamily() {
  *   static int row1[2] = {0, 0};
  *   static int row2[2] = {1, 1};
  *   static int* rows[2] = {row1, row2};
- *   return Quasigroup::ProperFamily(2, 2, rows);
+ *   return ProperFamily(2, 2, rows);
  * }
  *
  * public:
- *   static const Quasigroup::ProperFamily& family() {
- *     static const Quasigroup::ProperFamily instance = createFamily();
+ *   static const ProperFamily& family() {
+ *     static const ProperFamily instance = createFamily();
  *     return instance;
  *   }
  */
