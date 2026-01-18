@@ -6,6 +6,7 @@
 namespace Quasigroup {
 class KepkaTransformer {
  public:
+  KepkaTransformer() = delete;
   static Quasigroup *transform(const Quasigroup *original);
 };
 }  // namespace Quasigroup
