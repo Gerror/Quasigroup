@@ -21,9 +21,11 @@
  *     return instance;
  *   }
  */
+namespace Quasigroup {
 class WellKnownProperFamilyCatalog {
  public:
   WellKnownProperFamilyCatalog() = delete;
 };
+}  // namespace Quasigroup
 
 #endif  // QUASIGROUP_WELLKNOWNPROPERFAMILYCATALOG_H
