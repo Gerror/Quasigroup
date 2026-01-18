@@ -7,12 +7,15 @@ PFQuasigroup::PFQuasigroup(const ProperFamily &properFamily,
                            unsigned long long int)
     : FunctionalQuasigroup(properFamily) {
   piValue = new int[n * k * k];
-  generate();
+  PFQuasigroup::generate();
 }
 
 PFQuasigroup::PFQuasigroup(const int k, const int n,
                            const unsigned long long int seed)
     : PFQuasigroup(ProperFamily(k, n, seed), seed) {}
+
+PFQuasigroup::PFQuasigroup(const PFQuasigroup &q)
+    : FunctionalQuasigroup(q), piValue(q.piValue) {}
 
 PFQuasigroup::~PFQuasigroup() { delete[] piValue; }
 

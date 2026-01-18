@@ -16,7 +16,7 @@ class FunctionalQuasigroup : public Quasigroup {
   friend bool operator==(const FunctionalQuasigroup &q1,
                          const FunctionalQuasigroup &q2);
 
-  FunctionFamily &getFunctionFamily();
+  FunctionFamily getFunctionFamily() const;
 
  protected:
   int k;

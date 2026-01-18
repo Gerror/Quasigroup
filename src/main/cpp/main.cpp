@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "PFQuasigroupPermutationTransformer.h"
 #include "function/AbelianGroupAutomorphism.h"
 #include "generator/QuasigroupGenerator.h"
 #include "quasigroup/Quasigroup.h"

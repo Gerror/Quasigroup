@@ -14,7 +14,7 @@ bool operator==(const FunctionalQuasigroup &q1,
   return q1.functionFamily == q2.functionFamily;
 }
 
-FunctionFamily &FunctionalQuasigroup::getFunctionFamily() {
+FunctionFamily FunctionalQuasigroup::getFunctionFamily() const {
   return functionFamily;
 }
 }  // namespace Quasigroup

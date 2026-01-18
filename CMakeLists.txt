@@ -89,4 +89,8 @@ add_executable(
         src/main/cpp/transformer/KepkaTransformer.h
         src/main/cpp/function/family/catalog/WellKnownProperFamilyCatalog.h
         src/main/cpp/function/family/catalog/WellKnownProperFamilyCatalog.cpp
+        src/main/cpp/transformer/PFQuasigroupPermutationTransformer.cpp
+        src/main/cpp/transformer/PFQuasigroupPermutationTransformer.h
+        src/main/cpp/quasigroup/functional/PFPermutatedQuasigroup.cpp
+        src/main/cpp/quasigroup/functional/PFPermutatedQuasigroup.h
 )

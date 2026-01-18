@@ -183,21 +183,33 @@ bool isPentagonal() const;
 int findSubquasigroup(int border, unsigned int **a_sq) const;
 ```
 
-##### Улучшение свойств
+##### Преобразования
 
 Метод *transform* класса *KepkaTransformer* можно использовать для преобразования произвольной квазигруппы в полиномиально
 полную без собственных подквазигрупп.
 ```c++
 Quasigroup::JMQuasigroupFactory factory(16);
-Quasigroup::QuasigroupGenerator generator(&factory);
 
-auto q = generator.generate();
+auto q = factory.create();
 auto transformedQ = Quasigroup::KepkaTransformer::transform(q);
 
 // какие-то действия с квазигруппой transformedQ
 
 delete q;
 delete transformedQ;
+```
+
+Метод *transform* класса *PFQuasigroupPermutationTransformer* можно использовать для преобразования квазигруппы, созданной на основе
+правильного семейства функций в другую квазигруппу с применением перестановочных конструкций на индексы переменных и функций семейства
+```c++
+Quasigroup::PFQuasigroupFactory factory(2, 3);
+
+const auto q = factory.create();
+const auto transformedQ = Quasigroup::PFQuasigroupPermutationTransformer::transform(q);
+
+// какие-то действия с квазигруппой transformedQ
+
+delete q;
 ```
 
 ##### Эксперименты
