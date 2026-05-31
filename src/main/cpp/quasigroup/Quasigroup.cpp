@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <ctime>
 #include <memory>
 #include <ostream>
 #include <queue>
@@ -147,7 +146,21 @@ bool Quasigroup::oneOfShapelessIdentitiesIsSatisfiedForK(const int k) const {
   return true;
 }
 
-bool Quasigroup::isAssociative() const {
+bool Quasigroup::isAssociative(
+    AssociativityDeterminationStrategy associativityStrategy) const {
+  switch (associativityStrategy) {
+    case AssociativityDeterminationStrategy::LightTest:
+      return isAssociativeByLightTest();
+    case AssociativityDeterminationStrategy::CompleteSearch:
+      return isAssociativeByCompleteSearch();
+    case AssociativityDeterminationStrategy::Basis4Associativity:
+      return isAssociativeByBasis4Associativity();
+    default:
+      return isAssociativeByLightTest();
+  }
+}
+
+bool Quasigroup::isAssociativeByCompleteSearch() const {
   for (int i = 0; i < order; i++) {
     for (int j = 0; j < order; j++) {
       for (int k = 0; k < order; k++) {
@@ -217,6 +230,275 @@ bool Quasigroup::isAssociativeByLightTest() const {
   return true;
 }
 
+bool Quasigroup::isAssociativeByBasis4Associativity() const {
+  const std::unordered_set<int> S = findBasis();
+
+  if (S.size() > 3 * std::sqrt(order)) return false;
+
+  std::unordered_set<int> S2;
+  for (const int a : S)
+    for (const int b : S) S2.insert(getProduct(a, b));
+
+  if (S2.size() != order) return false;
+
+  return check4Associativity(S);
+}
+
+bool Quasigroup::check4Associativity(const std::unordered_set<int> &S) const {
+  const std::vector Sv(S.begin(), S.end());
+  const size_t m = Sv.size();
+
+  for (size_t i = 0; i < m; i++) {
+    const int a = Sv[i];
+    for (size_t j = 0; j < m; j++) {
+      const int b = Sv[j];
+      const int ab = getProduct(a, b);
+
+      for (size_t k = 0; k < m; k++) {
+        const int c = Sv[k];
+        const int bc = getProduct(b, c);
+        const int abc = getProduct(ab, c);
+
+        for (size_t l = 0; l < m; l++) {
+          const int d = Sv[l];
+          const int cd = getProduct(c, d);
+          const int bcd = getProduct(bc, d);
+
+          const int v1 = getProduct(abc, d);
+          const int v2 = getProduct(ab, cd);
+
+          if (const int v4 = getProduct(a, bcd); v1 != v2 || v2 != v4)
+            return false;
+
+          const int v3 = getProduct(getProduct(a, bc), d);
+          if (v2 != v3) return false;
+
+          if (const int v5 = getProduct(a, getProduct(b, cd)); v3 != v5)
+            return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+std::unordered_set<int> Quasigroup::findBasis() const {
+  const double ell = std::sqrt(order / 2.0);
+
+  std::vector<int> elemToGlobal(order);
+  for (int i = 0; i < order; i++) {
+    elemToGlobal[i] = i;
+  }
+
+  auto operation = [this](const int x, const int y) {
+    return getProduct(x, y);
+  };
+
+  auto [A, B] = groupDecomposition(order, ell, elemToGlobal, operation);
+
+  std::unordered_set<int> S = A;
+  S.insert(B.begin(), B.end());
+  return S;
+}
+
+std::pair<std::unordered_set<int>, std::unordered_set<int>>
+Quasigroup::groupDecomposition(
+    int suborder, double ell, const std::vector<int> &elemToGlobal,
+    const std::function<int(int, int)> &operation) const {
+  double n = suborder;
+
+  if (ell > n) ell = n;
+  if (ell < 1.0) ell = 1.0;
+
+  bool isPrime = true;
+  for (int d = 2; d * d <= suborder; d++) {
+    if (suborder % d == 0) {
+      isPrime = false;
+      break;
+    }
+  }
+
+  if (isPrime) {
+    int g = 1;
+    int q = std::floor(n / ell);
+
+    auto pow = [&](const int base, int exp) {
+      int result = 0;
+      int b = base;
+      while (exp > 0) {
+        if (exp & 1) result = operation(result, b);
+        b = operation(b, b);
+        exp >>= 1;
+      }
+      return result;
+    };
+
+    std::unordered_set<int> A, B;
+
+    int current = 0;
+    for (int i = 0; i < q; i++) {
+      B.insert(elemToGlobal[current]);
+      current = operation(current, g);
+    }
+
+    int gq = pow(g, q);
+    int max_a = std::floor(n / q);
+    current = 0;
+    for (int a = 0; a <= max_a; a++) {
+      A.insert(elemToGlobal[current]);
+      current = operation(current, gq);
+    }
+
+    return {A, B};
+  }
+
+  std::unordered_set<int> HLocal = findLargeSubgroup(suborder, operation);
+  double hSize = HLocal.size();
+
+  std::vector Hv(HLocal.begin(), HLocal.end());
+  std::sort(Hv.begin(), Hv.end());
+
+  std::vector<int> HToGlobal(Hv.size());
+  std::unordered_map<int, int> globalToH;
+  for (size_t i = 0; i < Hv.size(); i++) {
+    HToGlobal[i] = elemToGlobal[Hv[i]];
+    globalToH[Hv[i]] = i;
+  }
+
+  auto operationH = [&](const int x, const int y) {
+    const int oldX = Hv[x];
+    const int oldY = Hv[y];
+    const int oldResult = operation(oldX, oldY);
+    return globalToH.at(oldResult);
+  };
+
+  if (hSize > n / ell) {
+    double ellPrime = ell * hSize / n;
+
+    auto [APrime, BPrime] = groupDecomposition(static_cast<int>(Hv.size()),
+                                               ellPrime, HToGlobal, operationH);
+
+    std::unordered_set<int> TLocal =
+        leftTransversal(suborder, HLocal, operation);
+
+    std::unordered_set<int> AGlobal, BGlobal;
+    for (int t : TLocal) {
+      int tGlobal = elemToGlobal[t];
+      for (int a : APrime) {
+        AGlobal.insert(getProduct(tGlobal, a));
+      }
+    }
+    for (int b : BPrime) {
+      BGlobal.insert(b);
+    }
+
+    return {AGlobal, BGlobal};
+  }
+
+  if (hSize >= n / (2 * ell)) {
+    std::unordered_set<int> T_local =
+        leftTransversal(suborder, HLocal, operation);
+
+    std::unordered_set<int> T_global, H_global;
+    for (int t : T_local) T_global.insert(elemToGlobal[t]);
+    for (int h : HLocal) H_global.insert(elemToGlobal[h]);
+
+    return {T_global, H_global};
+  }
+
+  auto [A_prime, B_prime] = groupDecomposition(static_cast<int>(Hv.size()), ell,
+                                               HToGlobal, operationH);
+
+  std::unordered_set<int> T_local =
+      rightTransversal(suborder, HLocal, operation);
+
+  std::unordered_set<int> A_global, B_global;
+  for (int a : A_prime) {
+    A_global.insert(a);
+  }
+  for (int b : B_prime) {
+    for (int t : T_local) {
+      int t_global = elemToGlobal[t];
+      B_global.insert(getProduct(b, t_global));
+    }
+  }
+
+  return {A_global, B_global};
+}
+
+std::unordered_set<int> Quasigroup::findLargeSubgroup(
+    const int suborder, const std::function<int(int, int)> &operation) const {
+  const int target = std::ceil(std::sqrt(suborder));
+
+  for (int g = 1; g < suborder; g++) {
+    int current = g;
+    int ord = 1;
+    while (current != 0) {
+      current = operation(current, g);
+      ord++;
+    }
+    if (ord >= target && ord < suborder) {
+      std::unordered_set<int> H;
+      current = 0;
+      for (int i = 0; i < ord; i++) {
+        H.insert(current);
+        current = operation(current, g);
+      }
+      return H;
+    }
+  }
+
+  std::vector inH(suborder, false);
+  std::vector<int> H_elements;
+  inH[0] = true;
+  H_elements.push_back(0);
+
+  for (int g = 1; g < suborder; g++) {
+    if (inH[g]) continue;
+    const size_t current_size = H_elements.size();
+    for (size_t i = 0; i < current_size; i++) {
+      int y = operation(H_elements[i], g);
+      if (!inH[y]) {
+        inH[y] = true;
+        H_elements.push_back(y);
+      }
+    }
+    if (H_elements.size() >= target) break;
+  }
+
+  if (H_elements.size() >= target && H_elements.size() < suborder) {
+    return std::unordered_set(H_elements.begin(), H_elements.end());
+  }
+
+  std::unordered_set<int> H;
+  for (int i = 0; i < suborder; i++) H.insert(i);
+  return H;
+}
+
+std::unordered_set<int> Quasigroup::leftTransversal(
+    const int suborder, const std::unordered_set<int> &H,
+    const std::function<int(int, int)> &operation) const {
+  std::vector used(suborder, false);
+  std::unordered_set<int> transversal;
+  const std::vector Hv(H.begin(), H.end());
+
+  for (int g = 0; g < suborder; g++) {
+    if (used[g]) continue;
+    transversal.insert(g);
+    for (const int h : Hv) {
+      used[operation(g, h)] = true;
+    }
+  }
+  return transversal;
+}
+
+std::unordered_set<int> Quasigroup::rightTransversal(
+    int suborder, const std::unordered_set<int> &H,
+    const std::function<int(int, int)> &operation) const {
+  return leftTransversal(
+      suborder, H, [&](const int x, const int y) { return operation(y, x); });
+}
+
 bool Quasigroup::isCommutative() const {
   for (int x = 0; x < order; x++) {
     for (int y = x + 1; y < order; y++) {
@@ -229,7 +511,8 @@ bool Quasigroup::isCommutative() const {
   return true;
 }
 
-bool Quasigroup::isAffine(const bool useLightTest) const {
+bool Quasigroup::isAffine(
+    const AssociativityDeterminationStrategy associativityStrategy) const {
   /*
    * latinSquare далее - матрица L, её i-я строка - s(i)
    *
@@ -278,8 +561,7 @@ bool Quasigroup::isAffine(const bool useLightTest) const {
    * (4) Проверяем ассоциативность
    * Если не ассоциативна, то квазигруппа не аффинна
    */
-  if ((useLightTest && !tempQuasigroup->isAssociativeByLightTest()) ||
-      (!useLightTest && !tempQuasigroup->isAssociative())) {
+  if (!tempQuasigroup->isAssociative(associativityStrategy)) {
     return false;
   }
 
