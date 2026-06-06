@@ -129,6 +129,14 @@ class Quasigroup {
 
   [[nodiscard]] bool isPentagonal() const;
 
+  [[nodiscard]] int associativeTripletsCount() const;
+
+  [[nodiscard]] int nonAssociativeTripletsCount() const;
+
+  [[nodiscard]] int commutativePairsCount() const;
+
+  [[nodiscard]] int nonCommutativePairsCount() const;
+
   int findSubquasigroup(int border, unsigned int **a_sq) const;
 
   std::unordered_set<int> getGenerationSystem() const;

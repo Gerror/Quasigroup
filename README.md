@@ -103,21 +103,28 @@ for (auto q : qSet) {
 ```c++
 /* 
  * Проверка аффинности
- * При передаче useLightTest = false будет использован оригинальный
- * алгоритм проверки аффинности. По умолчанию используется оптимизированный
- * вариант, использующий тест Лайта.
+ * Возможно изменение алгоритма проверки ассоциативности, влияющее на итоговую сложность алгоритма
+ * По умолчанию используется тест Лайта (n^2 logn) (см. другие варианты в isAssociative)
 */ 
-bool isAffine(bool useLightTest = true) const;
+bool isAffine(
+    AssociativityDeterminationStrategy strategy = AssociativityDeterminationStrategy::LightTest
+) const;
 
 // Проверка простоты
 bool isSimple() const;
 
-// Проверка ассоциативности
-// DEPRECATED
-bool isAssociative() const;
-
-// Проверка ассоциативности
-bool isAssociativeByLightTest() const;
+/*
+ * Проверка ассоциативности. В качестве входного параметра принимает алгоритм.
+ * По умолчанию ассоциативность проверяется тестом Лайта.
+ * Возможные алгоритмы:
+ * AssociativityDeterminationStrategy::LightTest -- тест Лайта (n^2 logn)
+ * AssociativityDeterminationStrategy::CompleteSearch -- полный перебор всех троек (n^3)
+ * AssociativityDeterminationStrategy::Basis4Associativity -- через проверку 4-ассоциативности на базисе (n^2)
+ * ! Последний на данный момент поддерживается только в терминах проверки аффинности
+ */
+bool isAssociative(
+    AssociativityDeterminationStrategy strategy = AssociativityDeterminationStrategy::LightTest
+) const;
 
 // Проверка коммутативности
 bool isCommutative() const;
@@ -190,6 +197,18 @@ bool isPentagonal() const;
  * и проверить, что метод вернул 0.
  */
 int findSubquasigroup(int border, unsigned int **a_sq) const;
+
+// Колличество ассоциативных троек
+int associativeTripletsCount() const;
+
+// Колличество неассоциативных троек
+int nonAssociativeTripletsCount() const;
+
+// Колличество коммутативных пар
+int commutativePairsCount() const;
+
+// Колличество некоммутативных пар
+int nonCommutativePairsCount() const;
 ```
 
 ##### Преобразования

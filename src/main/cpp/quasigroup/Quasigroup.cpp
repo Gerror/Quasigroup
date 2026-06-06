@@ -1064,6 +1064,43 @@ std::string Quasigroup::getRowsConcatenation() const {
   return result;
 }
 
+int Quasigroup::associativeTripletsCount() const {
+  int result = 0;
+  for (int x = 0; x < getOrder(); x++) {
+    for (int y = 0; y < getOrder(); y++) {
+      for (int z = 0; z < getOrder(); z++) {
+        const auto isAssociativeTriplet =
+            getProduct(getProduct(x, y), z) == getProduct(x, getProduct(y, z));
+
+        if (isAssociativeTriplet) {
+          result++;
+        }
+      }
+    }
+  }
+  return result;
+}
+
+int Quasigroup::nonAssociativeTripletsCount() const {
+  return getOrder() * getOrder() * getOrder() - associativeTripletsCount();
+}
+
+int Quasigroup::commutativePairsCount() const {
+  int result = 0;
+  for (int x = 0; x < getOrder(); x++) {
+    for (int y = 0; y < getOrder(); y++) {
+      if (getProduct(x, y) == getProduct(y, x)) {
+        result++;
+      }
+    }
+  }
+  return result;
+}
+
+int Quasigroup::nonCommutativePairsCount() const {
+  return getOrder() * getOrder() - commutativePairsCount();
+}
+
 bool operator==(const Quasigroup &left, const Quasigroup &right) {
   return left.getRowsConcatenation() == right.getRowsConcatenation();
 }
