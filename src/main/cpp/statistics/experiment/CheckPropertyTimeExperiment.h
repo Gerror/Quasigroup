@@ -4,14 +4,14 @@
 #include "Experiment.h"
 
 namespace Quasigroup {
-class CheckPropertyTimeExperiment : public Experiment {
+class CheckPropertyTimeExperiment final : public Experiment {
   const std::function<void(Quasigroup *)> &checkPropertyFunction;
 
  public:
   explicit CheckPropertyTimeExperiment(
       const std::function<void(Quasigroup *)> &checkPropertyFunction);
 
-  double iterate(QuasigroupGenerator *generator, int objectsCount) override;
+  double iterate(std::vector<Quasigroup *> quasigroups) override;
 };
 }  // namespace Quasigroup
 

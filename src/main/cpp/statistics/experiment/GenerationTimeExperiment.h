@@ -6,7 +6,8 @@
 namespace Quasigroup {
 class GenerationTimeExperiment final : public Experiment {
  public:
-  double iterate(QuasigroupGenerator *generator, int objectsCount) override;
+  double iterate(const QuasigroupGenerator *generator,
+                 int objectsCount) override;
 };
 }  // namespace Quasigroup
 

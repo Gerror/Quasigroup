@@ -14,7 +14,7 @@ class QuantitiveExperiment final : public Experiment {
   explicit QuantitiveExperiment(
       const std::function<bool(Quasigroup *)> &condition);
 
-  double iterate(QuasigroupGenerator *generator, int objectsCount) override;
+  double iterate(std::vector<Quasigroup *> quasigroups) override;
 };
 }  // namespace Quasigroup
 

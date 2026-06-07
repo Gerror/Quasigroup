@@ -6,9 +6,8 @@ QuantitiveExperiment::QuantitiveExperiment(
     const std::function<bool(Quasigroup *)> &condition)
     : condition(condition) {}
 
-double QuantitiveExperiment::iterate(QuasigroupGenerator *generator,
-                                     const int objectsCount) {
-  const auto quasigroups = generator->generateVector(objectsCount);
+double QuantitiveExperiment::iterate(
+    const std::vector<Quasigroup *> quasigroups) {
   int suitableInThisIteration = 0;
   for (const auto q : quasigroups) {
     suitableInThisIteration += condition(q);

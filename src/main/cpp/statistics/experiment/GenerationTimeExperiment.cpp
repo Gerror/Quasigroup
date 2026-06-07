@@ -3,7 +3,7 @@
 #include <chrono>
 
 namespace Quasigroup {
-double GenerationTimeExperiment::iterate(QuasigroupGenerator *generator,
+double GenerationTimeExperiment::iterate(const QuasigroupGenerator *generator,
                                          const int objectsCount) {
   double result = 0.0;
 

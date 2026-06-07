@@ -1,7 +1,6 @@
 #ifndef QUASIGROUP_EXPERIMENTSRUNNER_H
 #define QUASIGROUP_EXPERIMENTSRUNNER_H
 
-#include <generator/QuasigroupGenerator.h>
 #include <quasigroup/factory/QuasigroupFactory.h>
 
 #include "Experiment.h"
@@ -9,15 +8,12 @@
 
 namespace Quasigroup {
 class ExperimentsRunner {
-  QuasigroupFactory *factory;
-  QuasigroupGenerator *generator;
-
  public:
-  explicit ExperimentsRunner(QuasigroupFactory *factory);
+  ExperimentalReport *run(QuasigroupFactory *factory, int iterations,
+                          int objectsPerIteration,
+                          Experiment *experiment) const;
 
-  ~ExperimentsRunner();
-
-  ExperimentalReport *run(int iterations, int objectsPerIteration,
+  ExperimentalReport *run(const std::vector<Quasigroup *> &quasigroups,
                           Experiment *experiment) const;
 };
 }  // namespace Quasigroup

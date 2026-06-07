@@ -8,13 +8,11 @@ CheckPropertyTimeExperiment::CheckPropertyTimeExperiment(
     const std::function<void(Quasigroup *)> &checkPropertyFunction)
     : checkPropertyFunction(checkPropertyFunction) {}
 
-double CheckPropertyTimeExperiment::iterate(QuasigroupGenerator *generator,
-                                            const int objectsCount) {
+double CheckPropertyTimeExperiment::iterate(
+    const std::vector<Quasigroup *> quasigroups) {
   double result = 0.0;
 
-  for (int i = 0; i < objectsCount; i++) {
-    const auto q = generator->generate();
-
+  for (const auto q : quasigroups) {
     auto begin = std::chrono::steady_clock::now();
     checkPropertyFunction(q);
     auto end = std::chrono::steady_clock::now();
