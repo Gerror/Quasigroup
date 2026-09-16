@@ -10,6 +10,8 @@
 #include <unordered_set>
 
 #include "LatinSquareQuasigroup.h"
+#include "properties/CommutativeQuasigroupAssociativityByBasisResolver.h"
+#include "properties/SubquasigroupResolver.h"
 #include "utils/Helper.h"
 namespace Quasigroup {
 bool Quasigroup::isIdempotent() const {
@@ -58,52 +60,16 @@ bool Quasigroup::hasRightUnit() const {
   return false;
 }
 
-bool Quasigroup::hasUnit() const {
-  for (int e = 0; e < order; e++) {
-    auto count = 0;
-    for (int x = 0; x < order; x++) {
-      if (getProduct(e, x) != x || getProduct(x, e) != x) {
-        break;
-      }
-      count++;
-    }
+bool Quasigroup::isLoop() { return hasUnit(); }
 
-    if (count == order) {
-      return true;
-    }
-  }
+bool Quasigroup::isGroup() { return isLoop() && isAssociativeByLightTest(); }
 
-  return false;
-}
-
-bool Quasigroup::isLoop() const { return hasUnit(); }
-
-bool Quasigroup::isGroup() const {
-  return isLoop() && isAssociativeByLightTest();
-}
-
-bool Quasigroup::isAbelianGroup() const { return isGroup() && isCommutative(); }
+bool Quasigroup::isAbelianGroup() { return isGroup() && isCommutative(); }
 
 bool Quasigroup::containsProperSubquasigroup() const {
-  unsigned int *sqg;
-  sqg = nullptr;
-  constexpr auto properBorder = 1;
-
-  const int findSubgroupResult = findSubquasigroup(properBorder, &sqg);
-  if (sqg != nullptr) {
-    free(sqg);
-  }
-
-  return findSubgroupResult > 0;
+  return SubquasigroupResolver::containsProperSubquasigroup(this);
 }
 
-/*
- * A quasigroup (Q, ∗) of order N is said to be shapeless iff it is
- * non-idempotent, non-commutative, non-associative, it does not
- * have neither left nor right unit, it does not contain proper (non-trivial)
- * sub-quasigroups, and there is no k < 2N such that identities of the
- * kinds x * (x * ... * (x  * y)) = y, y = ((y * x) * ... * x) (k times)
- */
 bool Quasigroup::isShapeless() const {
   return !isIdempotent() && !isCommutative() && !isAssociativeByLightTest() &&
          !hasLeftUnit() && !hasRightUnit() && !containsProperSubquasigroup() &&
@@ -142,19 +108,18 @@ bool Quasigroup::oneOfShapelessIdentitiesIsSatisfiedForK(const int k) const {
       }
     }
   }
-
   return true;
 }
 
 bool Quasigroup::isAssociative(
-    AssociativityDeterminationStrategy associativityStrategy) const {
+    AssociativityDeterminationStrategy associativityStrategy) {
   switch (associativityStrategy) {
     case AssociativityDeterminationStrategy::LightTest:
       return isAssociativeByLightTest();
     case AssociativityDeterminationStrategy::CompleteSearch:
       return isAssociativeByCompleteSearch();
-    case AssociativityDeterminationStrategy::Basis4Associativity:
-      return isAssociativeByBasis4Associativity();
+    case AssociativityDeterminationStrategy::BasisAssociativity:
+      return isAssociativeByBasis();
     default:
       return isAssociativeByLightTest();
   }
@@ -230,363 +195,33 @@ bool Quasigroup::isAssociativeByLightTest() const {
   return true;
 }
 
-bool Quasigroup::isPrime(const int n) const {
-  if (n < 2) return false;
-  for (int d = 2; d * d <= n; d++) {
-    if (n % d == 0) return false;
+bool Quasigroup::hasUnit() {
+  if (unit != -1) return true;
+  if (order <= 0) return false;
+
+  int candidate = -1;
+
+  for (int x = 0; x < order; ++x) {
+    if (getProduct(0, x) == 0) {
+      candidate = x;
+      break;
+    }
   }
+
+  if (candidate == -1) return false;
+
+  for (int x = 0; x < order; ++x) {
+    if (getProduct(candidate, x) != x || getProduct(x, candidate) != x) {
+      return false;
+    }
+  }
+
+  unit = candidate;
   return true;
 }
 
-bool Quasigroup::isSubgroup(const std::unordered_set<int> &H,
-                            const std::function<int(int, int)> &op) const {
-  for (int a : H) {
-    for (int b : H) {
-      if (H.find(op(a, b)) == H.end()) return false;
-    }
-  }
-  return true;
-}
-
-bool Quasigroup::isAssociativeByBasis4Associativity() const {
-  auto maybeS = findBasis();
-  if (!maybeS.has_value()) return false;
-  const std::unordered_set<int> S = maybeS.value();
-
-  if (S.size() > 3 * std::sqrt(order)) return false;
-
-  std::unordered_set<int> S2;
-  for (int a : S)
-    for (int b : S) S2.insert(getProduct(a, b));
-  if (S2.size() != order) return false;
-
-  return check4Associativity(S);
-}
-
-bool Quasigroup::check4Associativity(const std::unordered_set<int> &S) const {
-  const std::vector Sv(S.begin(), S.end());
-  const size_t m = Sv.size();
-
-  for (size_t i = 0; i < m; i++) {
-    const int a = Sv[i];
-    for (size_t j = 0; j < m; j++) {
-      const int b = Sv[j];
-      const int ab = getProduct(a, b);
-
-      for (size_t k = 0; k < m; k++) {
-        const int c = Sv[k];
-        const int bc = getProduct(b, c);
-        const int abc = getProduct(ab, c);
-
-        for (size_t l = 0; l < m; l++) {
-          const int d = Sv[l];
-          const int cd = getProduct(c, d);
-          const int bcd = getProduct(bc, d);
-
-          const int v1 = getProduct(abc, d);
-          const int v2 = getProduct(ab, cd);
-          const int v3 = getProduct(getProduct(a, bc), d);
-          const int v4 = getProduct(a, bcd);
-
-          if (const int v5 = getProduct(a, getProduct(b, cd));
-              v1 != v2 || v2 != v3 || v3 != v4 || v4 != v5)
-            return false;
-        }
-      }
-    }
-  }
-  return true;
-}
-
-std::unordered_set<int> Quasigroup::findLargeSubgroup(
-    const int suborder, const std::function<int(int, int)> &operation) const {
-  const int target = static_cast<int>(std::ceil(std::sqrt(suborder)));
-
-  std::vector order(suborder, 0);
-  order[0] = 1;
-  for (int g = 1; g < suborder; g++) {
-    int ord = 1;
-    int current = g;
-    while (current != 0) {
-      current = operation(current, g);
-      ord++;
-      if (ord > suborder) {
-        ord = -1;
-        break;
-      }
-    }
-    order[g] = ord;
-  }
-
-  for (int g = 1; g < suborder; g++) {
-    if (order[g] >= target) {
-      std::unordered_set<int> H;
-      int current = 0;
-      for (int i = 0; i < order[g]; i++) {
-        H.insert(current);
-        current = operation(current, g);
-      }
-      if (H.size() < static_cast<size_t>(suborder)) {
-        return H;
-      }
-    }
-  }
-
-  std::unordered_set H = {0};
-
-  while (H.size() < static_cast<size_t>(target)) {
-    int g = -1;
-    for (int x = 1; x < suborder; x++) {
-      if (H.find(x) == H.end()) {
-        g = x;
-        break;
-      }
-    }
-    if (g == -1) break;
-
-    int t = 1;
-    int cur = g;
-    while (H.find(cur) == H.end()) {
-      cur = operation(cur, g);
-      t++;
-      if (t > suborder) break;
-    }
-
-    std::vector<int> powers(t);
-    powers[0] = 0;
-    int current = 0;
-    for (int k = 1; k < t; k++) {
-      current = operation(current, g);
-      powers[k] = current;
-    }
-
-    std::unordered_set<int> newH;
-    for (int h : H) {
-      for (int k = 0; k < t; k++) {
-        newH.insert(operation(h, powers[k]));
-      }
-    }
-
-    H = newH;
-  }
-
-  return H;
-}
-
-std::unordered_set<int> Quasigroup::leftTransversal(
-    const int suborder, const std::unordered_set<int> &H) const {
-  std::vector used(suborder, false);
-  std::unordered_set<int> transversal;
-  const std::vector Hv(H.begin(), H.end());
-
-  for (int g = 0; g < suborder; g++) {
-    if (used[g]) continue;
-    transversal.insert(g);
-    for (int h : Hv) {
-      used[getProduct(g, h)] = true;
-    }
-  }
-
-  if (transversal.size() * H.size() != static_cast<size_t>(suborder)) {
-    return {};
-  }
-  return transversal;
-}
-
-std::unordered_set<int> Quasigroup::rightTransversal(
-    const int suborder, const std::unordered_set<int> &H) const {
-  auto revOp = [&](const int x, const int y) { return getProduct(y, x); };
-  std::vector used(suborder, false);
-  std::unordered_set<int> transversal;
-  const std::vector Hv(H.begin(), H.end());
-
-  for (int g = 0; g < suborder; g++) {
-    if (used[g]) continue;
-    transversal.insert(g);
-    for (const int h : Hv) {
-      used[revOp(g, h)] = true;
-    }
-  }
-
-  if (transversal.size() * H.size() != static_cast<size_t>(suborder)) {
-    return {};
-  }
-  return transversal;
-}
-
-std::pair<std::unordered_set<int>, std::unordered_set<int>>
-Quasigroup::groupDecomposition(int n, double ell,
-                               const std::function<int(int, int)> &op) const {
-  if (n == 1) {
-    return {{0}, {0}};
-  }
-
-  if (isPrime(n)) {
-    int g = -1;
-    for (int i = 1; i < n; i++) {
-      if (i != 0) {
-        g = i;
-        break;
-      }
-    }
-    if (g == -1) return {{0}, {0}};
-
-    int q = static_cast<int>(std::floor(n / ell));
-
-    std::unordered_set<int> B;
-    int current = 0;
-    for (int i = 0; i < q; i++) {
-      B.insert(current);
-      current = op(current, g);
-    }
-
-    int step = 0;
-    for (int i = 0; i < q; i++) {
-      step = op(step, g);
-    }
-
-    std::unordered_set<int> A;
-    current = 0;
-    int maxA = static_cast<int>(std::floor(n / q));
-    for (int a = 0; a <= maxA; a++) {
-      A.insert(current);
-      current = op(current, step);
-    }
-
-    return {A, B};
-  }
-
-  std::unordered_set<int> H = findLargeSubgroup(n, op);
-
-  if (H.size() == static_cast<size_t>(n)) {
-    return {{}, {}};
-  }
-
-  if (!isSubgroup(H, op)) {
-    return {{}, {}};
-  }
-
-  double hSize = H.size();
-  double nVal = n;
-
-  std::unordered_set<int> T;
-  {
-    std::vector used(n, false);
-    std::vector Hv(H.begin(), H.end());
-    for (int g = 0; g < n; g++) {
-      if (used[g]) continue;
-      T.insert(g);
-      for (int h : Hv) {
-        used[op(g, h)] = true;
-      }
-    }
-    if (T.size() * H.size() != static_cast<size_t>(n)) {
-      return {{}, {}};
-    }
-  }
-
-  if (hSize > nVal / ell) {
-    double ellPrime = ell * hSize / nVal;
-
-    std::vector Hlist(H.begin(), H.end());
-    std::sort(Hlist.begin(), Hlist.end());
-    std::unordered_map<int, int> elemToIdx;
-    for (size_t i = 0; i < Hlist.size(); i++) {
-      elemToIdx[Hlist[i]] = i;
-    }
-
-    auto opH = [&](int x, int y) -> int {
-      int oldX = Hlist[x];
-      int oldY = Hlist[y];
-      int oldResult = op(oldX, oldY);
-      return elemToIdx.at(oldResult);
-    };
-
-    auto [APrime, BPrime] =
-        groupDecomposition(static_cast<int>(H.size()), ellPrime, opH);
-
-    if (APrime.empty() && BPrime.empty()) {
-      return {{}, {}};
-    }
-
-    std::unordered_set<int> A, B;
-    for (int t : T) {
-      for (int aIdx : APrime) {
-        A.insert(op(t, Hlist[aIdx]));
-      }
-    }
-    for (int bIdx : BPrime) {
-      B.insert(Hlist[bIdx]);
-    }
-
-    return {A, B};
-  }
-
-  if (hSize >= nVal / (2 * ell)) {
-    return {T, H};
-  }
-
-  std::unordered_set<int> Tright;
-  {
-    auto revOp = [&](int x, int y) { return op(y, x); };
-    std::vector used(n, false);
-    std::vector Hv(H.begin(), H.end());
-    for (int g = 0; g < n; g++) {
-      if (used[g]) continue;
-      Tright.insert(g);
-      for (int h : Hv) {
-        used[revOp(g, h)] = true;
-      }
-    }
-    if (Tright.size() * H.size() != static_cast<size_t>(n)) {
-      return {{}, {}};
-    }
-  }
-
-  std::vector Hlist(H.begin(), H.end());
-  std::sort(Hlist.begin(), Hlist.end());
-  std::unordered_map<int, int> elemToIdx;
-  for (size_t i = 0; i < Hlist.size(); i++) {
-    elemToIdx[Hlist[i]] = i;
-  }
-
-  auto opH = [&](const int x, const int y) -> int {
-    const int oldX = Hlist[x];
-    const int oldY = Hlist[y];
-    const int oldResult = op(oldX, oldY);
-    return elemToIdx.at(oldResult);
-  };
-
-  auto [APrime, BPrime] =
-      groupDecomposition(static_cast<int>(H.size()), ell, opH);
-
-  if (APrime.empty() && BPrime.empty()) {
-    return {{}, {}};
-  }
-
-  std::unordered_set<int> A, B;
-  for (int aIdx : APrime) {
-    A.insert(Hlist[aIdx]);
-  }
-  for (int bIdx : BPrime) {
-    for (int t : Tright) {
-      B.insert(op(Hlist[bIdx], t));
-    }
-  }
-
-  return {A, B};
-}
-
-std::optional<std::unordered_set<int>> Quasigroup::findBasis() const {
-  const double ell = std::sqrt(order / 2.0);
-  auto op = [this](const int x, const int y) { return getProduct(x, y); };
-  auto [A, B] = groupDecomposition(order, ell, op);
-  if (A.empty() && B.empty()) {
-    return std::nullopt;
-  }
-  std::unordered_set<int> S = A;
-  S.insert(B.begin(), B.end());
-  return S;
+bool Quasigroup::isAssociativeByBasis() {
+  return CommutativeQuasigroupAssociativityByBasisResolver::isAssociative(this);
 }
 
 bool Quasigroup::isCommutative() const {
@@ -825,145 +460,7 @@ std::ostream &operator<<(std::ostream &out, const Quasigroup &q) {
   return out;
 }
 
-int Quasigroup::findSubquasigroup(const int border, unsigned int **a_sq) const {
-  unsigned int *a_sqi;
-  int last;
-
-  *a_sq = nullptr;
-  unsigned int *a_q = nullptr;
-  int retval = -1;
-
-  const auto seed =
-      static_cast<unsigned int *>(malloc(border * sizeof(unsigned int)));
-  if (seed == nullptr) {
-    printf("Failed to allocate memory\n");
-    return -1;
-  }
-
-  do {
-    *a_sq = static_cast<unsigned int *>(malloc(sizeof(unsigned int) * order));
-    a_sqi = static_cast<unsigned int *>(malloc(sizeof(unsigned int) * order));
-    if (a_sqi == nullptr) {
-      printf("Failed to allocate memory\n");
-      break;
-    }
-    a_q = static_cast<unsigned int *>(malloc(sizeof(unsigned int) * order));
-    if (a_q == nullptr) {
-      printf("Failed to allocate memory\n");
-      break;
-    }
-
-    for (int i = 0; i < border; i++) {
-      seed[i] = static_cast<unsigned int>(i);
-    }
-
-    do {
-      retval = checkStep(seed, border, *a_sq, a_sqi, a_q);
-      if (retval != 0) {
-        break;
-      }
-      last = nextStep(seed, border);
-      retval = checkStep(seed, border, *a_sq, a_sqi, a_q);
-    } while (last == 0);
-  } while (false);
-
-  free(seed);
-  if (*a_sq != nullptr && retval <= 0) {
-    free(*a_sq);
-    *a_sq = nullptr;
-  }
-  if (a_sqi != nullptr) {
-    free(a_sqi);
-  }
-  if (a_q != nullptr) {
-    free(a_q);
-  }
-
-  return retval;
-}
-
-int Quasigroup::nextStep(unsigned int *step, const int border) const {
-  int i;
-
-  for (i = border - 1; i >= 0; i--) {
-    if (step[i] < (order - 1) - (border - 1 - i)) {
-      break;
-    }
-  }
-
-  step[i]++;
-  int cur = step[i] + 1;
-  for (i = i + 1; i < border; i++) {
-    step[i] = cur;
-    cur++;
-  }
-
-  if (step[0] == order - border) {
-    return 1;
-  }
-  return 0;
-}
-
-int Quasigroup::checkStep(const unsigned int *step, const int border,
-                          unsigned int *a_sq, unsigned int *a_sqi,
-                          unsigned int *a_q) const {
-  int i;
-
-  int sqLen = border;
-  int first = 0;
-  int last = border;
-  int retval = 0;
-
-  // initialization
-  memset(a_sq, 0, sizeof(unsigned int) * order);
-  memset(a_sqi, 0, sizeof(unsigned int) * order);
-  memset(a_q, 0, sizeof(unsigned int) * order);
-  for (i = 0; i < border; i++) {
-    a_sq[i] = step[i];
-    a_sqi[step[i]] = 3;
-    a_q[i] = step[i];
-  }
-
-  // build the closure of the seed
-  while (last - first > 0) {
-    const unsigned int cur = a_q[first];
-    first++;
-
-    unsigned int tmp = getProduct(cur, cur);
-    if (a_sqi[tmp] == 0) {
-      a_q[last] = tmp;
-      a_sqi[tmp] = 2;
-      last++;
-    }
-
-    for (i = 0; i < sqLen; i++) {
-      tmp = getProduct(a_sq[i], cur);
-      if (a_sqi[tmp] == 0) {
-        a_q[last] = tmp;
-        a_sqi[tmp] = 2;
-        last++;
-      }
-      tmp = getProduct(cur, a_sq[i]);
-      if (a_sqi[tmp] == 0) {
-        a_q[last] = tmp;
-        a_sqi[tmp] = 2;
-        last++;
-      }
-    }
-
-    if ((a_sqi[cur] % 2) == 0) {
-      a_sq[sqLen] = cur;
-      a_sqi[cur] = 1;
-      sqLen++;
-    }
-  }
-  if (last - first + sqLen <= order / 2) {
-    // a subquasigroup is found
-    retval = sqLen;
-  }
-
-  return retval;
-}
+int Quasigroup::getUnit() { return hasUnit() ? unit : -1; }
 
 std::unordered_set<int> Quasigroup::getGenerationSystem() const {
   auto *generationSystem = new std::unordered_set<int>();

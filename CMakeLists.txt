@@ -93,4 +93,13 @@ add_executable(
         src/main/cpp/transformer/PFQuasigroupPermutationTransformer.h
         src/main/cpp/quasigroup/functional/PFPermutatedQuasigroup.cpp
         src/main/cpp/quasigroup/functional/PFPermutatedQuasigroup.h
+        src/main/cpp/quasigroup/factory/AbelianGroupFactory.h
+        src/main/cpp/quasigroup/factory/AbelianGroupFactory.cpp
+        src/main/cpp/properties/CommutativeQuasigroupAssociativityByBasisResolver.cpp
+        src/main/cpp/properties/CommutativeQuasigroupAssociativityByBasisResolver.h
+        src/main/cpp/properties/SubquasigroupResolver.cpp
+        src/main/cpp/properties/SubquasigroupResolver.h
 )
+
+find_package(Threads REQUIRED)
+target_link_libraries(Quasigroup ${CMAKE_THREAD_LIBS_INIT})

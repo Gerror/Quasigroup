@@ -1,5 +1,7 @@
 #include "Helper.h"
 
+#include <numeric>
+
 namespace Quasigroup {
 std::vector<int> calculateReversePermutation(
     const std::vector<int> &permutation) {
@@ -229,4 +231,19 @@ std::vector<int> transmutationFromCycle(const std::vector<int> &cycle,
 
   return result;
 }
+
+bool isPrime(const int n) {
+  if (n < 2) return false;
+  if (n == 2 || n == 3) return true;
+  if (n % 2 == 0 || n % 3 == 0) return false;
+
+  for (int d = 5; d <= n / d; d += 6) {
+    if (n % d == 0 || n % (d + 2) == 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 }  // namespace Quasigroup

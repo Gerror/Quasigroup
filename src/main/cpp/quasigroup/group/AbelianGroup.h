@@ -3,23 +3,30 @@
 
 #include <quasigroup/Quasigroup.h>
 
+#include "GeneratedObject.h"
+
 namespace Quasigroup {
-class AbelianGroup final : public Quasigroup {
+class AbelianGroup final : public Quasigroup, public GeneratedObject {
   std::vector<int> cyclicGroupsOrders;
 
  public:
+  explicit AbelianGroup(int order, unsigned long long int seed = 0);
+
   // if abelian group = Z_n1 x Z_n2 x ... x Z_nm
   // then cyclicGroupsOrders is array of (n1, n2, ..., nm)
   explicit AbelianGroup(const std::vector<int> &cyclicGroupsOrders);
 
-  std::vector<int> getCyclicGroupsOrders() const;
+  [[nodiscard]] std::vector<int> getCyclicGroupsOrders() const;
 
-  std::vector<int> convertElementToGroupComponents(int element) const;
+  [[nodiscard]] std::vector<int> convertElementToGroupComponents(int element) const;
 
-  int convertGroupComponentsToElement(
+  [[nodiscard]] int convertGroupComponentsToElement(
       const std::vector<int> &groupComponents) const;
 
-  int getProduct(int x, int y) const override;
+  [[nodiscard]] int getProduct(int x, int y) const override;
+
+ protected:
+  void generate() override;
 };
 }  // namespace Quasigroup
 

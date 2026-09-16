@@ -1,8 +1,16 @@
 #include "AbelianGroup.h"
 
+#include <queue>
+
 #include "utils/Helper.h"
 
 namespace Quasigroup {
+AbelianGroup::AbelianGroup(const int order, const unsigned long long int seed)
+    : GeneratedObject(seed) {
+  this->order = order;
+  generate();
+}
+
 AbelianGroup::AbelianGroup(const std::vector<int> &cyclicGroupsOrders) {
   this->order = 1;
   for (const auto cyclicGroupOrder : cyclicGroupsOrders) {
@@ -52,5 +60,42 @@ int AbelianGroup::getProduct(const int x, const int y) const {
 
 std::vector<int> AbelianGroup::getCyclicGroupsOrders() const {
   return cyclicGroupsOrders;
+}
+
+void AbelianGroup::generate() {
+  std::vector<int> orderFactorization;
+  int tmpOrder = order;
+  while (tmpOrder != 1) {
+    for (int i = 2; i <= tmpOrder; i++) {
+      if (tmpOrder % i == 0) {
+        orderFactorization.push_back(i);
+        tmpOrder /= i;
+        break;
+      }
+    }
+  }
+
+  const auto permutation =
+      generateRandomPermutation(orderFactorization.size(), getSeed() + 1);
+  std::queue<int> newFactorizationOrder;
+  for (int i = 0; i < orderFactorization.size(); i++) {
+    newFactorizationOrder.push(orderFactorization[permutation[i]]);
+  }
+
+  std::vector<int> tmpCyclicGroupsOrders;
+  int componentOrder = 1;
+  while (!newFactorizationOrder.empty()) {
+    const auto multiplier = newFactorizationOrder.front();
+    newFactorizationOrder.pop();
+    componentOrder *= multiplier;
+
+    if (const auto nextStep = mersenne() % 2;
+        newFactorizationOrder.empty() || nextStep == 1) {
+      tmpCyclicGroupsOrders.push_back(componentOrder);
+      componentOrder = 1;
+    }
+  }
+
+  this->cyclicGroupsOrders = tmpCyclicGroupsOrders;
 }
 }  // namespace Quasigroup

@@ -1,9 +1,5 @@
 #include "AffineQuasigroup.h"
 
-#include <queue>
-
-#include "utils/Helper.h"
-
 namespace Quasigroup {
 AffineQuasigroup::AffineQuasigroup(const int order,
                                    const unsigned long long int seed)
@@ -33,40 +29,7 @@ void AffineQuasigroup::initializeLatinSquare() const {
 }
 
 void AffineQuasigroup::generate() {
-  std::vector<int> orderFactorization;
-  int tmpOrder = order;
-  while (tmpOrder != 1) {
-    for (int i = 2; i <= tmpOrder; i++) {
-      if (tmpOrder % i == 0) {
-        orderFactorization.push_back(i);
-        tmpOrder /= i;
-        break;
-      }
-    }
-  }
-
-  const auto permutation =
-      generateRandomPermutation(orderFactorization.size(), getSeed() + 1);
-  std::queue<int> newFactorizationOrder;
-  for (int i = 0; i < orderFactorization.size(); i++) {
-    newFactorizationOrder.push(orderFactorization[permutation[i]]);
-  }
-
-  std::vector<int> cyclicGroupsOrders;
-  int componentOrder = 1;
-  while (!newFactorizationOrder.empty()) {
-    const auto multiplier = newFactorizationOrder.front();
-    newFactorizationOrder.pop();
-    componentOrder *= multiplier;
-
-    if (const auto nextStep = mersenne() % 2;
-        newFactorizationOrder.empty() || nextStep == 1) {
-      cyclicGroupsOrders.push_back(componentOrder);
-      componentOrder = 1;
-    }
-  }
-
-  this->abelianGroup = new AbelianGroup(cyclicGroupsOrders);
+  this->abelianGroup = new AbelianGroup(order);
   this->alpha = new AbelianGroupAutomorphism(abelianGroup, getSeed() + 2);
   this->beta = new AbelianGroupAutomorphism(abelianGroup, getSeed() + 3);
   this->c = mersenne() % order;

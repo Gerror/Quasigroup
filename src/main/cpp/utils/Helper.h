@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <cmath>
 #include <ctime>
-#include <random>
 #include <sstream>
 #include <tuple>
 #include <vector>
@@ -64,6 +63,8 @@ std::string permutationToString(const int *permutation, int n);
 
 std::vector<int> transmutationFromCycle(const std::vector<int> &cycle,
                                         int size);
+
+bool isPrime(int n);
 }  // namespace Quasigroup
 
 #endif  // QUASIGROUP_HELPER_H

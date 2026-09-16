@@ -191,4 +191,16 @@ void ProperFamily::generate() {
 }
 
 int ProperFamily::getOrder() const { return order; }
+
+void ProperFamily::normalize() const {
+  for (int j = 0; j < n; j++) {
+    if (functionFamily[j][0] != 0) {
+      const auto shift = functionFamily[j][0];
+      for (int i = 0; i < order; i++) {
+        functionFamily[j][i] = mod(functionFamily[j][i] - shift, k);
+      }
+    }
+  }
+}
+
 }  // namespace Quasigroup

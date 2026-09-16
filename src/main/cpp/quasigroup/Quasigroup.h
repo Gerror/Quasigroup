@@ -1,12 +1,9 @@
 #ifndef QUASIGROUP_QUASIGROUP_H
 #define QUASIGROUP_QUASIGROUP_H
 
-#include <functional>
 #include <memory>
-#include <optional>
 #include <random>
 #include <unordered_set>
-#include <vector>
 
 namespace Quasigroup {
 
@@ -18,32 +15,17 @@ struct UnorderedPair {
 enum class AssociativityDeterminationStrategy {
   CompleteSearch,
   LightTest,
-  Basis4Associativity
+  BasisAssociativity  // This method works only for quasigroups known to be
+                      // commutative.
 };
 
 class Quasigroup {
-  int nextStep(unsigned int *step, int border) const;
-  int checkStep(const unsigned int *step, int border, unsigned int *a_sq,
-                unsigned int *a_sqi, unsigned int *a_q) const;
+  int unit = -1;
+
   [[nodiscard]] std::string getRowsConcatenation() const;
   [[nodiscard]] bool isAssociativeByLightTest() const;
   [[nodiscard]] bool isAssociativeByCompleteSearch() const;
-  [[nodiscard]] bool isAssociativeByBasis4Associativity() const;
-  [[nodiscard]] bool check4Associativity(
-      const std::unordered_set<int> &S) const;
-  [[nodiscard]] std::optional<std::unordered_set<int>> findBasis() const;
-  [[nodiscard]] std::unordered_set<int> leftTransversal(
-      int suborder, const std::unordered_set<int> &H) const;
-  [[nodiscard]] std::unordered_set<int> rightTransversal(
-      int suborder, const std::unordered_set<int> &H) const;
-  [[nodiscard]] std::unordered_set<int> findLargeSubgroup(
-      int suborder, const std::function<int(int, int)> &operation) const;
-  [[nodiscard]] std::pair<std::unordered_set<int>, std::unordered_set<int>>
-  groupDecomposition(int n, double ell,
-                     const std::function<int(int, int)> &op) const;
-  [[nodiscard]] bool isPrime(int n) const;
-  [[nodiscard]] bool isSubgroup(const std::unordered_set<int> &H,
-                                const std::function<int(int, int)> &op) const;
+  [[nodiscard]] bool isAssociativeByBasis();
 
  public:
   class QuasigroupHash {
@@ -72,18 +54,18 @@ class Quasigroup {
   [[nodiscard]] bool isPolynomiallyComplete() const;
   [[nodiscard]] bool isAssociative(
       AssociativityDeterminationStrategy strategy =
-          AssociativityDeterminationStrategy::LightTest) const;
+          AssociativityDeterminationStrategy::LightTest);
   [[nodiscard]] bool isCommutative() const;
   [[nodiscard]] bool isIdempotent() const;
   [[nodiscard]] bool hasLeftUnit() const;
   [[nodiscard]] bool hasRightUnit() const;
-  [[nodiscard]] bool hasUnit() const;
+  [[nodiscard]] bool hasUnit();
   [[nodiscard]] bool isShapeless() const;
   [[nodiscard]] bool oneOfShapelessIdentitiesIsSatisfied() const;
   [[nodiscard]] bool oneOfShapelessIdentitiesIsSatisfiedForK(int k) const;
-  [[nodiscard]] bool isLoop() const;
-  [[nodiscard]] bool isGroup() const;
-  [[nodiscard]] bool isAbelianGroup() const;
+  [[nodiscard]] bool isLoop();
+  [[nodiscard]] bool isGroup();
+  [[nodiscard]] bool isAbelianGroup();
   [[nodiscard]] bool containsProperSubquasigroup() const;
   [[nodiscard]] bool isQuadratical() const;
   [[nodiscard]] bool isHexagonal() const;
@@ -96,8 +78,8 @@ class Quasigroup {
   [[nodiscard]] int nonAssociativeTripletsCount() const;
   [[nodiscard]] int commutativePairsCount() const;
   [[nodiscard]] int nonCommutativePairsCount() const;
-  int findSubquasigroup(int border, unsigned int **a_sq) const;
-  std::unordered_set<int> getGenerationSystem() const;
+  [[nodiscard]] std::unordered_set<int> getGenerationSystem() const;
+  int getUnit();
 
   friend std::ostream &operator<<(std::ostream &out, const Quasigroup &q);
   friend bool operator==(const Quasigroup &left, const Quasigroup &right);

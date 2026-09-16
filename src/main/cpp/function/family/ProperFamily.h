@@ -16,7 +16,8 @@ class ProperFamily final : public FunctionFamily, public GeneratedObject {
   int order;
 
  public:
-  int getOrder() const;
+  [[nodiscard]] int getOrder() const;
+  void normalize() const;
 
   ProperFamily(int k, int n, unsigned long long int seed = 0);
 
