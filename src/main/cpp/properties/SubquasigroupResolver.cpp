@@ -4,27 +4,35 @@
 
 namespace Quasigroup {
 
-bool SubquasigroupResolver::containsProperSubquasigroup(const Quasigroup *q) {
+bool SubquasigroupResolver::containsProperSubquasigroup(const Quasigroup *q,
+                                                        const int border) {
   unsigned int *sqg;
   sqg = nullptr;
-  constexpr auto properBorder = 1;
 
-  const int findSubgroupResult = findSubquasigroup(q, properBorder, &sqg);
+  const int findSubgroupResult = findSubquasigroup(q, border, &sqg);
   if (sqg != nullptr) {
     free(sqg);
   }
 
   return findSubgroupResult > 0;
 }
+bool SubquasigroupResolver::containsNonTrivialProperSubquasigroup(
+    const Quasigroup *q) {
+  return containsProperSubquasigroup(q, 2);
+}
+
+bool SubquasigroupResolver::containsAnyProperSubquasigroup(
+    const Quasigroup *q) {
+  return containsProperSubquasigroup(q, 1);
+}
 
 int SubquasigroupResolver::findSubquasigroup(const Quasigroup *q,
                                              const int border,
                                              unsigned int **a_sq) {
-  unsigned int *a_sqi;
   int last;
 
   *a_sq = nullptr;
-  unsigned int *a_q = nullptr;
+  unsigned int *a_sqi = nullptr;
   int retval = -1;
 
   const auto seed =
@@ -43,122 +51,121 @@ int SubquasigroupResolver::findSubquasigroup(const Quasigroup *q,
       printf("Failed to allocate memory\n");
       break;
     }
-    a_q = static_cast<unsigned int *>(
-        malloc(sizeof(unsigned int) * q->getOrder()));
-    if (a_q == nullptr) {
-      printf("Failed to allocate memory\n");
-      break;
-    }
 
     for (int i = 0; i < border; i++) {
       seed[i] = static_cast<unsigned int>(i);
     }
 
+    retval = checkSeed(q, seed, border, *a_sq, a_sqi);
+    if (retval != 0) {
+      break;
+    }
     do {
-      retval = checkStep(q, seed, border, *a_sq, a_sqi, a_q);
+      last = getNextSeed(q, seed, border);
+      retval = checkSeed(q, seed, border, *a_sq, a_sqi);
       if (retval != 0) {
         break;
       }
-      last = nextStep(q, seed, border);
-      retval = checkStep(q, seed, border, *a_sq, a_sqi, a_q);
     } while (last == 0);
   } while (false);
 
   free(seed);
-  if (*a_sq != nullptr && retval <= 0) {
+  if (*a_sq != nullptr && (retval <= 0)) {
     free(*a_sq);
     *a_sq = nullptr;
   }
   if (a_sqi != nullptr) {
     free(a_sqi);
   }
-  if (a_q != nullptr) {
-    free(a_q);
-  }
 
   return retval;
 }
 
-int SubquasigroupResolver::nextStep(const Quasigroup *q, unsigned int *step,
-                                    const int border) {
+int SubquasigroupResolver::getNextSeed(const Quasigroup *q, unsigned int *seed,
+                                       const int border) {
   int i;
 
   for (i = border - 1; i >= 0; i--) {
-    if (step[i] < (q->getOrder() - 1) - (border - 1 - i)) {
+    if (seed[i] < (q->getOrder() - 1) - (border - 1 - i)) {
       break;
     }
   }
-
-  step[i]++;
-  int cur = step[i] + 1;
+  seed[i]++;
+  int cur = seed[i] + 1;
   for (i = i + 1; i < border; i++) {
-    step[i] = cur;
+    seed[i] = cur;
     cur++;
   }
 
-  if (step[0] == q->getOrder() - border) {
+  if (seed[0] == q->getOrder() - border) {
     return 1;
   }
   return 0;
 }
 
-int SubquasigroupResolver::checkStep(const Quasigroup *q,
-                                     const unsigned int *step, const int border,
-                                     unsigned int *a_sq, unsigned int *a_sqi,
-                                     unsigned int *a_q) {
+int SubquasigroupResolver::checkSeed(const Quasigroup *q,
+                                     const unsigned int *seed, const int border,
+                                     unsigned int *a_sq, unsigned int *a_sqi) {
   int i;
 
-  int sqLen = border;
-  int first = 0;
-  int last = border;
   int retval = 0;
 
+  if (border >= q->getOrder()) {
+    printf("Subquasigroup order %d must be less than quasigroup order %d\n",
+           border, q->getOrder());
+    return -1;
+  }
+
   // initialization
-  memset(a_sq, 0, sizeof(unsigned int) * q->getOrder());
-  memset(a_sqi, 0, sizeof(unsigned int) * q->getOrder());
-  memset(a_q, 0, sizeof(unsigned int) * q->getOrder());
+  memset(a_sq, 0, sizeof(unsigned int) * q->getOrder());   // subquasigroup
+  memset(a_sqi, 0, sizeof(unsigned int) * q->getOrder());  // covered
   for (i = 0; i < border; i++) {
-    a_sq[i] = step[i];
-    a_sqi[step[i]] = 3;
-    a_q[i] = step[i];
+    a_sq[i] = seed[i];
+    a_sqi[seed[i]] = 3;
   }
 
   // build the closure of the seed
-  while (last - first > 0) {
-    const unsigned int cur = a_q[first];
-    first++;
-
-    unsigned int tmp = q->getProduct(cur, cur);
-    if (a_sqi[tmp] == 0) {
-      a_q[last] = tmp;
-      a_sqi[tmp] = 2;
-      last++;
-    }
-
-    for (i = 0; i < sqLen; i++) {
-      tmp = q->getProduct(a_sq[i], cur);
-      if (a_sqi[tmp] == 0) {
-        a_q[last] = tmp;
-        a_sqi[tmp] = 2;
-        last++;
-      }
-      tmp = q->getProduct(cur, a_sq[i]);
-      if (a_sqi[tmp] == 0) {
-        a_q[last] = tmp;
-        a_sqi[tmp] = 2;
-        last++;
-      }
-    }
-
-    if ((a_sqi[cur] % 2) == 0) {
-      a_sq[sqLen] = cur;
-      a_sqi[cur] = 1;
-      sqLen++;
-    }
+  int covered_num = border;
+  unsigned int cur = q->getProduct(a_sq[0], a_sq[0]);
+  if (a_sqi[cur] != 3) {  // uncovered
+    a_sqi[cur] = 3;
+    a_sq[covered_num] = cur;
+    covered_num++;
   }
-  if (last - first + sqLen <= q->getOrder() / 2) {
+  int checked_num = 1;
+
+  while ((covered_num <= q->getOrder() / 2) && (checked_num < covered_num)) {
+    for (i = 0; i < checked_num; i++) {
+      cur = q->getProduct(a_sq[i], a_sq[checked_num]);
+      if (a_sqi[cur] != 3) {
+        a_sqi[cur] = 3;
+        a_sq[covered_num] = cur;
+        covered_num++;
+        if (covered_num > q->getOrder() / 2) {
+          break;
+        }
+      }
+      cur = q->getProduct(a_sq[checked_num], a_sq[i]);
+      if (a_sqi[cur] != 3) {
+        a_sqi[cur] = 3;
+        a_sq[covered_num] = cur;
+        covered_num++;
+        if (covered_num > q->getOrder() / 2) {
+          break;
+        }
+      }
+    }
+    cur = q->getProduct(a_sq[checked_num], a_sq[checked_num]);
+    if (a_sqi[cur] != 3) {
+      a_sqi[cur] = 3;
+      a_sq[covered_num] = cur;
+      covered_num++;
+    }
+    checked_num++;
+  }
+  if (covered_num <= q->getOrder() / 2) {
     // a subquasigroup is found
-    retval = sqLen;
+    retval = covered_num;
   }
 
   return retval;

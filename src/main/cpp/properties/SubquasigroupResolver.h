@@ -5,13 +5,14 @@
 namespace Quasigroup {
 
 class SubquasigroupResolver {
-  static int nextStep(const Quasigroup *q, unsigned int *step, int border);
-  static int checkStep(const Quasigroup *q, const unsigned int *step,
-                       int border, unsigned int *a_sq, unsigned int *a_sqi,
-                       unsigned int *a_q);
+  static int getNextSeed(const Quasigroup *q, unsigned int *seed, int border);
+  static int checkSeed(const Quasigroup *q, const unsigned int *seed,
+                       int border, unsigned int *a_sq, unsigned int *a_sqi);
 
  public:
-  static bool containsProperSubquasigroup(const Quasigroup *q);
+  static bool containsProperSubquasigroup(const Quasigroup *q, int border);
+  static bool containsAnyProperSubquasigroup(const Quasigroup *q);
+  static bool containsNonTrivialProperSubquasigroup(const Quasigroup *q);
   static int findSubquasigroup(const Quasigroup *q, int border,
                                unsigned int **a_sq);
 };

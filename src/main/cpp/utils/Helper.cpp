@@ -1,6 +1,7 @@
 #include "Helper.h"
 
 #include <numeric>
+#include <random>
 
 namespace Quasigroup {
 std::vector<int> calculateReversePermutation(

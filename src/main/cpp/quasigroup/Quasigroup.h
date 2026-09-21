@@ -60,13 +60,15 @@ class Quasigroup {
   [[nodiscard]] bool hasLeftUnit() const;
   [[nodiscard]] bool hasRightUnit() const;
   [[nodiscard]] bool hasUnit();
-  [[nodiscard]] bool isShapeless() const;
+  [[nodiscard]] bool isShapeless(
+      AssociativityDeterminationStrategy strategy =
+          AssociativityDeterminationStrategy::LightTest);
   [[nodiscard]] bool oneOfShapelessIdentitiesIsSatisfied() const;
-  [[nodiscard]] bool oneOfShapelessIdentitiesIsSatisfiedForK(int k) const;
   [[nodiscard]] bool isLoop();
   [[nodiscard]] bool isGroup();
   [[nodiscard]] bool isAbelianGroup();
-  [[nodiscard]] bool containsProperSubquasigroup() const;
+  [[nodiscard]] bool containsAnyProperSubquasigroup() const;
+  [[nodiscard]] bool containsNonTrivialProperSubquasigroup() const;
   [[nodiscard]] bool isQuadratical() const;
   [[nodiscard]] bool isHexagonal() const;
   [[nodiscard]] bool isGoldenSquare() const;

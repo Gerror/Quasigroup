@@ -66,54 +66,73 @@ bool Quasigroup::isGroup() { return isLoop() && isAssociativeByLightTest(); }
 
 bool Quasigroup::isAbelianGroup() { return isGroup() && isCommutative(); }
 
-bool Quasigroup::containsProperSubquasigroup() const {
-  return SubquasigroupResolver::containsProperSubquasigroup(this);
+bool Quasigroup::containsAnyProperSubquasigroup() const {
+  return SubquasigroupResolver::containsAnyProperSubquasigroup(this);
 }
 
-bool Quasigroup::isShapeless() const {
-  return !isIdempotent() && !isCommutative() && !isAssociativeByLightTest() &&
-         !hasLeftUnit() && !hasRightUnit() && !containsProperSubquasigroup() &&
+bool Quasigroup::containsNonTrivialProperSubquasigroup() const {
+  return SubquasigroupResolver::containsNonTrivialProperSubquasigroup(this);
+}
+
+bool Quasigroup::isShapeless(
+    const AssociativityDeterminationStrategy strategy) {
+  return !isIdempotent() && !isCommutative() && !isAssociative(strategy) &&
+         !hasLeftUnit() && !hasRightUnit() &&
+         !containsAnyProperSubquasigroup() &&
          !oneOfShapelessIdentitiesIsSatisfied();
 }
 
 bool Quasigroup::oneOfShapelessIdentitiesIsSatisfied() const {
-  for (int k = 1; k < 2 * order; k++) {
-    if (oneOfShapelessIdentitiesIsSatisfiedForK(k)) {
-      return true;
-    }
-  }
+  int leftK = 1;
+  int rightK = 1;
 
-  return false;
-}
-
-bool Quasigroup::oneOfShapelessIdentitiesIsSatisfiedForK(const int k) const {
-  auto leftProductIsSatisfied = true;
-  auto rightProductIsSatisfied = true;
-
+  bool leftAlreadyNotSatisfied = false;
+  bool rightAlreadyNotSatisfied = false;
   for (int x = 0; x < order; x++) {
+    std::vector leftVisited(order, false);
+    std::vector rightVisited(order, false);
     for (int y = 0; y < order; y++) {
-      auto leftProduct = y;
-      auto rightProduct = y;
+      if (!leftAlreadyNotSatisfied && !leftVisited[y]) {
+        auto leftProduct = y;
+        auto leftCycleOrder = 1;
+        for (int z = 0; z < order; z++) {
+          leftVisited[leftProduct] = true;
+          leftProduct = getProduct(x, leftProduct);
+          if (leftProduct == y) break;
 
-      for (int i = 0; i < k; i++) {
-        leftProduct = getProduct(x, leftProduct);
-        rightProduct = getProduct(rightProduct, x);
+          leftCycleOrder++;
+        }
+
+        leftK = std::lcm(leftK, leftCycleOrder);
+        if (leftK >= 2 * order) leftAlreadyNotSatisfied = true;
       }
 
-      leftProductIsSatisfied = leftProductIsSatisfied && (leftProduct == y);
-      rightProductIsSatisfied = rightProductIsSatisfied && (rightProduct == y);
+      if (!rightAlreadyNotSatisfied && !rightVisited[y]) {
+        auto rightProduct = y;
+        auto rightCycleOrder = 1;
+        for (int z = 0; z < order; z++) {
+          rightVisited[rightProduct] = true;
+          rightProduct = getProduct(rightProduct, x);
 
-      if (!leftProductIsSatisfied && !rightProductIsSatisfied) {
-        return false;
+          if (rightProduct == y) break;
+
+          rightCycleOrder++;
+        }
+
+        rightK = std::lcm(rightK, rightCycleOrder);
+        if (rightK >= 2 * order) rightAlreadyNotSatisfied = true;
       }
+
+      if (leftAlreadyNotSatisfied && rightAlreadyNotSatisfied) return false;
     }
   }
-  return true;
+
+  return !leftAlreadyNotSatisfied || !rightAlreadyNotSatisfied;
 }
 
 bool Quasigroup::isAssociative(
-    AssociativityDeterminationStrategy associativityStrategy) {
-  switch (associativityStrategy) {
+    const AssociativityDeterminationStrategy strategy) {
+  switch (strategy) {
     case AssociativityDeterminationStrategy::LightTest:
       return isAssociativeByLightTest();
     case AssociativityDeterminationStrategy::CompleteSearch:
