@@ -1,6 +1,79 @@
 # Quasigroup
 
-##### Генерация квазигрупп
+C++17 библиотека для работы с квазигруппами.
+
+## Требования
+
+- CMake ≥ 3.16
+- Компилятор с поддержкой C++17
+
+## Сборка и установка
+
+```bash
+git clone https://github.com/Gerror/Quasigroup.git
+cd Quasigroup
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+cmake --install build
+```
+
+## Подключение
+
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(my_app LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Quasigroup REQUIRED)
+
+add_executable(my_app main.cpp)
+target_link_libraries(my_app PRIVATE Quasigroup::QuasigroupLib)
+```
+
+## Описание функционала
+
+### Задание квазигрупп
+
+Квазигруппы порядка N задаются числами от 0 до N - 1.
+
+##### Создание фиксированных квазигрупп
+
+В виде фиксированной таблицы
+
+```c++
+Quasigroup::LatinSquareQuasigroup q = {
+    {0, 1, 2},
+    {1, 2, 0},
+    {2, 0, 1}
+};
+```
+
+Прочитать из файла `quasigroup.txt` с порядком `order`:
+
+```c++
+std::ifstream file("quasigroup.txt");
+constexpr int order = 3;
+Quasigroup::LatinSquareQuasigroup q(order, file);
+```
+
+Создать из двумерного массива
+
+```c++
+constexpr int order = 3;
+int **latinSquare = ...;
+Quasigroup::LatinSquareQuasigroup q(order, latinSquare);
+```
+
+Создать из явной квазигрупповой операции
+
+```c++
+constexpr int order = 3;
+Quasigroup::LatinSquareQuasigroup q(order, [](const int x, const int y) { return (x + y) % order; });
+```
+
+##### Генерация случайных квазигрупп
 
 Генерировать квазигруппы можно с помощью класса-генератора *QuasigroupGenerator*, передав
 ему необходимую фабрику квазигрупп в конструктор.
@@ -95,7 +168,7 @@ for (auto q : qSet) {
 }
 ```
 
-##### Проверка свойств квазигрупп
+### Проверка свойств квазигрупп
 
 Для проверки известных свойств доступны следующие методы класса *Quasigroup*. Каждое из bool свойств
 можно задать в lambda-функции для генерации квазигруппы с необходимыми свойствами.
@@ -107,7 +180,7 @@ for (auto q : qSet) {
  * По умолчанию используется тест Лайта (n^2 logn) (см. другие варианты в isAssociative)
 */ 
 bool isAffine(
-    AssociativityDeterminationStrategy strategy = AssociativityDeterminationStrategy::LightTest
+      AssociativityDeterminationStrategy associativityStrategy = AssociativityDeterminationStrategy::LightTest
 ) const;
 
 // Проверка простоты
@@ -119,8 +192,8 @@ bool isSimple() const;
  * Возможные алгоритмы:
  * AssociativityDeterminationStrategy::LightTest -- тест Лайта (n^2 logn)
  * AssociativityDeterminationStrategy::CompleteSearch -- полный перебор всех троек (n^3)
- * AssociativityDeterminationStrategy::Basis4Associativity -- через проверку 4-ассоциативности на базисе (n^2)
- * ! Последний на данный момент поддерживается только в терминах проверки аффинности
+ * AssociativityDeterminationStrategy::BasisAssociativity -- через проверку ассоциативности на базисе (n^2)
+ * ! Последний на данный момент поддерживается только для коммутативных квазигрупп
  */
 bool isAssociative(
     AssociativityDeterminationStrategy strategy = AssociativityDeterminationStrategy::LightTest
@@ -144,15 +217,10 @@ bool hasUnit() const;
 // Проверка бесформенности
 bool isShapeless() const;
 
-// Проверка того, что тождества вида
-// (x * ( ... * x * (x * y)) = y и (((y * x) * x) * ... * x) (k раз)
-// выполняются для всех k < 2 * N, где N порядок квазигруппы
-bool shapelessIdentitiesIsSatisfied() const;
-
-// Проверка того, что тождества вида
-// (x * ( ... * x * (x * y)) = y и (((y * x) * x) * ... * x) (k раз)
-// выполняются для конкретного k
-bool shapelessIdentitiesIsSatisfied(int k) const;
+// Проверка того, что хотя бы одно из тождеств вида
+// (x * ( ... * x * (x * y)) = y или (((y * x) * x) * ... * x) (k раз)
+// выполняются для какого-то k < 2 * N, где N порядок квазигруппы
+bool oneOfShapelessIdentitiesIsSatisfied() const;
 
 // Проверка того, что квазигруппа является лупой
 // Равносильно hasUnit
@@ -165,7 +233,11 @@ bool isGroup() const;
 bool isAbelianGroup() const;
 
 // Проверка того, что квазигруппа содержит собственную подквазигруппу
-bool containsProperSubqusigroup() const;
+bool containsAnyProperSubquasigroup() const;
+
+// Проверка того, что квазигруппа содержит собственную нетривиальную подквазигруппу
+// (порядка >= 2)
+bool containsNonTrivialProperSubquasigroup() const;
 
 // Проверка что выполнено тождество (x * y) * x = (z * x) * (y * z)
 bool isQuadratical() const;
@@ -188,16 +260,6 @@ bool isAffineRegularOctagonal() const;
 // Проверка что выполнено тождество (((x * y) * x) * y) * x = y
 bool isPentagonal() const;
 
-/*
- * Ищет подквазигруппу наименьшего размера с порядком не меньше чем border. 
- * Возвращает порядок найденной подквазигруппы.
- * Подквазигруппа сохраняется в a_sq.
- * 
- * Для проверки отсутствия подквазигрупп достаточно передать border = 1
- * и проверить, что метод вернул 0.
- */
-int findSubquasigroup(int border, unsigned int **a_sq) const;
-
 // Колличество ассоциативных троек
 int associativeTripletsCount() const;
 
@@ -211,7 +273,7 @@ int commutativePairsCount() const;
 int nonCommutativePairsCount() const;
 ```
 
-##### Преобразования
+### Преобразования
 
 Метод *transform* класса *KepkaTransformer* можно использовать для преобразования произвольной квазигруппы в
 полиномиально
@@ -245,7 +307,7 @@ const auto transformedQ = Quasigroup::PFQuasigroupPermutationTransformer::transf
 delete q;
 ```
 
-##### Эксперименты
+### Эксперименты
 
 Эксперименты запускаются вызовом метода *run* класса *ExperimentsRunner*. Сигнатура метода:
 
